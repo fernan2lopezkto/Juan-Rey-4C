@@ -2,9 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { useSession, signIn } from 'next-auth/react';
-import ReactPlayer from 'react-player';
+import dynamic from 'next/dynamic';
 import { FaSearch, FaThumbsDown, FaTrash, FaPlus } from 'react-icons/fa';
 import { searchVideos, rateVideo, Video } from '@/services/youtube';
+
+// Import ReactPlayer dynamically to avoid SSR issues
+const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
 
 export default function YoutubeFilter() {
     const { data: session } = useSession();
