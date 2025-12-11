@@ -155,7 +155,7 @@ export default function YoutubeFilter() {
                     <div className="lg:col-span-2 space-y-4">
                         <div className="aspect-video w-full bg-black rounded-xl overflow-hidden shadow-lg relative wrapper-player">
                             <ReactPlayer
-                                url={`https://www.youtube.com/watch?v=${currentVideo.id}`}
+                                src={`https://www.youtube.com/watch?v=${currentVideo.id}`}
                                 width="100%"
                                 height="100%"
                                 controls={true}

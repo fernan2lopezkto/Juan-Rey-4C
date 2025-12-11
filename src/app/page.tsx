@@ -14,14 +14,18 @@ export default function Home() {
           src="https://www.youtube.com/watch?v=eN0jYomsO_M?si=hQqCqt5SUqt22C2W"
           controls={true}
           volume={0.5}
-          width={"100%"}
-          height={"100%"}
+          width="560"
+          height="315"
         />
       </div>
       <div className="col-span-1 md:col-span-3">
         <h2>Video 2 react-player también</h2>
         <ReactPlayer
-          url="https://www.youtube.com/watch?v=gV7RkJtBOjU?si=zXjqhDBQ7FLIKT59"
+          src="https://www.youtube.com/watch?v=gV7RkJtBOjU?si=zXjqhDBQ7FLIKT59"
+          controls={true}
+          volume={0.5}
+          width={"100%"}
+          height={"100%"}
         />
       </div>
       <div className="col-span-1 md:col-span-3">
@@ -50,7 +54,7 @@ export default function Home() {
           allowfullscreen>
         </iframe>
       </div>
-</div>
+    </div>
 
   );
 }
