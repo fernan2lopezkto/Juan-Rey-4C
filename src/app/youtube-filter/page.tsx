@@ -24,6 +24,7 @@ export default function YoutubeFilter() {
         if (saved) {
             setBlacklist(JSON.parse(saved));
         }
+        console.log(saved)
     }, []);
 
     // Save blacklist to local storage
