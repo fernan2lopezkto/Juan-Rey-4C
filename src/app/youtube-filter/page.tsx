@@ -134,7 +134,7 @@ export default function YoutubeFilter() {
                             onChange={(e) => setNewFilterWord(e.target.value)}
                         />
                         <button type="submit" className="btn btn-sm btn-secondary">
-                            <FaPlus /> Add
+                            <FaPlus /> Agregar
                         </button>
                     </form>
                     <div className="flex flex-wrap gap-2">
