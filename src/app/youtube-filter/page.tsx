@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useSession, signIn } from 'next-auth/react';
 import dynamic from 'next/dynamic';
-import { FaSearch, FaThumbsDown, FaTrash, FaPlus, FaHistory } from 'react-icons/fa';
-import { searchVideos, rateVideo, Video } from '@/services/youtube';
+import { FaSearch, FaThumbsDown, FaTrash, FaPlus, FaHistory, FaLightbulb } from 'react-icons/fa';
+import { searchVideos, rateVideo, getRelatedVideos, getPopularVideos, Video } from '@/services/youtube';
 
 // Import ReactPlayer dynamically to avoid SSR issues
 const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
@@ -18,9 +18,11 @@ export default function YoutubeFilter() {
     const [newFilterWord, setNewFilterWord] = useState('');
     const [loading, setLoading] = useState(false);
 
-    // History State
+    // History & Suggestions State
     const [history, setHistory] = useState<Video[]>([]);
-    const [showHistoryMobile, setShowHistoryMobile] = useState(false);
+    const [suggestedVideos, setSuggestedVideos] = useState<Video[]>([]);
+    const [showHistory, setShowHistory] = useState(false); // Toggle between suggestions and history
+    const [isLoaded, setIsLoaded] = useState(false); // Persistence check
 
     // Load blacklist and history from local storage on mount
     useEffect(() => {
@@ -33,17 +35,61 @@ export default function YoutubeFilter() {
         if (savedHistory) {
             setHistory(JSON.parse(savedHistory));
         }
+        setIsLoaded(true);
     }, []);
 
     // Save blacklist to local storage
     useEffect(() => {
-        localStorage.setItem('yt-blacklist', JSON.stringify(blacklist));
-    }, [blacklist]);
+        if (isLoaded) {
+            localStorage.setItem('yt-blacklist', JSON.stringify(blacklist));
+        }
+    }, [blacklist, isLoaded]);
 
     // Save history to local storage
     useEffect(() => {
-        localStorage.setItem('yt-history', JSON.stringify(history));
-    }, [history]);
+        if (isLoaded) {
+            localStorage.setItem('yt-history', JSON.stringify(history));
+        }
+    }, [history, isLoaded]);
+
+    // Fetch Suggestions (Popular or Related)
+    useEffect(() => {
+        // User requested to NOT fetch if session is not active to avoid errors
+        if (!session) return;
+
+        const fetchSuggestions = async () => {
+            // If searching, usually we show search results, but this fills the 'suggestions' bucket
+
+            let results: Video[] = [];
+
+            if (currentVideo) {
+                // Watching a video -> Get Related
+                // We use a dummy token or real token. The service handles public key fallback if configured or just public access 
+                // where possible, but we passed session token usually.
+                // For now, assume public search/related works or uses the token if available.
+                // Ideally we need an API key if not logged in context, but let's try with what we have.
+                // Note: Our service methods normally take a token. If session is null, we might need a fallback.
+                // Since we don't have a secure way to hold API Key in env on client without exposing it, 
+                // we rely on the implementation in service (which might need attention if it strictly requires token).
+                // However, let's pass session token or empty string.
+                results = await getRelatedVideos(currentVideo.title, session.accessToken as string);
+            } else {
+                // Home Screen -> Get Popular
+                results = await getPopularVideos(session.accessToken as string);
+            }
+
+            // Filter blacklist
+            const filtered = results.filter(video => {
+                const text = (video.title + ' ' + video.description).toLowerCase();
+                return !blacklist.some(word => text.includes(word.toLowerCase()));
+            });
+
+            setSuggestedVideos(filtered);
+        };
+
+        fetchSuggestions();
+    }, [currentVideo, blacklist, session]); // Refetch when context changes
+
 
     const addToHistory = (video: Video) => {
         setHistory(prev => {
@@ -62,7 +108,7 @@ export default function YoutubeFilter() {
         }
 
         setLoading(true);
-        setShowHistoryMobile(false); // Hide history on new search
+        setShowHistory(false); // Hide history on new search
         try {
             // @ts-ignore
             const results = await searchVideos(query, session.accessToken as string);
@@ -109,12 +155,17 @@ export default function YoutubeFilter() {
     const handleVideoSelect = (video: Video) => {
         setCurrentVideo(video);
         addToHistory(video);
+        // setVideos([]); // Removed to allow search results to persist
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const removeHistoryItem = (e: React.MouseEvent, videoId: string) => {
         e.stopPropagation();
         setHistory(prev => prev.filter(v => v.id !== videoId));
+    };
+
+    const toggleHistory = () => {
+        setShowHistory(!showHistory);
     };
 
     // Helper to render a list of videos
@@ -168,14 +219,14 @@ export default function YoutubeFilter() {
                     <button type='submit' className="btn btn-primary">
                         <FaSearch />
                     </button>
-                    {/* Mobile History Toggle */}
+                    {/* View History Toggle (Replaces Mobile-only toggle) */}
                     <button
                         type="button"
-                        className="btn btn-circle btn-ghost md:hidden duration-200"
-                        onClick={() => setShowHistoryMobile(!showHistoryMobile)}
-                        title="History"
+                        className={`btn btn-circle btn-ghost duration-200 ${showHistory ? 'text-primary' : ''}`}
+                        onClick={toggleHistory}
+                        title={showHistory ? "Show Suggestions" : "Show History"}
                     >
-                        <FaHistory className={showHistoryMobile ? 'text-primary' : ''} />
+                        {showHistory ? <FaHistory /> : <FaHistory className="opacity-50" />}
                     </button>
                 </form>
 
@@ -250,19 +301,24 @@ export default function YoutubeFilter() {
                                 </p>
                             </div>
 
-                            {/* History BELOW Player */}
-                            {history.length > 0 && (
-                                <div className="pt-6 border-t border-base-300">
-                                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                                        <FaHistory /> Watch History
-                                    </h3>
-                                    {renderVideoList(history, true)}
-                                </div>
-                            )}
+                            {/* Suggestions or History BELOW Player */}
+                            <div className="pt-6 border-t border-base-300">
+                                <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                                    {showHistory ? <><FaHistory /> Watch History</> : <><FaLightbulb /> You might also like</>}
+                                </h3>
+                                {showHistory ?
+                                    (history.length > 0 ? renderVideoList(history, true) : <p className="opacity-50">History is empty.</p>)
+                                    :
+                                    (suggestedVideos.length > 0 ? renderVideoList(suggestedVideos) : <p className="opacity-50">Loading suggestions...</p>)
+                                }
+                            </div>
                         </div>
 
                         {/* Search Results (Right/Bottom) */}
                         <div className="lg:col-span-1 space-y-4">
+                            {/* Keep showing search results if available, otherwise maybe more suggestions? 
+                                 Original behavior: Search results stay here.
+                             */}
                             {loading ? (
                                 <div className="flex justify-center p-10"><span className="loading loading-spinner loading-lg"></span></div>
                             ) : videos.length > 0 ? (
@@ -272,33 +328,22 @@ export default function YoutubeFilter() {
                                 </>
                             ) : (
                                 <div className="text-center opacity-50 py-10">
-                                    No related videos found
+                                    {/* Empty space next to video if no search */}
                                 </div>
                             )}
                         </div>
                     </>
                 ) : (
-                    /* NOT WATCHING MODE */
+                    /* NOT WATCHING MODE (HOME) */
                     <div className="lg:col-span-3">
-                        {/* Mobile History View (Explicit Toggle) */}
-                        {showHistoryMobile && (
-                            <div className="md:hidden mb-6 p-4 bg-base-200 rounded-lg">
-                                <h2 className="text-xl font-bold mb-4 flex items-center gap-2 justify-between">
-                                    <span className="flex items-center gap-2"><FaHistory /> History</span>
-                                    <button className="btn btn-sm btn-circle btn-ghost" onClick={() => setShowHistoryMobile(false)}>✕</button>
-                                </h2>
-                                {history.length > 0 ? renderVideoList(history, true) : <p className="opacity-50">No history yet.</p>}
-                            </div>
-                        )}
 
-                        {/* Main Content: Search Results OR History */}
+                        {/* Main Content: Search Results OR (Suggestions/History) */}
                         {loading ? (
                             <div className="flex justify-center p-10"><span className="loading loading-spinner loading-lg"></span></div>
                         ) : videos.length > 0 ? (
                             <div className="w-full">
                                 <h3 className="font-bold text-lg mb-4">Search Results</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    {/* Custom grid for search results when full width */}
                                     {videos.map(video => (
                                         <div
                                             key={video.id}
@@ -318,20 +363,40 @@ export default function YoutubeFilter() {
                                 </div>
                             </div>
                         ) : (
-                            /* Default State: Show History */
-                            <div>
-                                {history.length > 0 ? (
-                                    <div className="w-full">
-                                        <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                                            <FaHistory /> Your Watch History
-                                        </h2>
-                                        {renderVideoList(history, true)}
-                                    </div>
+                            /* Default State: Show Suggestions OR History based on Toggle */
+                            <div className="w-full">
+                                <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                                    {showHistory ? <><FaHistory /> Your Watch History</> : <><FaLightbulb /> Suggested for you</>}
+                                </h2>
+
+                                {showHistory ? (
+                                    history.length > 0 ? renderVideoList(history, true) : <p className="opacity-50">Your history is empty.</p>
                                 ) : (
-                                    <div className="text-center opacity-50 py-20 flex flex-col items-center gap-4">
-                                        <FaSearch className="text-4xl" />
-                                        <p>Search for a video to start watching</p>
-                                    </div>
+                                    suggestedVideos.length > 0 ? (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                            {/* Reuse grid for suggestions */}
+                                            {suggestedVideos.map(video => (
+                                                <div
+                                                    key={video.id}
+                                                    className="flex flex-col gap-2 p-2 rounded-lg cursor-pointer hover:bg-base-200 transition-colors"
+                                                    onClick={() => handleVideoSelect(video)}
+                                                >
+                                                    <div className="aspect-video rounded-lg overflow-hidden bg-black">
+                                                        <img src={video.thumbnail} alt={video.title} className="w-full h-full object-cover" />
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <h3 className="font-semibold text-sm line-clamp-2 mb-1 text-base-content">{video.title}</h3>
+                                                        <p className="text-xs text-base-content/60">{video.channelTitle}</p>
+                                                        <p className="text-xs text-base-content/60">{new Date(video.publishedAt).toLocaleDateString()}</p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="text-center opacity-50 py-10">
+                                            <span className="loading loading-spinner text-primary"></span> Loading suggestions...
+                                        </div>
+                                    )
                                 )}
                             </div>
                         )}

@@ -59,6 +59,80 @@ export async function searchVideos(query: string, token: string): Promise<Video[
     }));
 }
 
+export async function getRelatedVideos(videoTitle: string, token: string): Promise<Video[]> {
+    const params = new URLSearchParams({
+        part: 'snippet',
+        maxResults: '20',
+        q: videoTitle, // Search for the video title to find related/similar content
+        type: 'video',
+        key: process.env.NEXT_PUBLIC_YOUTUBE_API_KEY || '',
+    });
+
+    try {
+        const response = await fetch(`https://www.googleapis.com/youtube/v3/search?${params.toString()}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            console.error('YouTube Related Videos Error', await response.text());
+            return [];
+        }
+
+        const data = await response.json();
+        return data.items.map((item: any) => ({
+            id: item.id.videoId,
+            title: item.snippet.title,
+            description: item.snippet.description,
+            thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.medium?.url,
+            channelTitle: item.snippet.channelTitle,
+            publishedAt: item.snippet.publishedAt,
+        }));
+    } catch (error) {
+        console.error("Failed to fetch related videos", error);
+        return [];
+    }
+}
+
+export async function getPopularVideos(token: string): Promise<Video[]> {
+    const params = new URLSearchParams({
+        part: 'snippet',
+        chart: 'mostPopular',
+        maxResults: '20',
+        regionCode: 'US', // Default to US or make dynamic if needed
+        key: process.env.NEXT_PUBLIC_YOUTUBE_API_KEY || '',
+    });
+
+    try {
+        const response = await fetch(`https://www.googleapis.com/youtube/v3/videos?${params.toString()}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            console.error('YouTube Popular Videos Error', await response.text());
+            return [];
+        }
+
+        const data = await response.json();
+        return data.items.map((item: any) => ({
+            id: item.id, // For videos endpoint, id is a string, not nested
+            title: item.snippet.title,
+            description: item.snippet.description,
+            thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.medium?.url,
+            channelTitle: item.snippet.channelTitle,
+            publishedAt: item.snippet.publishedAt,
+        }));
+    } catch (error) {
+        console.error("Failed to fetch popular videos", error);
+        return [];
+    }
+}
+
 export async function rateVideo(id: string, rating: 'like' | 'dislike' | 'none', token: string) {
     const params = new URLSearchParams({
         id: id,
