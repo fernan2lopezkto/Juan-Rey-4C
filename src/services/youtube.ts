@@ -62,7 +62,7 @@ export async function searchVideos(query: string, token: string): Promise<Video[
 export async function getRelatedVideos(videoTitle: string, token: string): Promise<Video[]> {
     const params = new URLSearchParams({
         part: 'snippet',
-        maxResults: '20',
+        maxResults: '50',
         q: videoTitle, // Search for the video title to find related/similar content
         type: 'video',
         key: process.env.NEXT_PUBLIC_YOUTUBE_API_KEY || '',

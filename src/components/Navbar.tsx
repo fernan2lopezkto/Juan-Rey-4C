@@ -1,49 +1,79 @@
 "use client";
 
 import Link from 'next/link';
-import ThemeSwitcher from './ThemeSwitcher'; // Importamos el selector de tema
+import ThemeSwitcher from './ThemeSwitcher';
 import { signIn, useSession, signOut } from "next-auth/react";
+import { useState, useEffect, useRef } from 'react';
 
 export default function Navbar() {
   const { data: session } = useSession();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const detailsRef = useRef<HTMLDetailsElement>(null);
+
+  const closeMobileMenu = () => {
+    if (detailsRef.current) {
+      detailsRef.current.removeAttribute('open');
+    }
+  };
+
+  const menuItems = (
+    <>
+      <li>
+        <Link href="/" onClick={closeMobileMenu}>Home</Link>
+      </li>
+      <li>
+        <Link href="/youtube-filter" onClick={closeMobileMenu}>YoutubeFilter</Link>
+      </li>
+    </>
+  );
 
   return (
-    // 'navbar' y 'bg-base-100' son clases de DaisyUI
-    <div className="navbar bg-base-100 shadow-md">
-      <div className="flex-1">
-        {/* Usamos 'Link' de Next.js para la navegación rápida */}
+    <div className="navbar bg-base-100 border-b border-base-200">
+      <div className="navbar-start">
+        {/* Mobile Dropdown */}
+        <div className="dropdown">
+          <details ref={detailsRef}>
+            <summary tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
+            </summary>
+            <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+              {menuItems}
+            </ul>
+          </details>
+        </div>
         <Link href="/" className="btn btn-ghost text-xl normal-case">
           Juan Rey 4C
         </Link>
       </div>
-      <div className="flex-none gap-2">
-        <ul className="menu menu-horizontal px-1">
-          <li>
-            <Link href="/">Home</Link>
-          </li>
-          <li>
-            <Link href="/youtube-filter">YoutubeFilter</Link>
-          </li>
-        </ul>
 
-        {/* Componente para cambiar entre modo claro y oscuro */}
+      <div className="navbar-center hidden lg:flex">
+        <ul className="menu menu-horizontal px-1">
+          {menuItems}
+        </ul>
+      </div>
+
+      <div className="navbar-end gap-2">
+        {/* Theme Switcher */}
         <ThemeSwitcher />
 
-        {/* Mostrar información del usuario si está autenticado */}
+        {/* User Info */}
         {session?.user && (
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-base-content">{session.user.name}</span>
+          <div className="hidden md:flex items-center gap-2">
+            <span className="text-sm text-base-content font-medium">{session.user.name}</span>
+            {session.user.image && (
+              <img src={session.user.image} alt={session.user.name || "User"} className="w-8 h-8 rounded-full" />
+            )}
           </div>
         )}
 
-        {/* Botón de Login/Logout condicional */}
+        {/* Login/Logout */}
         {session ? (
-          <button className="btn btn-secondary ml-4" onClick={() => signOut()}>
-            Cerrar Sesión
+          <button className="btn btn-sm btn-secondary ml-2" onClick={() => signOut()}>
+            Sign Out
           </button>
         ) : (
-          <button className="btn btn-primary ml-4" onClick={() => signIn()}>
-            Iniciar Sesión
+          <button className="btn btn-sm btn-primary ml-2" onClick={() => signIn()}>
+            Sign In
           </button>
         )}
       </div>

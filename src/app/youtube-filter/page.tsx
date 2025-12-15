@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSession, signIn } from 'next-auth/react';
 import dynamic from 'next/dynamic';
 import { FaSearch, FaThumbsDown, FaTrash, FaPlus, FaHistory, FaLightbulb } from 'react-icons/fa';
@@ -52,6 +52,37 @@ export default function YoutubeFilter() {
         }
     }, [history, isLoaded]);
 
+    /**
+     * Helper: Filters videos based on blacklist and auto-dislikes blacklisted ones.
+     */
+    const filterAndDislike = async (rawVideos: Video[]) => {
+        const allowed: Video[] = [];
+        const toDislike: string[] = [];
+
+        for (const video of rawVideos) {
+            const text = (video.title + ' ' + video.description).toLowerCase();
+            const isBlacklisted = blacklist.some(word => text.includes(word.toLowerCase()));
+
+            if (isBlacklisted) {
+                toDislike.push(video.id);
+            } else {
+                allowed.push(video);
+            }
+        }
+
+        // Auto-dislike blacklisted videos in background
+        if (toDislike.length > 0 && (session as any)?.accessToken) {
+            // We don't await this to keep UI snappy, or we can catch errors silently
+            Promise.all(toDislike.map(id =>
+                // @ts-ignore
+                rateVideo(id, 'dislike', (session as any).accessToken as string).catch(e => console.error(`Failed to dislike ${id}`, e))
+            ));
+            console.log(`Auto-disliking ${toDislike.length} videos`);
+        }
+
+        return allowed;
+    };
+
     // Fetch Suggestions (Popular or Related)
     useEffect(() => {
         // User requested to NOT fetch if session is not active to avoid errors
@@ -64,26 +95,14 @@ export default function YoutubeFilter() {
 
             if (currentVideo) {
                 // Watching a video -> Get Related
-                // We use a dummy token or real token. The service handles public key fallback if configured or just public access 
-                // where possible, but we passed session token usually.
-                // For now, assume public search/related works or uses the token if available.
-                // Ideally we need an API key if not logged in context, but let's try with what we have.
-                // Note: Our service methods normally take a token. If session is null, we might need a fallback.
-                // Since we don't have a secure way to hold API Key in env on client without exposing it, 
-                // we rely on the implementation in service (which might need attention if it strictly requires token).
-                // However, let's pass session token or empty string.
-                results = await getRelatedVideos(currentVideo.title, session.accessToken as string);
+                results = await getRelatedVideos(currentVideo.title, (session as any).accessToken as string);
             } else {
                 // Home Screen -> Get Popular
-                results = await getPopularVideos(session.accessToken as string);
+                results = await getPopularVideos((session as any).accessToken as string);
             }
 
-            // Filter blacklist
-            const filtered = results.filter(video => {
-                const text = (video.title + ' ' + video.description).toLowerCase();
-                return !blacklist.some(word => text.includes(word.toLowerCase()));
-            });
-
+            // Filter blacklist & Auto-Dislike
+            const filtered = await filterAndDislike(results);
             setSuggestedVideos(filtered);
         };
 
@@ -102,7 +121,7 @@ export default function YoutubeFilter() {
         e?.preventDefault();
         if (!query.trim()) return;
 
-        if (!session?.accessToken) {
+        if (!(session as any)?.accessToken) {
             alert('Please sign in to search videos');
             return;
         }
@@ -111,13 +130,10 @@ export default function YoutubeFilter() {
         setShowHistory(false); // Hide history on new search
         try {
             // @ts-ignore
-            const results = await searchVideos(query, session.accessToken as string);
+            const results = await searchVideos(query, (session as any).accessToken as string);
 
-            // Filter out videos containing blacklisted words
-            const filtered = results.filter(video => {
-                const text = (video.title + ' ' + video.description).toLowerCase();
-                return !blacklist.some(word => text.includes(word.toLowerCase()));
-            });
+            // Filter out videos containing blacklisted words & Auto-Dislike
+            const filtered = await filterAndDislike(results);
 
             setVideos(filtered);
             setCurrentVideo(null); // Reset current video on new search
@@ -142,10 +158,10 @@ export default function YoutubeFilter() {
     };
 
     const handleDislike = async (videoId: string) => {
-        if (!session?.accessToken) return;
+        if (!(session as any)?.accessToken) return;
         try {
             // @ts-ignore
-            await rateVideo(videoId, 'dislike', session.accessToken as string);
+            await rateVideo(videoId, 'dislike', (session as any).accessToken as string);
             alert('Marked as not interested (Disliked)');
         } catch (error) {
             alert('Error rating video');
@@ -157,6 +173,19 @@ export default function YoutubeFilter() {
         addToHistory(video);
         // setVideos([]); // Removed to allow search results to persist
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleVideoEnded = () => {
+        // Play the 3rd available suggestion to avoid loops (A <-> B), fallback to 2nd or 1st
+        if (suggestedVideos.length > 0) {
+            let nextVideo = suggestedVideos[0];
+            if (suggestedVideos.length >= 3) {
+                nextVideo = suggestedVideos[2];
+            } else if (suggestedVideos.length >= 2) {
+                nextVideo = suggestedVideos[1];
+            }
+            handleVideoSelect(nextVideo);
+        }
     };
 
     const removeHistoryItem = (e: React.MouseEvent, videoId: string) => {
@@ -275,14 +304,18 @@ export default function YoutubeFilter() {
                     <>
                         {/* Player Section (Left/Top) */}
                         <div className="lg:col-span-2 space-y-4">
-                            <div className="aspect-video w-full bg-black rounded-xl overflow-hidden shadow-lg relative wrapper-player">
-                                <ReactPlayer
-                                    src={`https://www.youtube.com/watch?v=${currentVideo.id}`}
-                                    width="100%"
-                                    height="100%"
-                                    controls={true}
-                                    playing={true}
-                                />
+                            {/* Sticky Player Wrapper */}
+                            <div className="sticky top-0 z-50 bg-base-100 pb-2 -mx-4 px-4 md:static md:p-0">
+                                <div className="aspect-video w-full bg-black rounded-xl overflow-hidden shadow-lg relative wrapper-player">
+                                    <ReactPlayer
+                                        src={`https://www.youtube.com/watch?v=${currentVideo.id}`}
+                                        width="100%"
+                                        height="100%"
+                                        controls={true}
+                                        playing={true}
+                                        onEnded={handleVideoEnded}
+                                    />
+                                </div>
                             </div>
                             <div className="space-y-2">
                                 <h2 className="text-xl font-bold text-base-content">{currentVideo.title}</h2>
