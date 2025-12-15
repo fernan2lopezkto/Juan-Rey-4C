@@ -1,11 +1,16 @@
 'use client';
 
+import HeroUno from '@components/Hero1'
+import FooterUno from '@components/Footer1'
+
 import ReactPlayer from 'react-player';
 
 const urlJ = "https://youtu.be/gV7RkJtBOjU?si=zXjqhDBQ7FLIKT59"
 
 export default function Home() {
   return (
+    <div>
+      <HeroUno />
     <div className="px-12 text-center mt-12">
       <div className="hero bg-base-200 min-h-screen">
         <div className="hero-content flex-col lg:flex-row">
@@ -16,13 +21,14 @@ export default function Home() {
           <div>
             <h1 className="text-5xl font-bold">Juan Rey 4C</h1>
             <p className="py-6">
-              Utilidades de todo tipo portfolio y CV
+              Utilidades de todo tipo, portfolio y CV
             </p>
             <button className="btn btn-primary">Get Started</button>
           </div>
         </div>
       </div>
     </div>
-
+    <FooterUno />
+</div>
   );
 }

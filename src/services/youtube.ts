@@ -11,7 +11,7 @@ export interface Video {
 export async function searchVideos(query: string, token: string): Promise<Video[]> {
     const params = new URLSearchParams({
         part: 'snippet',
-        maxResults: '25',
+        maxResults: '50',
         q: query,
         type: 'video',
         key: process.env.NEXT_PUBLIC_YOUTUBE_API_KEY || '', // Fallback, but we should use access token for user actions ideally, or API key for public search
@@ -62,7 +62,7 @@ export async function searchVideos(query: string, token: string): Promise<Video[
 export async function getRelatedVideos(videoTitle: string, token: string): Promise<Video[]> {
     const params = new URLSearchParams({
         part: 'snippet',
-        maxResults: '50',
+        maxResults: '100',
         q: videoTitle, // Search for the video title to find related/similar content
         type: 'video',
         key: process.env.NEXT_PUBLIC_YOUTUBE_API_KEY || '',
@@ -100,7 +100,7 @@ export async function getPopularVideos(token: string): Promise<Video[]> {
     const params = new URLSearchParams({
         part: 'snippet',
         chart: 'mostPopular',
-        maxResults: '20',
+        maxResults: '100',
         regionCode: 'US', // Default to US or make dynamic if needed
         key: process.env.NEXT_PUBLIC_YOUTUBE_API_KEY || '',
     });
