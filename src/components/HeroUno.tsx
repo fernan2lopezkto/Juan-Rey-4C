@@ -1,7 +1,7 @@
 
 
 export default function HeroUno() {
-  return(
+  return (
     <div
   className="hero min-h-screen"
   style={{
@@ -21,5 +21,5 @@ export default function HeroUno() {
     </div>
   </div>
 </div>
-  )
+  );
 }

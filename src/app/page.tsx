@@ -1,11 +1,7 @@
-'use client';
+
 
 import HeroUno from '@components/Hero1'
 import FooterUno from '@components/Footer1'
-
-import ReactPlayer from 'react-player';
-
-const urlJ = "https://youtu.be/gV7RkJtBOjU?si=zXjqhDBQ7FLIKT59"
 
 export default function Home() {
   return (
