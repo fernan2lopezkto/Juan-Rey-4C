@@ -1,7 +1,7 @@
 
 
-import HeroUno from '@components/Hero1'
-import FooterUno from '@components/Footer1'
+import HeroUno from '@components/HeroUno'
+import FooterUno from '@components/FooterUno'
 
 export default function Home() {
   return (
