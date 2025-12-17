@@ -1,12 +1,7 @@
 
-
-//import HeroUno from '@components/HeroUno'
-//import FooterUno from '@components/FooterUno'
-
 export default function Home() {
   return (
     <div>
-      
     <div className="px-12 text-center mt-12">
       <div className="hero bg-base-200 min-h-screen">
         <div className="hero-content flex-col lg:flex-row">
@@ -24,7 +19,6 @@ export default function Home() {
         </div>
       </div>
     </div>
-    
 </div>
   );
 }
