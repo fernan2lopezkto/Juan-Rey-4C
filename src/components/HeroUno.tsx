@@ -4,7 +4,7 @@ export default function HeroUno() {
   return(
     <div>
             <div
-  className="hero min-h-screen"
+  className="hero"
   style={{
     backgroundImage:
       "url('/fondoCrucesUno.jpg')",
