@@ -1,4 +1,4 @@
-import HeroUno from ("../components/HeroUno")
+import HeroUno from "@/components/HeroUno"
 export default function Home() {
   return (
     <div>
