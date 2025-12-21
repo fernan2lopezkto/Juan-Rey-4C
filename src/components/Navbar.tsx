@@ -12,14 +12,22 @@ export default function Navbar() {
   const toggleMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const closeMenu = () => setIsMobileMenuOpen(false);
 
+  const navLinks = [
+    { name: 'Home', href: '/' },
+    { name: 'Filtro', href: '/youtube-filter' },
+    { name: 'About', href: '/about' },
+    { name: 'Utilidades', href: '/utilities' },
+  ];
+
   const menuItems = (
     <>
-      <li>
-        <Link href="/" onClick={closeMenu} className="text-2xl lg:text-base">Home</Link>
-      </li>
-      <li>
-        <Link href="/youtube-filter" onClick={closeMenu} className="text-2xl lg:text-base">YoutubeFilter</Link>
-      </li>
+      {navLinks.map((link) => (
+        <li key={link.href}>
+          <Link href={link.href} onClick={closeMenu} className="text-2xl lg:text-base">
+            {link.name}
+          </Link>
+        </li>
+      ))}
     </>
   );
 
@@ -27,7 +35,7 @@ export default function Navbar() {
     <div className="navbar bg-base-100 border-b border-base-200 sticky top-0 z-50">
       <div className="navbar-start">
         {/* Botón Hamburguesa para Móvil */}
-        <button 
+        <button
           onClick={toggleMenu}
           className="btn btn-ghost lg:hidden"
           aria-label="Abrir menú"
@@ -51,7 +59,7 @@ export default function Navbar() {
 
       <div className="navbar-end gap-2">
         <ThemeSwitcher />
-        
+
         {session?.user && (
           <div className="hidden md:flex items-center gap-2">
             <span className="text-sm text-base-content font-medium">{session.user.name}</span>
@@ -90,8 +98,8 @@ export default function Navbar() {
               {menuItems}
               {session?.user && (
                 <li className="mt-4 flex flex-col items-center gap-2">
-                   <img src={session.user.image || ""} alt="User" className="w-16 h-16 rounded-full border-2 border-primary" />
-                   <span className="text-xl font-bold">{session.user.name}</span>
+                  <img src={session.user.image || ""} alt="User" className="w-16 h-16 rounded-full border-2 border-primary" />
+                  <span className="text-xl font-bold">{session.user.name}</span>
                 </li>
               )}
             </ul>

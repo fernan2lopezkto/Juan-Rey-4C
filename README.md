@@ -1,37 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Juan Rey 4C
 
-## Getting Started
+<div align="center">
+  <img src="public/fondoCrucesUno.jpg" alt="Banner" width="100%" />
 
-First, run the development server:
+  <h1>🚀 Juan Rey 4C - Utilities & Portfolio</h1>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+  <p>
+    <strong>A modern, responsive web application built with Next.js, Tailwind CSS, and DaisyUI.</strong>
+  </p>
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+  <a href="https://your-deployment-url.com" target="_blank">
+    <img src="https://img.shields.io/badge/Visit%20Site-Click%20Here-blue?style=for-the-badge&logo=vercel" alt="Visit Site" />
+  </a>
+</div>
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## ✨ Features
 
-## Learn More
+*   **Responsive Design**: Built with Tailwind CSS and DaisyUI for a beautiful experience on any device.
+*   **YouTube Filter**: A specialized tool for filtering YouTube content.
+*   **Authentication**: Secure Google login with NextAuth.
+*   **Utilities**: A collection of useful tools and calculators.
+*   **Dark Mode**: Fully supported dark/light theme switching.
 
-To learn more about Next.js, take a look at the following resources:
+## 🛠️ Tech Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+*   **Framework**: Next.js 14
+*   **Styling**: Tailwind CSS, DaisyUI
+*   **Auth**: NextAuth.js (Google Provider)
+*   **Language**: TypeScript
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# Juan-Rey-4C
+<div align="center">
+  <sub>Built with ❤️ by Juan Rey</sub>
+</div>
