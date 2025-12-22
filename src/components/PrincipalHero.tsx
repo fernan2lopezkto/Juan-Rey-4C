@@ -1,6 +1,6 @@
+import Link from 'next/link';
 
-
-export default function HeroUno() {
+export default function PrincipalHero() {
   return (
     <div
       className="hero min-h-[80vh] bg-center"
@@ -14,8 +14,22 @@ export default function HeroUno() {
         <div className="max-w-md">
           <h1 className="mb-5 text-5xl font-bold">4C = For Christ</h1>
           <p className="mb-5 ">
-            Lo que antes fue Cuatro Cuerdas bajo las siglas 4C, 
-            hoy se transforma en 4C - For Christ.
+            Lo que antes fue{" "}
+            <a 
+              href="https://m.youtube.com/@cuatrocuerdas7892" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="link link-hover text-primary font-semibold"
+            >
+              Cuatro Cuerdas
+            </a>{" "}
+            bajo las siglas 4C, hoy se transforma en{" "}
+            <Link 
+              href="/youtube-filter" 
+              className="link link-hover text-primary font-semibold"
+            >
+              4C - For Christ
+            </Link>.
           </p>
           <p className="mb-5 mt-5 italic">
             Porque de él, y por él, y para él,
@@ -27,7 +41,5 @@ export default function HeroUno() {
         </div>
       </div>
     </div>
-
-
   )
 }

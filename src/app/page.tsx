@@ -1,13 +1,14 @@
+
 import Slider from "@/components/Slider"
-import PrincipalFooter from "@/components/PrincipalFooter";
-import HeroUno from "@/components/HeroUno"
+import PrincipalHero from "@/components/PrincipalHero";
 import FilterButton from "@/components/FilterButton";
-import FooterUno from "@/components/FooterUno";
+import PrincipalFooter from "@/components/PrincipalFooter";
 
 export default function Home() {
   return (
+    
     <div>
-      <HeroUno />
+      <PrincipalHero />
       <FilterButton />
       <Slider />
       <PrincipalFooter />

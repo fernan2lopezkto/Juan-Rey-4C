@@ -1,4 +1,4 @@
-import Slider from "@/component/Slider"
+import Slider from "@/components/Slider"
 import PrincipalFooter from "@/components/PrincipalFooter";
 import FooterUno from "@/components/FooterUno";
 
