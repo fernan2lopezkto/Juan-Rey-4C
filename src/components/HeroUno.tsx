@@ -12,12 +12,18 @@ export default function HeroUno() {
       <div className="hero-overlay"></div>
       <div className="hero-content text-neutral-content text-center">
         <div className="max-w-md">
-          <h1 className="mb-5 text-5xl font-bold">Hello there</h1>
-          <p className="mb-5">
-            Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem
-            quasi. In deleniti eaque aut repudiandae et a id nisi.
+          <h1 className="mb-5 text-5xl font-bold">4C = For Christ</h1>
+          <p className="mb-5 text-2xl">
+            Lo que antes fue Cuatro Cuerdas bajo las siglas 4C, 
+            hoy se transforma en 4C - For Christ.
           </p>
-          <button className="btn btn-primary">Get Started</button>
+          <p className="mb-5">
+            Porque de él, y por él, y para él,
+            son todas las cosas.
+          </p>
+          <p className="mb-5">
+            Romanos 11:36 RVR1960
+          </p>
         </div>
       </div>
     </div>
