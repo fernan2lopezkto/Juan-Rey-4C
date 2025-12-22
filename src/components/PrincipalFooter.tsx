@@ -21,7 +21,7 @@ export default function PrincipalFooter() {
     <>
       {navLinks.map((link) => (
         <li key={link.href}>
-          <Link href={link.href} onClick={closeMenu} className="link link-hover">
+          <Link href={link.href}  className="link link-hover">
             {link.name}
           </Link>
         </li>
