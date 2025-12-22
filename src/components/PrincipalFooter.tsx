@@ -18,15 +18,13 @@ export default function PrincipalFooter() {
     <a className="link link-hover">Press kit</a>
   </nav>
   <nav className="grid grid-flow-col gap-4">
-    <>
+    
       {navLinks.map((link) => (
-        <li key={link.href}>
-          <Link href={link.href}  className="link link-hover">
+          <Link href={link.href} key={link.href} className="link link-hover">
             {link.name}
           </Link>
-        </li>
       ))}
-    </>
+    
   </nav>
   <nav>
     <div className="grid grid-flow-col gap-4">

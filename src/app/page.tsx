@@ -8,7 +8,6 @@ export default function Home() {
       <HeroUno />
       <FilterButton />
       <PrincipalFooter />
-      <FooterUno />
     </div>
 
   );
