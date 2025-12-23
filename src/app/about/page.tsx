@@ -4,7 +4,7 @@ import PrincipalFooter from "@/components/PrincipalFooter";
 export default function About() {
     return (
         <div className="min-h-screen bg-base-200 p-8">
-            <h1 classNam="">
+            <h1 classNam="text-2xl text-secondary font-semibold my-4">
                 {aboutTexts.pretitle}
             </h1>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
