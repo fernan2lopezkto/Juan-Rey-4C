@@ -7,11 +7,11 @@ import PrincipalFooter from "@/components/PrincipalFooter";
 export default function Home() {
   return (
     
-    <div className="p-4">
+    <div>
       <PrincipalHero />
       <FilterButton />
       <Slider />
-      <PrincipalFooter />
+      <PrincipalFooter className="m-4"/>
     </div>
 
   );
