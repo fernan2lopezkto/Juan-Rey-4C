@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function FilterButton() {
     return (
-        <div className=" justify-center my-8">
+        <div className=" justify-center text-center my-8">
             <h3 className="text-2xl">
                 Youtube kid filter!
             </h3>

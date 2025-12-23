@@ -11,7 +11,7 @@ export default function Home() {
       <PrincipalHero />
       <FilterButton />
       <Slider />
-      <div className="px-4">
+      <div className="px-6">
         <PrincipalFooter />
       </div>
       
