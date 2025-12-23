@@ -3,15 +3,15 @@
 import { useState, useEffect } from 'react';
 
 // Los temas que configuramos en tailwind.config.ts
-const themes = ['light', 'dark'];
+const themes = ['garden', 'forest'];
 
 export default function ThemeSwitcher() {
   // Inicializamos el tema en el navegador, por defecto 'light'
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState('garden');
 
   // 1. Al cargar, lee si hay un tema guardado en la memoria del navegador
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') || 'light';
+    const savedTheme = localStorage.getItem('theme') || 'garden';
     setTheme(savedTheme);
   }, []);
 
@@ -22,7 +22,7 @@ export default function ThemeSwitcher() {
   }, [theme]);
 
   const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
+    const newTheme = theme === 'garden' ? 'forest' : 'garden';
     setTheme(newTheme);
   };
 
@@ -34,7 +34,7 @@ export default function ThemeSwitcher() {
         type="checkbox"
         className="theme-controller"
         onChange={toggleTheme}
-        checked={theme === 'dark'}
+        checked={theme === 'forest'}
       />
 
       {/* sun icon */}

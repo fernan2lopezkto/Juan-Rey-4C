@@ -1,8 +1,3 @@
-import { siteConfig } from "@/config/site";
-
-//export default function Footer() {
-//  return <footer>{siteConfig.address}</footer>;
-//}
 
 
 import Link from 'next/link';
@@ -46,9 +41,6 @@ export default function PrincipalHero() {
             Romanos 11:36 RVR1960
           </p>
         </div>
-        <p>
-          {siteConfig.name}
-        </p>
       </div>
     </div>
   )
