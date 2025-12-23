@@ -1,5 +1,3 @@
-
-
 import Link from 'next/link';
 
 export default function PrincipalHero() {
@@ -14,7 +12,7 @@ export default function PrincipalHero() {
       <div className="hero-overlay"></div>
       <div className="hero-content text-neutral-content text-center">
         <div className="max-w-md">
-          <h1 className="mb-5 text-5xl font-bold">4C = For Christ</h1>
+          <h1 className="mb-5 text-5xl">4C = For Christ</h1>
           <p className="mb-5 ">
             Lo que antes fue{" "}
             <a 
@@ -27,7 +25,7 @@ export default function PrincipalHero() {
             </a>{" "}
             bajo las siglas 4C, hoy se transforma en{" "}
             <Link 
-              href="/youtube-filter" 
+              href="/about" 
               className="link link-hover text-primary font-semibold"
             >
               4C - For Christ
