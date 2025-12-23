@@ -11,7 +11,7 @@ export default function Home() {
       <PrincipalHero />
       <FilterButton />
       <Slider />
-      <PrincipalFooter className="m-4"/>
+      <PrincipalFooter className="mx-4"/>
     </div>
 
   );
