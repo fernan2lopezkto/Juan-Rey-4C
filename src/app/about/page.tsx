@@ -3,7 +3,14 @@ import PrincipalFooter from "@/components/PrincipalFooter";
 
 export default function About() {
     return (
-        <div className="min-h-screen bg-base-200 p-8">
+        <div className="min-h-screen hero-overlay bg-base-200 p-8">
+            <div
+      className="hero min-h-[80vh] hero-overlay bg-center"
+      style={{
+        backgroundImage:
+          "url('/fondoCrucesUno.jpg')",
+      }}
+    >
             <h1 className="text-2xl text-secondary font-semibold my-4">
                 {aboutTexts.preTitle}
             </h1>
@@ -13,6 +20,7 @@ export default function About() {
               {parrafo}
             </p>
           ))}
+        </div>
         </div>
             <PrincipalFooter />
         </div>
