@@ -10,8 +10,10 @@ export default function Home() {
     <div>
       <PrincipalHero />
       <FilterButton />
-      <Slider />
       <div className="px-6">
+        <Slider />
+      </div>
+      <div>
         <PrincipalFooter />
       </div>
       

@@ -2,8 +2,8 @@ import Link from 'next/link';
 
 export default function FilterButton() {
     return (
-        <div className=" justify-center text-center my-8">
-            <h3 className="text-2xl">
+        <div className=" justify-center text-center my-12">
+            <h3 className="text-2xl text-primary font-semibold my-4">
                 Youtube kid filter!
             </h3>
             <p className="m-4 italic">
@@ -19,7 +19,7 @@ export default function FilterButton() {
                 aparezcan. Ideal para cuidar lo que 
                 ven nuestros hijos.
             </p>
-            <Link href="/youtube-filter" className="btn btn-primary btn-lg">
+            <Link href="/youtube-filter" className="btn btn-primary my-4 btn-lg">
                 Ir a Filtro de YouTube
             </Link>
         </div>
