@@ -11,7 +11,10 @@ export default function Home() {
       <PrincipalHero />
       <FilterButton />
       <Slider />
-      <PrincipalFooter className="mx-4"/>
+      <div className="px-4">
+        <PrincipalFooter />
+      </div>
+      
     </div>
 
   );
