@@ -3,7 +3,7 @@ import PrincipalFooter from "@/components/PrincipalFooter";
 
 export default function About() {
     return (
-        <div className=" p-8">
+        <div>
             <div
       className=" min-h-[80vh] bg-center"
       style={{
@@ -16,7 +16,7 @@ export default function About() {
             </h1>
                     <div className="grid grid-cols-1 lg:grid-cols-3 text-secondary-content gap-2">
           {aboutTexts.parrafos.map((parrafo) => (
-            <p key={parrafo} className="mt-1 ">
+            <p key={parrafo} className="mt-1 drop-shadow-md">
               {parrafo}
             </p>
           ))}
