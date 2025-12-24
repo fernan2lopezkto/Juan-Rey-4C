@@ -7,12 +7,9 @@ export default function About() {
             {/* Contenedor Principal con Imagen */}
             <div
                 className="hero min-h-[80vh] bg-center bg-cover"
-                style={{
-                    backgroundImage: "url('/fondoCrucesUno.jpg')",
-                }}
-            >
+                style={{backgroundImage: "url('/fondoCrucesUno.jpg')",}}>
                 {/* Overlay: Esta capa cubre todo el fondo y da la transparencia */}
-                <div className="hero-overlay bg-black bg-opacity-60"></div>
+                <div className="hero-overlay bg-black bg-opacity-20"></div>
 
                 {/* Contenido: Centrado gracias a las clases de DaisyUI */}
                 <div className="hero-content text-center flex-col p-8">
