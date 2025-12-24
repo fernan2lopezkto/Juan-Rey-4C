@@ -4,22 +4,35 @@ import PrincipalFooter from "@/components/PrincipalFooter";
 export default function About() {
     return (
         <div>
+            {/* Contenedor Principal con Imagen */}
             <div
-            className=" min-h-[80vh] text-center bg-center"
-            style={{
-            backgroundImage:"url('/fondoCrucesUno.jpg')",
-            }}>
-            <div className="bg-opacity-50 bg-black">
-                {/* Titulo */}
-                <h1 className="text-3xl text-secondary font-semibold my-4">
-                {aboutTexts.preTitle}
-                </h1>
-                {/* parrafos del texto */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 text-secondary-content drop-shadow my-4 gap-2">
-                    {aboutTexts.parrafos.map((parrafo) => (
-                        <p key={parrafo} className="mt-1">{parrafo}</p>
-                    ))}
-                </div>
+                className="hero min-h-[80vh] bg-center bg-cover"
+                style={{
+                    backgroundImage: "url('/fondoCrucesUno.jpg')",
+                }}
+            >
+                {/* Overlay: Esta capa cubre todo el fondo y da la transparencia */}
+                <div className="hero-overlay bg-black bg-opacity-60"></div>
+
+                {/* Contenido: Centrado gracias a las clases de DaisyUI */}
+                <div className="hero-content text-center flex-col p-8">
+                    
+                    {/* Titulo */}
+                    <h1 className="text-4xl text-secondary font-bold mb-8 drop-shadow-lg">
+                        {aboutTexts.preTitle}
+                    </h1>
+
+                    {/* Contenedor de párrafos */}
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 text-white">
+                        {aboutTexts.parrafos.map((parrafo, index) => (
+                            <p 
+                                key={index} 
+                                className="bg-black/30 backdrop-blur-sm p-4 rounded-xl shadow-xl italic drop-shadow-md"
+                            >
+                                {parrafo}</p>
+                        ))}
+                    </div>
+
                 </div>
             </div>
             <PrincipalFooter />
