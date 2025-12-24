@@ -3,9 +3,9 @@ import PrincipalFooter from "@/components/PrincipalFooter";
 
 export default function About() {
     return (
-        <div className="min-h-screen hero-overlay bg-base-200 p-8">
+        <div className=" p-8">
             <div
-      className="hero min-h-[80vh] bg-center"
+      className=" min-h-[80vh] bg-center"
       style={{
         backgroundImage:
           "url('/fondoCrucesUno.jpg')",

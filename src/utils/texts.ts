@@ -84,13 +84,11 @@ export const homeTexts: HomeTexts = {
 
 // ABOUT
 export const aboutTexts: AboutTexts = {
-  preTitle: "¿Quiénes somos?",
+  preTitle: "Hola Mundo!",
   title: "For Christ",
   parrafos: [
-    "Lo que comenzó hace unos años como un proyecto de enseñanza musical, hoy se ha expandido en una visión mucho más grande: que todo sea Para Cristo. En 4C, entendemos que cada aspecto de nuestras vidas, talentos y recursos, provienen de Él y son para Él.",
-    "Nuestra misión es ser una fuente de recursos para cada etapa de tu camino de fe. Ya sea que estés dando tus primeros pasos o sientas el llamado a alcanzar a otros, aquí encontrarás apoyo y herramientas para crecer. Desde tutoriales musicales simplificados para tocar esas canciones que tanto ministran, hasta material evangelístico y recursos para tu crecimiento personal en la fe, nuestro propósito es equiparte.",
-    'Inspirados en Romanos 11:36, creemos que "todas las cosas proceden de él, y existen por él y para él. ¡A él sea la gloria por siempre! Amén." Es con esta certeza y la ayuda del Espíritu Santo que retomamos este llamado, con una fe renovada y la convicción de que Dios expandió nuestra visión para impactar no solo a músicos, sino a todo aquel que anhela vivir una vida plena en Cristo y llevar Su mensaje.',
-    "Te invitamos a explorar 4C: For Christ y a ser parte de esta comunidad donde todo lo hacemos para Su gloria.",
+    "Soy Juan Rey, Uruguayo, padre de dos hermanos hijos. Fui musico, fotógrafo, emprendedor y varias cosas mas, y hoy a través de esta plataforma, quiero aprovechar mi pasion por el desarrollo de software, para unificar ideas, proyectos y portafolio.",
+    
   ],
 };
 
