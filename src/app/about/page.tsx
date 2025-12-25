@@ -9,7 +9,7 @@ export default function About() {
                 className="hero min-h-[80vh] bg-center bg-cover"
                 style={{backgroundImage: "url('/fondoCrucesUno.jpg')",}}>
                 {/* Overlay: Esta capa cubre todo el fondo y da la transparencia */}
-                <div className="bg-black opacity-40"></div>
+                <div className="bg-black opacity-40">
 
                 {/* Contenido: Centrado gracias a las clases de DaisyUI */}
                 <div className="hero-content text-center flex-col p-8">
@@ -29,7 +29,7 @@ export default function About() {
                                 {parrafo}</p>
                         ))}
                     </div>
-
+</div>
                 </div>
             </div>
             <PrincipalFooter />
