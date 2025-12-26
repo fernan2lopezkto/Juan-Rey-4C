@@ -5,7 +5,7 @@ export default function About() {
     return (
         <div>
             {/* Contenedor Principal con Imagen */}
-            <div className="hero min-h-[80vh] bg-center bg-cover opacity-40" style={{backgroundImage: "url('/fondoCrucesUno.jpg')",}}>
+            <div className="min-h-[80vh] bg-center bg-cover opacity-20" style={{backgroundImage: "url('/fondoCrucesUno.jpg')",}}>
                 <div className="backdrop-blur-sm">
                 <div className="hero-content text-center flex-col p-8">
                     
