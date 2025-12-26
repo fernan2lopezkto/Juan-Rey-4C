@@ -5,13 +5,8 @@ export default function About() {
     return (
         <div>
             {/* Contenedor Principal con Imagen */}
-            <div
-                className="hero min-h-[80vh] bg-center bg-cover"
-                style={{backgroundImage: "url('/fondoCrucesUno.jpg')",}}>
-                {/* Overlay: Esta capa cubre todo el fondo y da la transparencia */}
+            <div className="hero min-h-[80vh] bg-center bg-cover opacity-20" style={{backgroundImage: "url('/fondoCrucesUno.jpg')",}}>
                 <div className="backdrop-blur-sm">
-
-                {/* Contenido: Centrado gracias a las clases de DaisyUI */}
                 <div className="hero-content text-center flex-col p-8">
                     
                     {/* Titulo */}
@@ -20,11 +15,11 @@ export default function About() {
                     </h1>
 
                     {/* Contenedor de párrafos */}
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 text-secoundary-content shadow-xl  ">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 text-secoundary-content">
                         {aboutTexts.parrafos.map((parrafo, index) => (
                             <p 
                                 key={index} 
-                                className="bg-black/30 p-4  italic drop-shadow-md"
+                                className="p-4  italic"
                             >
                                 {parrafo}</p>
                         ))}
