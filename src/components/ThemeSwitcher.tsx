@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 
 // Los temas que configuramos en tailwind.config.ts
-const themes = ['emerald', 'forest'];
+const themes = ['emerald', 'synthwave'];
 
 export default function ThemeSwitcher() {
   // Inicializamos el tema en el navegador, por defecto 'light'
@@ -22,7 +22,7 @@ export default function ThemeSwitcher() {
   }, [theme]);
 
   const toggleTheme = () => {
-    const newTheme = theme === 'emerald' ? 'forest' : 'garden';
+    const newTheme = theme === 'emerald' ? 'synthwave' : 'emerald';
     setTheme(newTheme);
   };
 
@@ -34,7 +34,7 @@ export default function ThemeSwitcher() {
         type="checkbox"
         className="theme-controller"
         onChange={toggleTheme}
-        checked={theme === 'forest'}
+        checked={theme === 'synthwave'}
       />
 
       {/* sun icon */}
