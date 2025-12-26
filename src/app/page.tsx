@@ -4,6 +4,16 @@ import PrincipalHero from "@/components/PrincipalHero";
 import FilterButton from "@/components/FilterButton";
 import PrincipalFooter from "@/components/PrincipalFooter";
 
+
+// 1. Definimos la interfaz aquí o la importamos si la exportaste desde Slider
+interface SliderItem {
+  id: number;
+  src: string;
+  alt: string;
+  url: string;
+}
+
+
 export default function Home() {
   
     // Objeto de datos para este caso específico (ej. Promociones)

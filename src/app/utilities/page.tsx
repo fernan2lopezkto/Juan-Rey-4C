@@ -1,11 +1,18 @@
-import Slider from "@/components/Slider"
+import Slider from "@/components/Slider";
 import PrincipalFooter from "@/components/PrincipalFooter";
-import FooterUno from "@/components/FooterUno";
+
+// 1. Definimos la interfaz aquí o la importamos si la exportaste desde Slider
+interface SliderItem {
+  id: number;
+  src: string;
+  alt: string;
+  url: string;
+}
 
 export default function Utilities() {
    
-     // Objeto de datos para este caso específico (ej. Promociones)
-  const promoImages = [
+  // 2. Le asignamos el tipo SliderItem[] al arreglo
+  const promoImages: SliderItem[] = [
     {
       id: 1,
       src: "https://img.daisyui.com/images/stock/photo-1559703248-dcaaec9fab78.webp",
@@ -21,12 +28,16 @@ export default function Utilities() {
   ];
    
     return (
-        <div className="min-h-screen p-8">
-            <h1 className="text-5xl my-4">
+        <div className="min-h-screen p-8 flex flex-col gap-8">
+            <h1 className="text-5xl font-bold">
                 Utilidades
             </h1>
-            {/* Pasamos el objeto mediante la prop 'items' */}
-      <Slider items={promoImages} />
+            
+            <section>
+                {/* 3. Ahora la prop 'items' recibirá los datos sin errores de compilación */}
+                <Slider items={promoImages} />
+            </section>
+
             <PrincipalFooter />
         </div>
     );
