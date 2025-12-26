@@ -74,7 +74,7 @@ export default function Navbar() {
             Sign Out
           </button>
         ) : (
-          <button className="btn btn-sm btn-primary ml-2" onClick={() => signIn()}>
+          <button className="btn btn-sm ml-2" onClick={() => signIn()}>
             Sign In
           </button>
         )}

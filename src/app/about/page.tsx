@@ -6,6 +6,7 @@ export default function About() {
         <div>
             {/* Contenedor Principal con Imagen */}
             <div className="min-h-[80vh] bg-center bg-cover opacity-20" style={{backgroundImage: "url('/fondoCrucesUno.jpg')",}}>
+                </div>
                 <div className="backdrop-blur-sm">
                 <div className="hero-content text-center flex-col p-8">
                     
@@ -24,7 +25,7 @@ export default function About() {
                                 {parrafo}</p>
                         ))}
                     </div>
-</div>
+
                 </div>
             </div>
             <PrincipalFooter />
