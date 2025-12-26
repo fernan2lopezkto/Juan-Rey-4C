@@ -8,20 +8,23 @@ import Slider, { SliderItem } from "@/components/Slider";
 
 export default function Home() {
   
-    // Objeto de datos para este caso específico (ej. Promociones)
-    // 2. AÑADE EL TIPO ': SliderItem[]' AQUÍ
-  const promoImages: SliderItem[] = [ 
+ const promoImages: SliderItem[] = [
+    // 1. Objeto estilo Card (Tu filtro de YouTube)
     {
       id: 1,
-      src: "https://img.daisyui.com/images/stock/photo-1559703248-dcaaec9fab78.webp",
-      alt: "Promo Verano",
-      url: "/about"
+      src: "https://placehold.co/600x400/FF0000/FFFFFF/png?text=YouTube+Filter", // La imagen placeholder
+      alt: "Filtro YouTube",
+      url: "/youtube-filter", // La ruta a la que quieres ir
+      title: "Canal de YouTube",
+      description: "Mira nuestros últimos videos filtrados."
     },
+    // 2. Objeto estilo Imagen simple (sin título)
     {
       id: 2,
       src: "https://img.daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.webp",
-      alt: "Nuevo Lanzamiento",
+      alt: "Solo Imagen",
       url: "/nuevo"
+      // Al no poner title ni description, se verá como imagen completa
     }
   ];
   
