@@ -1,20 +1,17 @@
 // import Slider from "@/components/Slider";
 import PrincipalFooter from "@/components/PrincipalFooter";
 
-import Slider, { SliderItem } from "@/components/Slider"; 
+import ImagenSlider, { SliderItem } from "@/components/ImagenSlider"; 
 
 export default function Utilities() {
    
  const promoImages: SliderItem[] = [
-    // 1. Objeto estilo Card (Tu filtro de YouTube)
-  
-    // 2. Objeto estilo Imagen simple (sin título)
+
     {
       id: 2,
       src: "https://img.daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.webp",
       alt: "Solo Imagen",
       url: "/nuevo"
-      // Al no poner title ni description, se verá como imagen completa
     }
   ];
     return (
@@ -25,7 +22,7 @@ export default function Utilities() {
             
             <section>
                 {/* 3. Ahora la prop 'items' recibirá los datos sin errores de compilación */}
-                <Slider items={promoImages} />
+                <ImagenSlider items={promoImages} />
             </section>
 
             <PrincipalFooter />
