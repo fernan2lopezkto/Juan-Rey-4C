@@ -9,7 +9,7 @@ export default function About() {
                 className="hero min-h-[80vh] bg-center bg-cover"
                 style={{backgroundImage: "url('/fondoCrucesUno.jpg')",}}>
                 {/* Overlay: Esta capa cubre todo el fondo y da la transparencia */}
-                <div className="bg-black opacity-40">
+                <div className="backdrop-blur-sm">
 
                 {/* Contenido: Centrado gracias a las clases de DaisyUI */}
                 <div className="hero-content text-center flex-col p-8">
@@ -20,7 +20,7 @@ export default function About() {
                     </h1>
 
                     {/* Contenedor de párrafos */}
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 text-white rounded-xl shadow-xl backdrop-blur-sm ">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 text-secoundary-content shadow-xl  ">
                         {aboutTexts.parrafos.map((parrafo, index) => (
                             <p 
                                 key={index} 
