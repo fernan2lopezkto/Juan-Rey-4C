@@ -7,14 +7,7 @@ export default function Utilities() {
    
  const promoImages: SliderItem[] = [
     // 1. Objeto estilo Card (Tu filtro de YouTube)
-    {
-      id: 1,
-      src: "https://placehold.co/600x400/FF0000/FFFFFF/png?text=YouTube+Filter", // La imagen placeholder
-      alt: "Filtro YouTube",
-      url: "/youtube-filter", // La ruta a la que quieres ir
-      title: "Canal de YouTube",
-      description: "Mira nuestros últimos videos filtrados."
-    },
+  
     // 2. Objeto estilo Imagen simple (sin título)
     {
       id: 2,
