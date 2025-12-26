@@ -1,7 +1,7 @@
-import Slider from "@/components/Slider";
+// import Slider from "@/components/Slider";
 import PrincipalFooter from "@/components/PrincipalFooter";
 
-
+import Slider, { SliderItem } from "@/components/Slider"; 
 
 export default function Utilities() {
    
