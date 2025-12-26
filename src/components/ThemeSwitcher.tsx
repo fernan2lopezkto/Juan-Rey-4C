@@ -3,15 +3,15 @@
 import { useState, useEffect } from 'react';
 
 // Los temas que configuramos en tailwind.config.ts
-const themes = ['garden', 'forest'];
+const themes = ['emerald', 'forest'];
 
 export default function ThemeSwitcher() {
   // Inicializamos el tema en el navegador, por defecto 'light'
-  const [theme, setTheme] = useState('garden');
+  const [theme, setTheme] = useState('emerald');
 
   // 1. Al cargar, lee si hay un tema guardado en la memoria del navegador
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') || 'garden';
+    const savedTheme = localStorage.getItem('theme') || 'emerald';
     setTheme(savedTheme);
   }, []);
 
@@ -22,7 +22,7 @@ export default function ThemeSwitcher() {
   }, [theme]);
 
   const toggleTheme = () => {
-    const newTheme = theme === 'garden' ? 'forest' : 'garden';
+    const newTheme = theme === 'emerald' ? 'forest' : 'garden';
     setTheme(newTheme);
   };
 

@@ -5,17 +5,17 @@ export default function About() {
     return (
         <div>
             {/* Contenedor Principal con Imagen */}
-            <div className="hero min-h-[80vh] bg-center bg-cover opacity-20" style={{backgroundImage: "url('/fondoCrucesUno.jpg')",}}>
+            <div className="hero min-h-[80vh] bg-center bg-cover opacity-40" style={{backgroundImage: "url('/fondoCrucesUno.jpg')",}}>
                 <div className="backdrop-blur-sm">
                 <div className="hero-content text-center flex-col p-8">
                     
                     {/* Titulo */}
-                    <h1 className="text-4xl text-secondary font-bold mb-8 drop-shadow-lg">
+                    <h1 className="text-4xl font-bold mb-8 drop-shadow-lg">
                         {aboutTexts.preTitle}
                     </h1>
 
                     {/* Contenedor de párrafos */}
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 text-secoundary-content">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         {aboutTexts.parrafos.map((parrafo, index) => (
                             <p 
                                 key={index} 
