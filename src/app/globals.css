@@ -2,5 +2,5 @@
 @plugin "daisyui";
 
 @plugin "daisyui" {
-  themes: emerald --default, synthwave --prefersdark;
+  themes: emerald --default, forest --prefersdark;
 }
