@@ -4,14 +4,13 @@ import PrincipalFooter from "@/components/PrincipalFooter";
 export default function About() {
     return (
         <div>
-            {/* Contenedor Principal con Imagen */}
-            <div className="min-h-[80vh] bg-center bg-cover opacity-20" style={{backgroundImage: "url('/fondoCrucesUno.jpg')",}}>
-                </div>
-                <div className="backdrop-blur-sm">
-                <div className="hero-content text-center flex-col p-8">
+            {/* Contenedor Principal con Imagen esta es la que quiero que tenga la transparencia pero los textros no */}
+            <div className=" min-h-[80vh] bg-center bg-cover opacity-30" style={{backgroundImage: "url('/fondoCrucesUno.jpg')",}}>
+                
+                <div className="text-center flex-col p-8">
                     
                     {/* Titulo */}
-                    <h1 className="text-4xl font-bold mb-8 drop-shadow-lg">
+                    <h1 className="text-4xl font-bold mb-8">
                         {aboutTexts.preTitle}
                     </h1>
 
@@ -25,7 +24,6 @@ export default function About() {
                                 {parrafo}</p>
                         ))}
                     </div>
-
                 </div>
             </div>
             <PrincipalFooter />
