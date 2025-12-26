@@ -1,23 +1,16 @@
-
-import Slider from "@/components/Slider"
+//import Slider from "@/components/Slider";⇝
 import PrincipalHero from "@/components/PrincipalHero";
 import FilterButton from "@/components/FilterButton";
 import PrincipalFooter from "@/components/PrincipalFooter";
-
-
-// 1. Definimos la interfaz aquí o la importamos si la exportaste desde Slider
-interface SliderItem {
-  id: number;
-  src: string;
-  alt: string;
-  url: string;
-}
+// 1. Asegúrate de importar la interfaz SliderItem desde tu componente
+import Slider, { SliderItem } from "@/components/Slider"; 
 
 
 export default function Home() {
   
     // Objeto de datos para este caso específico (ej. Promociones)
-  const promoImages = [
+    // 2. AÑADE EL TIPO ': SliderItem[]' AQUÍ
+  const promoImages: SliderItem[] = [ 
     {
       id: 1,
       src: "https://img.daisyui.com/images/stock/photo-1559703248-dcaaec9fab78.webp",
