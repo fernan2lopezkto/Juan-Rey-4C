@@ -8,10 +8,10 @@ interface CarouselImage {
 
 const ImagenCarrusel: React.FC = () => {
   const imagenes: CarouselImage[] = [
-    { id: 1, src: "/itfimagens/capturafilter1.jpg", alt: "Cerezas" },
-    { id: 2, src: "/itfimagens/capturafilter2.jpg", alt: "Fresa" },
-    { id: 3, src: "/itfimagens/capturafilter3.jpg", alt: "Naranja" },
-    { id: 4, src: "/itfimagens/capturafilter4.jpg", alt: "Limón" },
+    { id: 1, src: "/ytfimagens/capturafilter1.jpg", alt: "Cerezas" },
+    { id: 2, src: "/ytfimagens/capturafilter2.jpg", alt: "Fresa" },
+    { id: 3, src: "/ytfimagens/capturafilter3.jpg", alt: "Naranja" },
+    { id: 4, src: "/ytfimagens/capturafilter4.jpg", alt: "Limón" },
     //{ id: 5, src: "https://img.daisyui.com/images/stock/photo-1550258987-190a2d41a8ba.webp", alt: "Piña" },
   ];
 
