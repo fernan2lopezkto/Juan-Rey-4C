@@ -8,11 +8,11 @@ interface CarouselImage {
 
 const ImagenCarrusel: React.FC = () => {
   const imagenes: CarouselImage[] = [
-    { id: 1, src: "https://img.daisyui.com/images/stock/photo-1559703248-dcaaec9fab78.webp", alt: "Cerezas" },
-    { id: 2, src: "https://img.daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.webp", alt: "Fresa" },
-    { id: 3, src: "https://img.daisyui.com/images/stock/photo-1572635148818-ef6fd45eb394.webp", alt: "Naranja" },
-    { id: 4, src: "https://img.daisyui.com/images/stock/photo-1494253109108-2e30c049369b.webp", alt: "Limón" },
-    { id: 5, src: "https://img.daisyui.com/images/stock/photo-1550258987-190a2d41a8ba.webp", alt: "Piña" },
+    { id: 1, src: "/itfimagens/capturafilter1.jpg", alt: "Cerezas" },
+    { id: 2, src: "/itfimagens/capturafilter2.jpg", alt: "Fresa" },
+    { id: 3, src: "/itfimagens/capturafilter3.jpg", alt: "Naranja" },
+    { id: 4, src: "/itfimagens/capturafilter4.jpg", alt: "Limón" },
+    //{ id: 5, src: "https://img.daisyui.com/images/stock/photo-1550258987-190a2d41a8ba.webp", alt: "Piña" },
   ];
 
   return (
