@@ -18,7 +18,7 @@ const ImagenCarrusel: React.FC = () => {
   return (
     /* CAMBIO: Eliminamos w-96 y usamos max-w-full con un contenedor centrado */
     <div className="flex justify-center w-full p-4"> 
-      <div className="carousel carousel-center rounded-box max-w-md space-x-4 bg-neutral">
+      <div className="carousel carousel-center rounded-box max-w-md space-x-4 ">
         {imagenes.map((imagen) => (
           <div key={imagen.id} className="carousel-item w-1/2">
             <img
