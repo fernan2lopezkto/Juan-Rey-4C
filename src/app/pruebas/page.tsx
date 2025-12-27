@@ -1,5 +1,6 @@
 import PrincipalFooter from "@/components/PrincipalFooter";
 
+import ImagenCarrusel from "@/components/ImagenCarrusel"
 export default function Pruebas() {
    
 
@@ -10,7 +11,7 @@ export default function Pruebas() {
             </h1>
             
             <section>
-             
+                <ImagenCarrusel />
             </section>
 
             <PrincipalFooter />
