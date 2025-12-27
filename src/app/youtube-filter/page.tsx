@@ -24,6 +24,14 @@ export default function YoutubeFilter() {
     const [showHistory, setShowHistory] = useState(false); // Toggle between suggestions and history
     const [isLoaded, setIsLoaded] = useState(false); // Persistence check
 
+    // Check for RefreshAccessTokenError
+    useEffect(() => {
+        // @ts-ignore
+        if (session?.error === "RefreshAccessTokenError") {
+            signIn("google"); // Force sign in to refresh credentials
+        }
+    }, [session]);
+
     // Load blacklist and history from local storage on mount
     useEffect(() => {
         const savedBlacklist = localStorage.getItem('yt-blacklist');

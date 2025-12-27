@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
 async function refreshAccessToken(token: any) {
@@ -40,7 +40,7 @@ async function refreshAccessToken(token: any) {
     }
 }
 
-const handler = NextAuth({
+export const authOptions: NextAuthOptions = {
     providers: [
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -58,10 +58,16 @@ const handler = NextAuth({
         async jwt({ token, account, user }) {
             // Initial sign in
             if (account && user) {
+                // If expires_at is available (absolute timestamp in seconds), usage that.
+                // Otherwise default to 1 hour from now.
+                const expiresAt = account.expires_at
+                    ? account.expires_at * 1000
+                    : Date.now() + 3600 * 1000;
+
                 return {
                     ...token,
                     accessToken: account.access_token,
-                    expiresAt: Date.now() + (account.expires_at ?? 3600) * 1000,
+                    expiresAt: expiresAt,
                     refreshToken: account.refresh_token,
                 };
             }
@@ -83,6 +89,8 @@ const handler = NextAuth({
             return session;
         },
     },
-});
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
