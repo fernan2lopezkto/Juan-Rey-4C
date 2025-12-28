@@ -12,16 +12,17 @@ const ImagenCarrusel: React.FC = () => {
     { id: 2, src: "/ytfimagens/capturaFilter2.jpg", alt: "captura" },
     { id: 3, src: "/ytfimagens/capturaFilter3.jpg", alt: "captura" },
     { id: 4, src: "/ytfimagens/capturaFilter4.jpg", alt: "captura" },
-    //{ id: 5, src: "https://img.daisyui.com/images/stock/photo-1550258987-190a2d41a8ba.webp", alt: "Piña" },
   ];
 
   return (
-    /* CAMBIO: Eliminamos w-96 y usamos max-w-full con un contenedor centrado */
-    <div className="flex justify-center w-full p-4">
-      <h1 className="text-5xl text-center">
-        titulo
+    /* flex-col pone el título arriba y el carrusel abajo */
+    <div className="flex flex-col items-center w-full p-4 gap-6">
+      
+      <h1 className="text-5xl font-bold text-center">
+        Título
       </h1>
-      <div className="carousel carousel-center rounded-box max-w-md space-x-4 ">
+
+      <div className="carousel carousel-center rounded-box max-w-md space-x-4 p-4 bg-neutral">
         {imagenes.map((imagen) => (
           <div key={imagen.id} className="carousel-item w-1/2">
             <img
@@ -32,6 +33,7 @@ const ImagenCarrusel: React.FC = () => {
           </div>
         ))}
       </div>
+
     </div>
   );
 };
