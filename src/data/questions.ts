@@ -1,117 +1,819 @@
-export type Difficulty = 'fácil' | 'media' | 'difícil';
+export type AnswerOption = {
+  answerText: string;
+  isCorrect: boolean;
+};
 
-export interface Question {
-  id: number;
-  pregunta: string;
-  opciones: string[];
-  correcta: number; // Índice 1-based
-  dificultad: Difficulty;
-}
+export type Question = {
+  questionText: string;
+  answerOptions: AnswerOption[];
+  id?: number; // Opcional por si lo necesitas
+  dificultad?: string; // Opcional
+};
 
 export const bibleQuestions: Question[] = [
   // --- FÁCILES (1-34) ---
-  { id: 1, pregunta: "¿Quién mató a Goliat?", opciones: ["Eliceo", "David", "Moisés"], correcta: 2, dificultad: "fácil" },
-  { id: 2, pregunta: "¿Cuál fue el arca que construyó Noé?", opciones: ["Arca de la Alianza", "Arca de la Creación", "Arca de Noé"], correcta: 3, dificultad: "fácil" },
-  { id: 3, pregunta: "¿En qué ciudad nació Jesús?", opciones: ["Belén", "Nazaret", "Jerusalén"], correcta: 1, dificultad: "fácil" },
-  { id: 4, pregunta: "¿Cuál era el nombre de la esposa de Adán?", opciones: ["Eva", "Raquel", "Sara"], correcta: 1, dificultad: "fácil" },
-  { id: 5, pregunta: "¿Cuántos discípulos tuvo Jesús?", opciones: ["10", "12", "15"], correcta: 2, dificultad: "fácil" },
-  { id: 6, pregunta: "¿Quién fue tragado por un gran pez?", opciones: ["Pedro", "Jonás", "Juan"], correcta: 2, dificultad: "fácil" },
-  { id: 7, pregunta: "¿Qué usó David para vencer a Goliat?", opciones: ["Una espada", "Una honda y una piedra", "Una lanza"], correcta: 2, dificultad: "fácil" },
-  { id: 8, pregunta: "¿Quién recibió los Diez Mandamientos?", opciones: ["Moisés", "Aarón", "Josué"], correcta: 1, dificultad: "fácil" },
-  { id: 9, pregunta: "¿Quién es el hijo de Dios?", opciones: ["Juan el Bautista", "Jesús", "Salomón"], correcta: 2, dificultad: "fácil" },
-  { id: 10, pregunta: "¿Cómo se llama el primer libro de la Biblia?", opciones: ["Éxodo", "Génesis", "Apocalipsis"], correcta: 2, dificultad: "fácil" },
-  { id: 11, pregunta: "¿Quién fue el hombre más fuerte de la Biblia?", opciones: ["Sansón", "Gedeón", "David"], correcta: 1, dificultad: "fácil" },
-  { id: 12, pregunta: "¿Cuántos días creó Dios el mundo?", opciones: ["5 días", "6 días", "7 días"], correcta: 2, dificultad: "fácil" },
-  { id: 13, pregunta: "¿Quién traicionó a Jesús por 30 monedas de plata?", opciones: ["Pedro", "Judas Iscariote", "Tomás"], correcta: 2, dificultad: "fácil" },
-  { id: 14, pregunta: "¿Qué mar abrió Moisés para que pasara el pueblo?", opciones: ["Mar Muerto", "Mar Rojo", "Mar Mediterráneo"], correcta: 2, dificultad: "fácil" },
-  { id: 15, pregunta: "¿Quién fue el padre de Isaac?", opciones: ["Jacob", "Abraham", "Lot"], correcta: 2, dificultad: "fácil" },
-  { id: 16, pregunta: "¿Cuál es el último libro de la Biblia?", opciones: ["Judas", "Hebreos", "Apocalipsis"], correcta: 3, dificultad: "fácil" },
-  { id: 17, pregunta: "¿Quién fue la madre de Jesús?", opciones: ["Marta", "María", "Magdalena"], correcta: 2, dificultad: "fácil" },
-  { id: 18, pregunta: "¿Cuántos mandamientos entregó Dios a Moisés?", opciones: ["5", "10", "12"], correcta: 2, dificultad: "fácil" },
-  { id: 19, pregunta: "¿Quién sobrevivió al diluvio en un arca?", opciones: ["Noé", "Enoc", "Lamec"], correcta: 1, dificultad: "fácil" },
-  { id: 20, pregunta: "¿Quién fue el primer hombre creado?", opciones: ["Abel", "Caín", "Adán"], correcta: 3, dificultad: "fácil" },
-  { id: 21, pregunta: "¿Cuál era el trabajo de Pedro antes de seguir a Jesús?", opciones: ["Pastor", "Pescador", "Carpintero"], correcta: 2, dificultad: "fácil" },
-  { id: 22, pregunta: "¿Qué animal tentó a Eva en el jardín del Edén?", opciones: ["León", "Serpiente", "Lobo"], correcta: 2, dificultad: "fácil" },
-  { id: 23, pregunta: "¿Quién construyó el Arca?", opciones: ["Moisés", "Noé", "Abraham"], correcta: 2, dificultad: "fácil" },
-  { id: 24, pregunta: "¿En qué libro encontramos el Salmo 23?", opciones: ["Proverbios", "Salmos", "Isaías"], correcta: 2, dificultad: "fácil" },
-  { id: 25, pregunta: "¿Cuántas personas se salvaron en el Arca de Noé?", opciones: ["8", "10", "12"], correcta: 1, dificultad: "fácil" },
-  { id: 26, pregunta: "¿Quién fue el hermano de Abel?", opciones: ["Seth", "Caín", "Enoc"], correcta: 2, dificultad: "fácil" },
-  { id: 27, pregunta: "¿Cómo se llamaba el lugar donde vivían Adán y Eva?", opciones: ["Canaán", "Jardín del Edén", "Egipto"], correcta: 2, dificultad: "fácil" },
-  { id: 28, pregunta: "¿Qué regaló Jacob a su hijo José?", opciones: ["Una túnica de colores", "Un anillo de oro", "Una espada"], correcta: 1, dificultad: "fácil" },
-  { id: 29, pregunta: "¿Quién fue el gigante que David derrotó?", opciones: ["Goliat", "Saúl", "Absalón"], correcta: 1, dificultad: "fácil" },
-  { id: 30, pregunta: "¿Cómo se llama el libro de oraciones y cantos?", opciones: ["Levítico", "Salmos", "Eclesiastés"], correcta: 2, dificultad: "fácil" },
-  { id: 31, pregunta: "¿Quién fue el primer rey de Israel?", opciones: ["David", "Saúl", "Salomón"], correcta: 2, dificultad: "fácil" },
-  { id: 32, pregunta: "¿Qué usó Dios para guiar al pueblo de noche por el desierto?", opciones: ["Una estrella", "Una columna de fuego", "Una nube"], correcta: 2, dificultad: "fácil" },
-  { id: 33, pregunta: "¿Cuántos evangelios hay en el Nuevo Testamento?", opciones: ["3", "4", "5"], correcta: 2, dificultad: "fácil" },
-  { id: 34, pregunta: "¿Quién es conocido como el 'Padre de la Fe'?", opciones: ["Moisés", "Abraham", "David"], correcta: 2, dificultad: "fácil" },
+  {
+    questionText: "¿Quién mató a Goliat?",
+    answerOptions: [
+      { answerText: "Eliceo", isCorrect: false },
+      { answerText: "David", isCorrect: true },
+      { answerText: "Moisés", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cuál fue el arca que construyó Noé?",
+    answerOptions: [
+      { answerText: "Arca de la Alianza", isCorrect: false },
+      { answerText: "Arca de la Creación", isCorrect: false },
+      { answerText: "Arca de Noé", isCorrect: true },
+    ],
+  },
+  {
+    questionText: "¿En qué ciudad nació Jesús?",
+    answerOptions: [
+      { answerText: "Belén", isCorrect: true },
+      { answerText: "Nazaret", isCorrect: false },
+      { answerText: "Jerusalén", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cuál era el nombre de la esposa de Adán?",
+    answerOptions: [
+      { answerText: "Eva", isCorrect: true },
+      { answerText: "Raquel", isCorrect: false },
+      { answerText: "Sara", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cuántos discípulos tuvo Jesús?",
+    answerOptions: [
+      { answerText: "10", isCorrect: false },
+      { answerText: "12", isCorrect: true },
+      { answerText: "15", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién fue tragado por un gran pez?",
+    answerOptions: [
+      { answerText: "Pedro", isCorrect: false },
+      { answerText: "Jonás", isCorrect: true },
+      { answerText: "Juan", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Qué usó David para vencer a Goliat?",
+    answerOptions: [
+      { answerText: "Una espada", isCorrect: false },
+      { answerText: "Una honda y una piedra", isCorrect: true },
+      { answerText: "Una lanza", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién recibió los Diez Mandamientos?",
+    answerOptions: [
+      { answerText: "Moisés", isCorrect: true },
+      { answerText: "Aarón", isCorrect: false },
+      { answerText: "Josué", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién es el hijo de Dios?",
+    answerOptions: [
+      { answerText: "Juan el Bautista", isCorrect: false },
+      { answerText: "Jesús", isCorrect: true },
+      { answerText: "Salomón", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cómo se llama el primer libro de la Biblia?",
+    answerOptions: [
+      { answerText: "Éxodo", isCorrect: false },
+      { answerText: "Génesis", isCorrect: true },
+      { answerText: "Apocalipsis", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién fue el hombre más fuerte de la Biblia?",
+    answerOptions: [
+      { answerText: "Sansón", isCorrect: true },
+      { answerText: "Gedeón", isCorrect: false },
+      { answerText: "David", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cuántos días creó Dios el mundo?",
+    answerOptions: [
+      { answerText: "5 días", isCorrect: false },
+      { answerText: "6 días", isCorrect: true },
+      { answerText: "7 días", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién traicionó a Jesús por 30 monedas de plata?",
+    answerOptions: [
+      { answerText: "Pedro", isCorrect: false },
+      { answerText: "Judas Iscariote", isCorrect: true },
+      { answerText: "Tomás", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Qué mar abrió Moisés para que pasara el pueblo?",
+    answerOptions: [
+      { answerText: "Mar Muerto", isCorrect: false },
+      { answerText: "Mar Rojo", isCorrect: true },
+      { answerText: "Mar Mediterráneo", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién fue el padre de Isaac?",
+    answerOptions: [
+      { answerText: "Jacob", isCorrect: false },
+      { answerText: "Abraham", isCorrect: true },
+      { answerText: "Lot", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cuál es el último libro de la Biblia?",
+    answerOptions: [
+      { answerText: "Judas", isCorrect: false },
+      { answerText: "Hebreos", isCorrect: false },
+      { answerText: "Apocalipsis", isCorrect: true },
+    ],
+  },
+  {
+    questionText: "¿Quién fue la madre de Jesús?",
+    answerOptions: [
+      { answerText: "Marta", isCorrect: false },
+      { answerText: "María", isCorrect: true },
+      { answerText: "Magdalena", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cuántos mandamientos entregó Dios a Moisés?",
+    answerOptions: [
+      { answerText: "5", isCorrect: false },
+      { answerText: "10", isCorrect: true },
+      { answerText: "12", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién sobrevivió al diluvio en un arca?",
+    answerOptions: [
+      { answerText: "Noé", isCorrect: true },
+      { answerText: "Enoc", isCorrect: false },
+      { answerText: "Lamec", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién fue el primer hombre creado?",
+    answerOptions: [
+      { answerText: "Abel", isCorrect: false },
+      { answerText: "Caín", isCorrect: false },
+      { answerText: "Adán", isCorrect: true },
+    ],
+  },
+  {
+    questionText: "¿Cuál era el trabajo de Pedro antes de seguir a Jesús?",
+    answerOptions: [
+      { answerText: "Pastor", isCorrect: false },
+      { answerText: "Pescador", isCorrect: true },
+      { answerText: "Carpintero", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Qué animal tentó a Eva en el jardín del Edén?",
+    answerOptions: [
+      { answerText: "León", isCorrect: false },
+      { answerText: "Serpiente", isCorrect: true },
+      { answerText: "Lobo", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién construyó el Arca?",
+    answerOptions: [
+      { answerText: "Moisés", isCorrect: false },
+      { answerText: "Noé", isCorrect: true },
+      { answerText: "Abraham", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿En qué libro encontramos el Salmo 23?",
+    answerOptions: [
+      { answerText: "Proverbios", isCorrect: false },
+      { answerText: "Salmos", isCorrect: true },
+      { answerText: "Isaías", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cuántas personas se salvaron en el Arca de Noé?",
+    answerOptions: [
+      { answerText: "8", isCorrect: true },
+      { answerText: "10", isCorrect: false },
+      { answerText: "12", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién fue el hermano de Abel?",
+    answerOptions: [
+      { answerText: "Seth", isCorrect: false },
+      { answerText: "Caín", isCorrect: true },
+      { answerText: "Enoc", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cómo se llamaba el lugar donde vivían Adán y Eva?",
+    answerOptions: [
+      { answerText: "Canaán", isCorrect: false },
+      { answerText: "Jardín del Edén", isCorrect: true },
+      { answerText: "Egipto", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Qué regaló Jacob a su hijo José?",
+    answerOptions: [
+      { answerText: "Una túnica de colores", isCorrect: true },
+      { answerText: "Un anillo de oro", isCorrect: false },
+      { answerText: "Una espada", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién fue el gigante que David derrotó?",
+    answerOptions: [
+      { answerText: "Goliat", isCorrect: true },
+      { answerText: "Saúl", isCorrect: false },
+      { answerText: "Absalón", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cómo se llama el libro de oraciones y cantos?",
+    answerOptions: [
+      { answerText: "Levítico", isCorrect: false },
+      { answerText: "Salmos", isCorrect: true },
+      { answerText: "Eclesiastés", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién fue el primer rey de Israel?",
+    answerOptions: [
+      { answerText: "David", isCorrect: false },
+      { answerText: "Saúl", isCorrect: true },
+      { answerText: "Salomón", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Qué usó Dios para guiar al pueblo de noche por el desierto?",
+    answerOptions: [
+      { answerText: "Una estrella", isCorrect: false },
+      { answerText: "Una columna de fuego", isCorrect: true },
+      { answerText: "Una nube", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cuántos evangelios hay en el Nuevo Testamento?",
+    answerOptions: [
+      { answerText: "3", isCorrect: false },
+      { answerText: "4", isCorrect: true },
+      { answerText: "5", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién es conocido como el 'Padre de la Fe'?",
+    answerOptions: [
+      { answerText: "Moisés", isCorrect: false },
+      { answerText: "Abraham", isCorrect: true },
+      { answerText: "David", isCorrect: false },
+    ],
+  },
 
   // --- MEDIAS (35-67) ---
-  { id: 35, pregunta: "¿Quién vivió más años en la Biblia?", opciones: ["Eliseo", "David", "Matusalén"], correcta: 3, dificultad: "media" },
-  { id: 36, pregunta: "¿Quién fue arrojado al foso de los leones?", opciones: ["Daniel", "José", "Isaías"], correcta: 1, dificultad: "media" },
-  { id: 37, pregunta: "¿Cuántos hijos tenía Jacob (Israel)?", opciones: ["10", "12", "20"], correcta: 2, dificultad: "media" },
-  { id: 38, pregunta: "¿Quién fue el primer rey de Israel según la Biblia?", opciones: ["Saúl", "David", "Salomón"], correcta: 1, dificultad: "media" },
-  { id: 39, pregunta: "¿Cuántos días pasó Jesús en el desierto ayunando?", opciones: ["20", "30", "40"], correcta: 3, dificultad: "media" },
-  { id: 40, pregunta: "¿Cuál fue el primer milagro registrado de Jesús?", opciones: ["Agua a vino", "Multiplicación de panes", "Caminar sobre el agua"], correcta: 1, dificultad: "media" },
-  { id: 41, pregunta: "¿Cuántos libros hay en el Nuevo Testamento?", opciones: ["24", "27", "30"], correcta: 2, dificultad: "media" },
-  { id: 42, pregunta: "¿En qué río fue bautizado Jesús?", opciones: ["Nilo", "Tigris", "Jordán"], correcta: 3, dificultad: "media" },
-  { id: 43, pregunta: "¿Quién escribió la mayoría de los Salmos?", opciones: ["David", "Salomón", "Moisés"], correcta: 1, dificultad: "media" },
-  { id: 44, pregunta: "¿Quién fue el sucesor de Moisés?", opciones: ["Caleb", "Josué", "Gedeón"], correcta: 2, dificultad: "media" },
-  { id: 45, pregunta: "¿En qué idioma se escribió originalmente el Nuevo Testamento?", opciones: ["Hebreo", "Latín", "Griego"], correcta: 3, dificultad: "media" },
-  { id: 46, pregunta: "¿Cuál era el nombre de Pablo antes de su conversión?", opciones: ["Saulo", "Silas", "Simón"], correcta: 1, dificultad: "media" },
-  { id: 47, pregunta: "¿Quién interpretó los sueños del Faraón en Egipto?", opciones: ["Benjamín", "José", "Efraín"], correcta: 2, dificultad: "media" },
-  { id: 48, pregunta: "¿Cuántas veces perdonó David la vida al Rey Saúl?", opciones: ["1 vez", "2 veces", "3 veces"], correcta: 2, dificultad: "media" },
-  { id: 49, pregunta: "¿Qué ciudad vio caer sus muros con trompetas?", opciones: ["Babilonia", "Jericó", "Sodoma"], correcta: 2, dificultad: "media" },
-  { id: 50, pregunta: "¿Cuál es el libro más largo de la Biblia por capítulos?", opciones: ["Génesis", "Isaías", "Salmos"], correcta: 3, dificultad: "media" },
-  { id: 51, pregunta: "¿Quién fue la mujer que juzgó a Israel?", opciones: ["Débora", "Rut", "Ester"], correcta: 1, dificultad: "media" },
-  { id: 52, pregunta: "¿Cuántas plagas envió Dios a Egipto?", opciones: ["7", "10", "12"], correcta: 2, dificultad: "media" },
-  { id: 53, pregunta: "¿Cuál fue el monte donde Moisés recibió la ley?", opciones: ["Carmelo", "Sinaí", "Nebo"], correcta: 2, dificultad: "media" },
-  { id: 54, pregunta: "¿Qué profeta desafió a los profetas de Baal?", opciones: ["Eliseo", "Elías", "Jeremías"], correcta: 2, dificultad: "media" },
-  { id: 55, pregunta: "¿Cómo se llamaba la esposa de Isaac?", opciones: ["Lea", "Raquel", "Rebeca"], correcta: 3, dificultad: "media" },
-  { id: 56, pregunta: "¿Qué ciudad fue destruida junto con Gomorra?", opciones: ["Sodoma", "Nínive", "Jericó"], correcta: 1, dificultad: "media" },
-  { id: 57, pregunta: "¿Qué rey de Israel pidió sabiduría a Dios?", opciones: ["David", "Salomón", "Ezequías"], correcta: 2, dificultad: "media" },
-  { id: 58, pregunta: "¿Cuál era la señal del pacto con Noé?", opciones: ["Un altar", "Un arcoíris", "Una paloma"], correcta: 2, dificultad: "media" },
-  { id: 59, pregunta: "¿Quién escribió el libro de Hechos?", opciones: ["Pablo", "Lucas", "Pedro"], correcta: 2, dificultad: "media" },
-  { id: 60, pregunta: "¿A quién resucitó Jesús tras cuatro días de muerto?", opciones: ["Lázaro", "Jairo", "Tabita"], correcta: 1, dificultad: "media" },
-  { id: 61, pregunta: "¿Cómo se llamaba la esposa de Lot?", opciones: ["No tiene nombre mencionado", "Rut", "Dalila"], correcta: 1, dificultad: "media" },
-  { id: 62, pregunta: "¿Quién fue vendido por sus hermanos como esclavo?", opciones: ["Benjamín", "José", "Judá"], correcta: 2, dificultad: "media" },
-  { id: 63, pregunta: "¿Cuántas tribus tenía Israel?", opciones: ["10", "12", "13"], correcta: 2, dificultad: "media" },
-  { id: 64, pregunta: "¿En qué idioma se escribió la mayor parte del A.T.?", opciones: ["Griego", "Hebreo", "Latín"], correcta: 2, dificultad: "media" },
-  { id: 65, pregunta: "¿Quién fue el profeta que ungió a David?", opciones: ["Samuel", "Natán", "Gad"], correcta: 1, dificultad: "media" },
-  { id: 66, pregunta: "¿Quién perdió su fuerza al cortarse el cabello?", opciones: ["Gedeón", "Sansón", "Absalón"], correcta: 2, dificultad: "media" },
-  { id: 67, pregunta: "¿Quién negó a Jesús tres veces?", opciones: ["Juan", "Pedro", "Andrés"], correcta: 2, dificultad: "media" },
+  {
+    questionText: "¿Quién vivió más años en la Biblia?",
+    answerOptions: [
+      { answerText: "Eliseo", isCorrect: false },
+      { answerText: "David", isCorrect: false },
+      { answerText: "Matusalén", isCorrect: true },
+    ],
+  },
+  {
+    questionText: "¿Quién fue arrojado al foso de los leones?",
+    answerOptions: [
+      { answerText: "Daniel", isCorrect: true },
+      { answerText: "José", isCorrect: false },
+      { answerText: "Isaías", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cuántos hijos tenía Jacob (Israel)?",
+    answerOptions: [
+      { answerText: "10", isCorrect: false },
+      { answerText: "12", isCorrect: true },
+      { answerText: "20", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién fue el primer rey de Israel según la Biblia?",
+    answerOptions: [
+      { answerText: "Saúl", isCorrect: true },
+      { answerText: "David", isCorrect: false },
+      { answerText: "Salomón", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cuántos días pasó Jesús en el desierto ayunando?",
+    answerOptions: [
+      { answerText: "20", isCorrect: false },
+      { answerText: "30", isCorrect: false },
+      { answerText: "40", isCorrect: true },
+    ],
+  },
+  {
+    questionText: "¿Cuál fue el primer milagro registrado de Jesús?",
+    answerOptions: [
+      { answerText: "Agua a vino", isCorrect: true },
+      { answerText: "Multiplicación de panes", isCorrect: false },
+      { answerText: "Caminar sobre el agua", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cuántos libros hay en el Nuevo Testamento?",
+    answerOptions: [
+      { answerText: "24", isCorrect: false },
+      { answerText: "27", isCorrect: true },
+      { answerText: "30", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿En qué río fue bautizado Jesús?",
+    answerOptions: [
+      { answerText: "Nilo", isCorrect: false },
+      { answerText: "Tigris", isCorrect: false },
+      { answerText: "Jordán", isCorrect: true },
+    ],
+  },
+  {
+    questionText: "¿Quién escribió la mayoría de los Salmos?",
+    answerOptions: [
+      { answerText: "David", isCorrect: true },
+      { answerText: "Salomón", isCorrect: false },
+      { answerText: "Moisés", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién fue el sucesor de Moisés?",
+    answerOptions: [
+      { answerText: "Caleb", isCorrect: false },
+      { answerText: "Josué", isCorrect: true },
+      { answerText: "Gedeón", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿En qué idioma se escribió originalmente el Nuevo Testamento?",
+    answerOptions: [
+      { answerText: "Hebreo", isCorrect: false },
+      { answerText: "Latín", isCorrect: false },
+      { answerText: "Griego", isCorrect: true },
+    ],
+  },
+  {
+    questionText: "¿Cuál era el nombre de Pablo antes de su conversión?",
+    answerOptions: [
+      { answerText: "Saulo", isCorrect: true },
+      { answerText: "Silas", isCorrect: false },
+      { answerText: "Simón", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién interpretó los sueños del Faraón en Egipto?",
+    answerOptions: [
+      { answerText: "Benjamín", isCorrect: false },
+      { answerText: "José", isCorrect: true },
+      { answerText: "Efraín", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cuántas veces perdonó David la vida al Rey Saúl?",
+    answerOptions: [
+      { answerText: "1 vez", isCorrect: false },
+      { answerText: "2 veces", isCorrect: true },
+      { answerText: "3 veces", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Qué ciudad vio caer sus muros con trompetas?",
+    answerOptions: [
+      { answerText: "Babilonia", isCorrect: false },
+      { answerText: "Jericó", isCorrect: true },
+      { answerText: "Sodoma", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cuál es el libro más largo de la Biblia por capítulos?",
+    answerOptions: [
+      { answerText: "Génesis", isCorrect: false },
+      { answerText: "Isaías", isCorrect: false },
+      { answerText: "Salmos", isCorrect: true },
+    ],
+  },
+  {
+    questionText: "¿Quién fue la mujer que juzgó a Israel?",
+    answerOptions: [
+      { answerText: "Débora", isCorrect: true },
+      { answerText: "Rut", isCorrect: false },
+      { answerText: "Ester", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cuántas plagas envió Dios a Egipto?",
+    answerOptions: [
+      { answerText: "7", isCorrect: false },
+      { answerText: "10", isCorrect: true },
+      { answerText: "12", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cuál fue el monte donde Moisés recibió la ley?",
+    answerOptions: [
+      { answerText: "Carmelo", isCorrect: false },
+      { answerText: "Sinaí", isCorrect: true },
+      { answerText: "Nebo", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Qué profeta desafió a los profetas de Baal?",
+    answerOptions: [
+      { answerText: "Eliseo", isCorrect: false },
+      { answerText: "Elías", isCorrect: true },
+      { answerText: "Jeremías", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cómo se llamaba la esposa de Isaac?",
+    answerOptions: [
+      { answerText: "Lea", isCorrect: false },
+      { answerText: "Raquel", isCorrect: false },
+      { answerText: "Rebeca", isCorrect: true },
+    ],
+  },
+  {
+    questionText: "¿Qué ciudad fue destruida junto con Gomorra?",
+    answerOptions: [
+      { answerText: "Sodoma", isCorrect: true },
+      { answerText: "Nínive", isCorrect: false },
+      { answerText: "Jericó", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Qué rey de Israel pidió sabiduría a Dios?",
+    answerOptions: [
+      { answerText: "David", isCorrect: false },
+      { answerText: "Salomón", isCorrect: true },
+      { answerText: "Ezequías", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cuál era la señal del pacto con Noé?",
+    answerOptions: [
+      { answerText: "Un altar", isCorrect: false },
+      { answerText: "Un arcoíris", isCorrect: true },
+      { answerText: "Una paloma", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién escribió el libro de Hechos?",
+    answerOptions: [
+      { answerText: "Pablo", isCorrect: false },
+      { answerText: "Lucas", isCorrect: true },
+      { answerText: "Pedro", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿A quién resucitó Jesús tras cuatro días de muerto?",
+    answerOptions: [
+      { answerText: "Lázaro", isCorrect: true },
+      { answerText: "Jairo", isCorrect: false },
+      { answerText: "Tabita", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cómo se llamaba la esposa de Lot?",
+    answerOptions: [
+      { answerText: "No tiene nombre mencionado", isCorrect: true },
+      { answerText: "Rut", isCorrect: false },
+      { answerText: "Dalila", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién fue vendido por sus hermanos como esclavo?",
+    answerOptions: [
+      { answerText: "Benjamín", isCorrect: false },
+      { answerText: "José", isCorrect: true },
+      { answerText: "Judá", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cuántas tribus tenía Israel?",
+    answerOptions: [
+      { answerText: "10", isCorrect: false },
+      { answerText: "12", isCorrect: true },
+      { answerText: "13", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿En qué idioma se escribió la mayor parte del A.T.?",
+    answerOptions: [
+      { answerText: "Griego", isCorrect: false },
+      { answerText: "Hebreo", isCorrect: true },
+      { answerText: "Latín", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién fue el profeta que ungió a David?",
+    answerOptions: [
+      { answerText: "Samuel", isCorrect: true },
+      { answerText: "Natán", isCorrect: false },
+      { answerText: "Gad", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién perdió su fuerza al cortarse el cabello?",
+    answerOptions: [
+      { answerText: "Gedeón", isCorrect: false },
+      { answerText: "Sansón", isCorrect: true },
+      { answerText: "Absalón", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién negó a Jesús tres veces?",
+    answerOptions: [
+      { answerText: "Juan", isCorrect: false },
+      { answerText: "Pedro", isCorrect: true },
+      { answerText: "Andrés", isCorrect: false },
+    ],
+  },
 
   // --- DIFÍCILES (68-100) ---
-  { id: 68, pregunta: "¿En qué monte sacrificó Abraham a Isaac?", opciones: ["Horeb", "Moriah", "Sinaí"], correcta: 2, dificultad: "difícil" },
-  { id: 69, pregunta: "¿Cuál fue la plaga final de Egipto?", opciones: ["Ranas", "Primogénitos", "Oscuridad"], correcta: 2, dificultad: "difícil" },
-  { id: 70, pregunta: "¿Cuál era la ocupación de Mateo antes de seguir a Jesús?", opciones: ["Carpintero", "Pescador", "Recaudador de impuestos"], correcta: 3, dificultad: "difícil" },
-  { id: 71, pregunta: "¿Cuál era la profesión de Pablo?", opciones: ["Soldado", "Hacedor de tiendas", "Carpintero"], correcta: 2, dificultad: "difícil" },
-  { id: 72, pregunta: "¿Quién fue el primer mártir cristiano?", opciones: ["Esteban", "Pedro", "Pablo"], correcta: 1, dificultad: "difícil" },
-  { id: 73, pregunta: "¿Qué rey de Babilonia vivió como animal?", opciones: ["Ciro", "Nabucodonosor", "Belsasar"], correcta: 2, dificultad: "difícil" },
-  { id: 74, pregunta: "¿Qué profeta vio el valle de huesos secos?", opciones: ["Jeremías", "Ezequiel", "Daniel"], correcta: 2, dificultad: "difícil" },
-  { id: 75, pregunta: "¿Cómo se llamaban los tres amigos de Daniel?", opciones: ["Sadrac, Mesac y Abed-nego", "Esdras y Nehemías", "Ananías y Azarías"], correcta: 1, dificultad: "difícil" },
-  { id: 76, pregunta: "¿Cuál de estos NO es un evangelio apócrifo?", opciones: ["Tomás", "Marcos", "Judas"], correcta: 2, dificultad: "difícil" },
-  { id: 77, pregunta: "¿Qué profeta subió al cielo en un torbellino?", opciones: ["Eliseo", "Elías", "Enoc"], correcta: 2, dificultad: "difícil" },
-  { id: 78, pregunta: "¿Quién fue el escriba que ayudó a Jeremías?", opciones: ["Baruc", "Esdras", "Guejazí"], correcta: 1, dificultad: "difícil" },
-  { id: 79, pregunta: "¿Cuántos años tenía Abraham cuando nació Isaac?", opciones: ["75", "99", "100"], correcta: 3, dificultad: "difícil" },
-  { id: 80, pregunta: "¿Quién escondió a los espías en Jericó?", opciones: ["Rahab", "Débora", "Jael"], correcta: 1, dificultad: "difícil" },
-  { id: 81, pregunta: "¿Cuál es el libro más corto del Antiguo Testamento?", opciones: ["Abdías", "Hageo", "Miqueas"], correcta: 1, dificultad: "difícil" },
-  { id: 82, pregunta: "¿En qué isla estuvo exiliado Juan?", opciones: ["Chipre", "Creta", "Patmos"], correcta: 3, dificultad: "difícil" },
-  { id: 83, pregunta: "¿Quién fue el primer hijo de Abraham?", opciones: ["Isaac", "Ismael", "Jacob"], correcta: 2, dificultad: "difícil" },
-  { id: 84, pregunta: "¿Quién fue el padre de Matusalén?", opciones: ["Enoc", "Lamec", "Set"], correcta: 1, dificultad: "difícil" },
-  { id: 85, pregunta: "¿Cuál de estas no era una de las siete iglesias de Asia?", opciones: ["Éfeso", "Colosas", "Esmirna"], correcta: 2, dificultad: "difícil" },
-  { id: 86, pregunta: "¿Cómo se llamaba la madre de Samuel?", opciones: ["Ana", "Penina", "Isabel"], correcta: 1, dificultad: "difícil" },
-  { id: 87, pregunta: "¿Quién fue el esposo de Rut?", opciones: ["Mahón", "Booz", "Quilión"], correcta: 2, dificultad: "difícil" },
-  { id: 88, pregunta: "¿Qué nombre le puso Dios a Jacob en Peniel?", opciones: ["Edom", "Israel", "Isaac"], correcta: 2, dificultad: "difícil" },
-  { id: 89, pregunta: "¿Qué rey vio su vida extendida 15 años?", opciones: ["Josías", "Ezequías", "Acaz"], correcta: 2, dificultad: "difícil" },
-  { id: 90, pregunta: "¿Quién fue el primer sumo sacerdote?", opciones: ["Moisés", "Aarón", "Eleazar"], correcta: 2, dificultad: "difícil" },
-  { id: 91, pregunta: "¿Cuántas veces se menciona la palabra 'Dios' en Ester?", opciones: ["Ninguna", "7 veces", "12 veces"], correcta: 1, dificultad: "difícil" },
-  { id: 92, pregunta: "¿De qué ciudad era María Magdalena?", opciones: ["Magdala", "Betsaida", "Caná"], correcta: 1, dificultad: "difícil" },
-  { id: 93, pregunta: "¿Quién reemplazó a Judas Iscariote?", opciones: ["Bernabé", "Matías", "Silas"], correcta: 2, dificultad: "difícil" },
-  { id: 94, pregunta: "¿Quién fue el abuelo del Rey David?", opciones: ["Booz", "Obed", "Isaí"], correcta: 2, dificultad: "difícil" },
-  { id: 95, pregunta: "¿Cuál era el nombre babilónico de Daniel?", opciones: ["Beltsasar", "Abandego", "Sadrac"], correcta: 1, dificultad: "difícil" },
-  { id: 96, pregunta: "¿Quién escribió Lamentaciones?", opciones: ["Ezequiel", "Jeremías", "Isaías"], correcta: 2, dificultad: "difícil" },
-  { id: 97, pregunta: "¿Qué ciudad fue la capital del Reino del Norte?", opciones: ["Jerusalén", "Samaria", "Hebrón"], correcta: 2, dificultad: "difícil" },
-  { id: 98, pregunta: "¿Quién mató a un gigante de 24 dedos?", opciones: ["David", "Jonatán hijo de Simea", "Abisai"], correcta: 2, dificultad: "difícil" },
-  { id: 99, pregunta: "¿Cómo se llamaba el tercer hijo de Adán?", opciones: ["Set", "Enoc", "Matusalén"], correcta: 1, dificultad: "difícil" },
-  { id: 100, pregunta: "¿Cuál es el libro que sigue después de los cuatro Evangelios?", opciones: ["Romanos", "Hechos", "Gálatas"], correcta: 2, dificultad: "difícil" }
+  {
+    questionText: "¿En qué monte sacrificó Abraham a Isaac?",
+    answerOptions: [
+      { answerText: "Horeb", isCorrect: false },
+      { answerText: "Moriah", isCorrect: true },
+      { answerText: "Sinaí", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cuál fue la plaga final de Egipto?",
+    answerOptions: [
+      { answerText: "Ranas", isCorrect: false },
+      { answerText: "Primogénitos", isCorrect: true },
+      { answerText: "Oscuridad", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cuál era la ocupación de Mateo antes de seguir a Jesús?",
+    answerOptions: [
+      { answerText: "Carpintero", isCorrect: false },
+      { answerText: "Pescador", isCorrect: false },
+      { answerText: "Recaudador de impuestos", isCorrect: true },
+    ],
+  },
+  {
+    questionText: "¿Cuál era la profesión de Pablo?",
+    answerOptions: [
+      { answerText: "Soldado", isCorrect: false },
+      { answerText: "Hacedor de tiendas", isCorrect: true },
+      { answerText: "Carpintero", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién fue el primer mártir cristiano?",
+    answerOptions: [
+      { answerText: "Esteban", isCorrect: true },
+      { answerText: "Pedro", isCorrect: false },
+      { answerText: "Pablo", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Qué rey de Babilonia vivió como animal?",
+    answerOptions: [
+      { answerText: "Ciro", isCorrect: false },
+      { answerText: "Nabucodonosor", isCorrect: true },
+      { answerText: "Belsasar", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Qué profeta vio el valle de huesos secos?",
+    answerOptions: [
+      { answerText: "Jeremías", isCorrect: false },
+      { answerText: "Ezequiel", isCorrect: true },
+      { answerText: "Daniel", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cómo se llamaban los tres amigos de Daniel?",
+    answerOptions: [
+      { answerText: "Sadrac, Mesac y Abed-nego", isCorrect: true },
+      { answerText: "Esdras y Nehemías", isCorrect: false },
+      { answerText: "Ananías y Azarías", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cuál de estos NO es un evangelio apócrifo?",
+    answerOptions: [
+      { answerText: "Tomás", isCorrect: false },
+      { answerText: "Marcos", isCorrect: true },
+      { answerText: "Judas", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Qué profeta subió al cielo en un torbellino?",
+    answerOptions: [
+      { answerText: "Eliseo", isCorrect: false },
+      { answerText: "Elías", isCorrect: true },
+      { answerText: "Enoc", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién fue el escriba que ayudó a Jeremías?",
+    answerOptions: [
+      { answerText: "Baruc", isCorrect: true },
+      { answerText: "Esdras", isCorrect: false },
+      { answerText: "Guejazí", isCorrect: false },
+    ],
+  },
+    {
+    questionText: "¿Cuántos años tenía Abraham cuando nació Isaac?",
+    answerOptions: [
+      { answerText: "75", isCorrect: false },
+      { answerText: "99", isCorrect: false },
+      { answerText: "100", isCorrect: true },
+    ],
+  },
+  {
+    questionText: "¿Quién escondió a los espías en Jericó?",
+    answerOptions: [
+      { answerText: "Rahab", isCorrect: true },
+      { answerText: "Débora", isCorrect: false },
+      { answerText: "Jael", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cuál es el libro más corto del Antiguo Testamento?",
+    answerOptions: [
+      { answerText: "Abdías", isCorrect: true },
+      { answerText: "Hageo", isCorrect: false },
+      { answerText: "Miqueas", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿En qué isla estuvo exiliado Juan?",
+    answerOptions: [
+      { answerText: "Chipre", isCorrect: false },
+      { answerText: "Creta", isCorrect: false },
+      { answerText: "Patmos", isCorrect: true },
+    ],
+  },
+  {
+    questionText: "¿Quién fue el primer hijo de Abraham?",
+    answerOptions: [
+      { answerText: "Isaac", isCorrect: false },
+      { answerText: "Ismael", isCorrect: true },
+      { answerText: "Jacob", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién fue el padre de Matusalén?",
+    answerOptions: [
+      { answerText: "Enoc", isCorrect: true },
+      { answerText: "Lamec", isCorrect: false },
+      { answerText: "Set", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cuál de estas no era una de las siete iglesias de Asia?",
+    answerOptions: [
+      { answerText: "Éfeso", isCorrect: false },
+      { answerText: "Colosas", isCorrect: true },
+      { answerText: "Esmirna", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cómo se llamaba la madre de Samuel?",
+    answerOptions: [
+      { answerText: "Ana", isCorrect: true },
+      { answerText: "Penina", isCorrect: false },
+      { answerText: "Isabel", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién fue el esposo de Rut?",
+    answerOptions: [
+      { answerText: "Mahón", isCorrect: false },
+      { answerText: "Booz", isCorrect: true },
+      { answerText: "Quilión", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Qué nombre le puso Dios a Jacob en Peniel?",
+    answerOptions: [
+      { answerText: "Edom", isCorrect: false },
+      { answerText: "Israel", isCorrect: true },
+      { answerText: "Isaac", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Qué rey vio su vida extendida 15 años?",
+    answerOptions: [
+      { answerText: "Josías", isCorrect: false },
+      { answerText: "Ezequías", isCorrect: true },
+      { answerText: "Acaz", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién fue el primer sumo sacerdote?",
+    answerOptions: [
+      { answerText: "Moisés", isCorrect: false },
+      { answerText: "Aarón", isCorrect: true },
+      { answerText: "Eleazar", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cuántas veces se menciona la palabra 'Dios' en Ester?",
+    answerOptions: [
+      { answerText: "Ninguna", isCorrect: true },
+      { answerText: "7 veces", isCorrect: false },
+      { answerText: "12 veces", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿De qué ciudad era María Magdalena?",
+    answerOptions: [
+      { answerText: "Magdala", isCorrect: true },
+      { answerText: "Betsaida", isCorrect: false },
+      { answerText: "Caná", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién reemplazó a Judas Iscariote?",
+    answerOptions: [
+      { answerText: "Bernabé", isCorrect: false },
+      { answerText: "Matías", isCorrect: true },
+      { answerText: "Silas", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién fue el abuelo del Rey David?",
+    answerOptions: [
+      { answerText: "Booz", isCorrect: false },
+      { answerText: "Obed", isCorrect: true },
+      { answerText: "Isaí", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cuál era el nombre babilónico de Daniel?",
+    answerOptions: [
+      { answerText: "Beltsasar", isCorrect: true },
+      { answerText: "Abandego", isCorrect: false },
+      { answerText: "Sadrac", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién escribió Lamentaciones?",
+    answerOptions: [
+      { answerText: "Ezequiel", isCorrect: false },
+      { answerText: "Jeremías", isCorrect: true },
+      { answerText: "Isaías", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Qué ciudad fue la capital del Reino del Norte?",
+    answerOptions: [
+      { answerText: "Jerusalén", isCorrect: false },
+      { answerText: "Samaria", isCorrect: true },
+      { answerText: "Hebrón", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Quién mató a un gigante de 24 dedos?",
+    answerOptions: [
+      { answerText: "David", isCorrect: false },
+      { answerText: "Jonatán hijo de Simea", isCorrect: true },
+      { answerText: "Abisai", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cómo se llamaba el tercer hijo de Adán?",
+    answerOptions: [
+      { answerText: "Set", isCorrect: true },
+      { answerText: "Enoc", isCorrect: false },
+      { answerText: "Matusalén", isCorrect: false },
+    ],
+  },
+  {
+    questionText: "¿Cuál es el libro que sigue después de los cuatro Evangelios?",
+    answerOptions: [
+      { answerText: "Romanos", isCorrect: false },
+      { answerText: "Hechos", isCorrect: true },
+      { answerText: "Gálatas", isCorrect: false },
+    ],
+  },
 ];
