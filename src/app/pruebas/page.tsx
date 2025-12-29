@@ -1,11 +1,15 @@
 import PrincipalFooter from "@/components/PrincipalFooter";
 
+import BqSPAComponent from "@/components/spaPilotos"
+
 import ImagenCarrusel from "@/components/ImagenCarrusel"
 export default function Pruebas() {
 
  const misImagenes = [
     { id: 1, src: "/ytfimagens/capturaFilter1.jpg", alt: "Filtro 1" },
     { id: 2, src: "/ytfimagens/capturaFilter2.jpg", alt: "Filtro 2" },
+    { id: 3, src: "/ytfimagens/capturaFilter3.jpg", alt: "Filtro 3" },
+    { id: 4, src: "/ytfimagens/capturaFilter4.jpg", alt: "Filtro 4" },
     // ... más imágenes
   ];   
 
@@ -14,6 +18,8 @@ export default function Pruebas() {
             <h1 className="text-5xl font-bold">
                 Pruebas
             </h1>
+            
+            <BqSPAComponent />
             
             <section>
                 <ImagenCarrusel
