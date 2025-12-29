@@ -1,6 +1,6 @@
 import PrincipalFooter from "@/components/PrincipalFooter";
 
-import BqSPAComponent from "@/components/spaPilotos"
+import BqSPAComponent from "@/components/spaPilotos/BqSPAComponent"
 
 import ImagenCarrusel from "@/components/ImagenCarrusel"
 export default function Pruebas() {
