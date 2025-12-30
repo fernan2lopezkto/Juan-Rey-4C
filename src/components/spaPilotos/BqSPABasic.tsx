@@ -71,7 +71,7 @@ export default function BqSPABasic() {
         <div className="card-body">
           
           <h2 className="card-title text-2xl font-bold text-primary mb-4 justify-center">
-            📖 Quiz Bíblico
+            Mini  📖 Quiz Bíblico
           </h2>
 
           {showScore ? (
@@ -82,7 +82,7 @@ export default function BqSPABasic() {
                 <div className="stat-value text-primary">
                   {score} / {questions.length}
                 </div>
-                <div className="stat-desc">Has completado el quiz</div>
+                <div className="stat-desc">Has completado el mini quiz</div>
               </div>
 
               <div className="card-actions justify-center">
