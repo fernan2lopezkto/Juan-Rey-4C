@@ -24,12 +24,12 @@ export default function PrincipalFooter() {
     },
     {
       name: 'LinkedIn',
-      href: 'https://www.linkedin.com/in/fernando-lopez-817924251/',
+      href: 'https://www.linkedin.com/in/juan-rey-fernan2lopezkto',
       icon: <FaLinkedin size={24} />,
     },
     {
       name: 'YouTube',
-      href: 'https://www.youtube.com/@fernan2lopezkto',
+      href: 'https://www.youtube.com/cuatrocuerdas7892',
       icon: <FaYoutube size={24} />,
     },
   ];
