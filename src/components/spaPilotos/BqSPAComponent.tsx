@@ -64,7 +64,12 @@ export default function BqSPAComponent({ questions }: BqSPAComponentProps) {
   if (!gameStarted) {
     return (
       <div className="max-w-2xl mx-auto p-4">
-        <RulesComponent />
+        <h1 className="text-5xl mt-8 text-center">
+          Bible Quiz
+        </h1>
+        <p className="text-center my-4" >
+          El record actual es de X puntos
+        </p>
         <button 
           onClick={() => setGameStarted(true)} 
           className="btn btn-primary btn-block text-lg shadow-lg"

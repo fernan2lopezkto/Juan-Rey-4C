@@ -1,6 +1,7 @@
 import PrincipalFooter from "@/components/PrincipalFooter";
 
 import BqSPAComponent from "@/components/spaPilotos/BqSPAComponent"
+import RulesComponent from "@/components/spaPilotos/RulesComponent"
 import { bibleQuestions } from '@/data/questions';
 
 import ImagenCarrusel from "@/components/ImagenCarrusel"
@@ -23,7 +24,7 @@ export default function Pruebas() {
             <BqSPAComponent 
             questions={bibleQuestions}
             />
-            
+            <RulesComponent />
             <section>
                 <ImagenCarrusel
                     titulo="Mis Capturas" 
