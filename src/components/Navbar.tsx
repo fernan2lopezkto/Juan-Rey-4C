@@ -11,7 +11,7 @@ export default async function Navbar() {
 
   const navLinks = [
     { name: 'Home', href: '/' },
-    { name: 'Filtro', href: '/youtube-filter' },
+    { name: 'Youtube kid Filter', href: '/youtube-filter' },
     { name: 'Bible Quiz', href:'/utilities/biblequiz'},
     { name: 'About', href: '/about' },
     { name: 'Utilidades', href: '/utilities' },
