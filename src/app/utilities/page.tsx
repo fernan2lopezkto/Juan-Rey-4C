@@ -20,6 +20,7 @@ export default function Utilities() {
             
             <h1 className="text-5xl font-bold">Utilidades</h1>
             <BqSPABasic />
+            <div className="divider"></div>
             <FilterButton />
             <ImagenCarrusel
                 titulo="imagenes" 
