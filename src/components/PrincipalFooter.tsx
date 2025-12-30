@@ -29,7 +29,7 @@ export default function PrincipalFooter() {
     },
     {
       name: 'YouTube',
-      href: 'https://www.youtube.com/cuatrocuerdas7892',
+      href: 'https://youtube.com/@cuatrocuerdas7892',
       icon: <FaYoutube size={24} />,
     },
   ];
