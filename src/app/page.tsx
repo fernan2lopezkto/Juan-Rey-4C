@@ -1,4 +1,3 @@
-//import Slider from "@/components/Slider";⇝
 import ImagenCarrusel from "@/components/ImagenCarrusel"
 
 import BqSPABasic from "@/components/spaPilotos/BqSPABasic"
@@ -20,17 +19,16 @@ export default function Home() {
   return (
     
     <div>
+      
       <PrincipalHero />
+      
       <FilterButton />
-      <BqSPABasic />
-      <section>
         <ImagenCarrusel
-        titulo="Mis Capturas" 
+        titulo="imagenes" 
         imagenes={misImagenes}/>
-      </section>
-      <div>
-        <PrincipalFooter />
-      </div>
+      <BqSPABasic />
+      
+      <PrincipalFooter />
       
     </div>
 

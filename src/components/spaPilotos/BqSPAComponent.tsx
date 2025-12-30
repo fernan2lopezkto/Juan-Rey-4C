@@ -1,145 +1,159 @@
 "use client";
 
-import React, { useState } from 'react';
-import RulesComponent from './RulesComponent';
+import React, { useState, useEffect } from 'react';
+import PersistenceManager from './PersistenceManager';
 import ScoreHandler from './ScoreHandler';
 
-// --- Definición de Tipos ---
-export type AnswerOption = {
-  answerText: string;
-  isCorrect: boolean;
-};
+export type AnswerOption = { answerText: string; isCorrect: boolean; };
+export type Question = { questionText: string; answerOptions: AnswerOption[]; };
 
-export type Question = {
-  questionText: string;
-  answerOptions: AnswerOption[];
-};
-
-interface BqSPAComponentProps {
-  questions: Question[]; // Recibimos las preguntas desde el padre
-}
-
-export default function BqSPAComponent({ questions }: BqSPAComponentProps) {
+export default function BqSPAComponent({ questions }: { questions: Question[] }) {
   // --- Estados ---
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
+  const [highScore, setHighScore] = useState(0);
   const [showScoreView, setShowScoreView] = useState(false);
   const [lastResult, setLastResult] = useState<'correct' | 'incorrect' | null>(null);
-  const [gameStarted, setGameStarted] = useState(false); // Para mostrar reglas primero
+  const [gameStarted, setGameStarted] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  // --- Lógica de Respuesta ---
+  // --- Cargar datos de LocalStorage al iniciar ---
+  useEffect(() => {
+    const savedProgress = localStorage.getItem('bible-quiz-progress');
+    const savedHighScore = localStorage.getItem('bible-quiz-highscore');
+    
+    if (savedHighScore) setHighScore(parseInt(savedHighScore));
+    
+    if (savedProgress) {
+      const { score: s, currentQuestion: q, gameStarted: gs } = JSON.parse(savedProgress);
+      setScore(s);
+      setCurrentQuestion(q);
+      setGameStarted(gs);
+    }
+  }, []);
+
+  // --- Guardar progreso cada vez que cambien valores clave ---
+  useEffect(() => {
+    if (gameStarted) {
+      localStorage.setItem('bible-quiz-progress', JSON.stringify({
+        score,
+        currentQuestion,
+        gameStarted
+      }));
+    }
+    if (score > highScore) {
+      setHighScore(score);
+      localStorage.setItem('bible-quiz-highscore', score.toString());
+    }
+  }, [score, currentQuestion, gameStarted, highScore]);
+
   const handleAnswerOptionClick = (isCorrect: boolean) => {
-    // 1. Lógica de Puntos (Sumar o Restar)
+    if (isProcessing) return; // Evita clics dobles
+    setIsProcessing(true);
+
     if (isCorrect) {
-      setScore((prev) => prev + 10);
+      setScore(prev => prev + 10);
       setLastResult('correct');
     } else {
-      setScore((prev) => prev - 5); // Resta puntos (puedes poner lógica para no bajar de 0 si quieres)
+      setScore(prev => prev - 5);
       setLastResult('incorrect');
     }
 
-    // 2. Avanzar pregunta (con un pequeño delay para ver el toast/animación)
-    const nextQuestion = currentQuestion + 1;
     setTimeout(() => {
-      setLastResult(null); // Reseteamos el estado del toast para que se oculte o reinicie
+      setLastResult(null);
+      const nextQuestion = currentQuestion + 1;
+      
       if (nextQuestion < questions.length) {
         setCurrentQuestion(nextQuestion);
       } else {
         setShowScoreView(true);
       }
-    }, 1000); // Espera 1 segundo antes de cambiar
+      setIsProcessing(false);
+    }, 1200); // Un poco más de tiempo para ver el toast
   };
 
-  const handleReset = () => {
+  const fullReset = () => {
+    localStorage.removeItem('bible-quiz-progress');
     setCurrentQuestion(0);
     setScore(0);
-    setShowScoreView(false);
     setGameStarted(false);
+    setShowScoreView(false);
     setLastResult(null);
   };
 
-  // --- Renderizado ---
-
-  // 1. Si no ha empezado, mostramos Reglas y Botón Start
+  // Renderizado Condicional...
   if (!gameStarted) {
     return (
-      <div className="max-w-2xl mx-auto p-4">
-        <h1 className="text-5xl mt-8 text-center">
-          Bible Quiz
-        </h1>
-        <p className="text-center my-4" >
-          El record actual es de X puntos
-        </p>
-        <button 
-          onClick={() => setGameStarted(true)} 
-          className="btn btn-primary btn-block text-lg shadow-lg"
-        >
-          ¡Comenzar Quiz!
+      <div className="max-w-2xl mx-auto p-4 text-center">
+        <h1 className="text-5xl mt-8 font-serif">Bible Quiz</h1>
+        <div className="py-8">
+           <PersistenceManager 
+              score={score} 
+              highScore={highScore} 
+              currentQuestion={currentQuestion} 
+              totalQuestions={questions.length} 
+              onReset={fullReset} 
+           />
+        </div>
+        <button onClick={() => setGameStarted(true)} className="btn btn-primary btn-lg btn-wide">
+          {currentQuestion > 0 ? "Continuar Quiz" : "Comenzar Quiz"}
         </button>
       </div>
     );
   }
 
-  // 2. Si terminó el juego, mostramos Resultado Final
   if (showScoreView) {
     return (
       <div className="max-w-2xl mx-auto p-4 text-center">
-        <div className="card bg-base-100 shadow-xl border border-base-300">
+        <div className="card bg-base-100 shadow-xl">
           <div className="card-body items-center">
-            <h2 className="card-title text-3xl mb-4">¡Juego Terminado!</h2>
-            <div className="radial-progress text-primary mb-4" style={{ "--value": 100, "--size": "8rem" } as any}>
-              {score} pts
-            </div>
-            <p className="text-lg opacity-70 mb-6">
-              Contestaste {questions.length} preguntas.
-            </p>
-            <button onClick={handleReset} className="btn btn-outline btn-wide">
-              Jugar de Nuevo
-            </button>
+            <h2 className="card-title text-3xl">¡Felicidades!</h2>
+            <div className="text-5xl font-bold my-4 text-primary">{score} pts</div>
+            <p>Has completado el desafío.</p>
+            <button onClick={fullReset} className="btn btn-primary mt-4">Reiniciar Todo</button>
           </div>
         </div>
       </div>
     );
   }
 
-  // 3. Juego en curso
   return (
     <div className="w-full max-w-2xl mx-auto p-4">
-      {/* Componente que maneja el puntaje visual y los Toasts */}
+      {/* Toast Renderizado aquí directamente para evitar desfases */}
+      {lastResult && (
+        <div className="toast toast-top toast-center z-[100] mt-10">
+          <div className={`alert ${lastResult === 'correct' ? 'alert-success' : 'alert-error'} shadow-lg`}>
+            <span>{lastResult === 'correct' ? '¡Correcto! +10' : 'Incorrecto... -5'}</span>
+          </div>
+        </div>
+      )}
+
+      <PersistenceManager 
+        score={score} 
+        highScore={highScore} 
+        currentQuestion={currentQuestion} 
+        totalQuestions={questions.length} 
+        onReset={fullReset} 
+      />
+
       <ScoreHandler score={score} lastResult={lastResult} />
 
-      {/* Tarjeta de Pregunta */}
-      <div className="card w-full bg-base-100 shadow-xl border border-base-300 mt-4">
+      <div className="card bg-base-100 shadow-xl border mt-4">
         <div className="card-body">
-          <div className="flex justify-between text-sm uppercase font-bold tracking-widest text-gray-500 mb-2">
-            <span>Pregunta {currentQuestion + 1} / {questions.length}</span>
-          </div>
-
-          <h3 className="text-xl md:text-2xl font-bold text-center my-6 min-h-[60px] flex items-center justify-center">
-            {questions[currentQuestion].questionText}
-          </h3>
-
-          <div className="grid grid-cols-1 gap-3 mt-4">
-            {questions[currentQuestion].answerOptions.map((option, index) => (
-              <button
-                key={index}
-                onClick={() => handleAnswerOptionClick(option.isCorrect)}
-                // Deshabilitamos botones mientras se procesa la respuesta anterior (1 seg)
-                disabled={lastResult !== null}
-                className={`btn h-auto py-3 text-lg normal-case 
-                  ${lastResult !== null ? 'btn-disabled opacity-50' : 'btn-outline hover:btn-primary'}
-                `}
+          <span className="text-xs font-bold opacity-50">PREGUNTA {currentQuestion + 1} / {questions.length}</span>
+          <h3 className="text-2xl font-bold py-4">{questions[currentQuestion].questionText}</h3>
+          <div className="grid gap-3">
+            {questions[currentQuestion].answerOptions.map((opt, idx) => (
+              <button 
+                key={idx} 
+                disabled={isProcessing}
+                onClick={() => handleAnswerOptionClick(opt.isCorrect)}
+                className="btn btn-outline btn-lg normal-case"
               >
-                {option.answerText}
+                {opt.answerText}
               </button>
             ))}
           </div>
-        </div>
-        <div className="w-full bg-base-200 h-2 mt-4 rounded-b-xl overflow-hidden">
-          <div 
-            className="bg-primary h-full transition-all duration-500 ease-out" 
-            style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
-          ></div>
         </div>
       </div>
     </div>
