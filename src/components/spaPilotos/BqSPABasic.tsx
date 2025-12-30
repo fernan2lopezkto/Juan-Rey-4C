@@ -1,8 +1,9 @@
-"use client"; // Indispensable para manejar estados (useState) en Next.js
+"use client";
 
 import React, { useState } from 'react';
+import Link from 'next/link'; // Importamos Link para la navegación
 
-// --- 1. Definición de Tipos (TypeScript) ---
+// --- 1. Definición de Tipos ---
 type AnswerOption = {
   answerText: string;
   isCorrect: boolean;
@@ -13,9 +14,7 @@ type Question = {
   answerOptions: AnswerOption[];
 };
 
-// --- 2. Tu "Base de Datos" temporal (Hardcoded) ---
-// Aquí copias el contenido de tu JSON original.
-// He puesto 3 preguntas de ejemplo bíblicas para probar.
+// --- 2. Base de Datos ---
 const questions: Question[] = [
   {
     questionText: "¿Quién construyó el arca?",
@@ -23,7 +22,6 @@ const questions: Question[] = [
       { answerText: "Moisés", isCorrect: false },
       { answerText: "Noé", isCorrect: true },
       { answerText: "Abraham", isCorrect: false },
-      { answerText: "Pedro", isCorrect: false },
     ],
   },
   {
@@ -32,7 +30,6 @@ const questions: Question[] = [
       { answerText: "Éxodo", isCorrect: false },
       { answerText: "Salmos", isCorrect: false },
       { answerText: "Génesis", isCorrect: true },
-      { answerText: "Mateo", isCorrect: false },
     ],
   },
   {
@@ -41,14 +38,12 @@ const questions: Question[] = [
       { answerText: "3 días y 3 noches", isCorrect: true },
       { answerText: "7 días", isCorrect: false },
       { answerText: "1 día", isCorrect: false },
-      { answerText: "40 días", isCorrect: false },
     ],
   },
-  // ... Agrega aquí el resto de tus preguntas de la SPA anterior
 ];
 
 export default function BqSPABasic() {
-  // --- 3. Estados de la Lógica ---
+  // --- 3. Estados ---
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [showScore, setShowScore] = useState(false);
   const [score, setScore] = useState(0);
@@ -67,20 +62,11 @@ export default function BqSPABasic() {
     }
   };
 
-  const handleReset = () => {
-    setCurrentQuestion(0);
-    setScore(0);
-    setShowScore(false);
-  };
-
-  // Cálculo de progreso para la barra visual
   const progressPercentage = ((currentQuestion + 1) / questions.length) * 100;
 
-  // --- 5. Renderizado (JSX con Tailwind + DaisyUI) ---
+  // --- 5. Renderizado ---
   return (
     <div className="w-full max-w-2xl mx-auto my-10 p-4">
-      
-      {/* Tarjeta Principal de DaisyUI */}
       <div className="card w-full bg-base-100 shadow-xl border border-base-300">
         <div className="card-body">
           
@@ -100,16 +86,18 @@ export default function BqSPABasic() {
               </div>
 
               <div className="card-actions justify-center">
-                <button onClick={handleReset} className="btn btn-primary btn-wide">
-                  Volver a Jugar
-                </button>
+                {/* Usamos Link para navegar a la ruta deseada. 
+                   El botón mantiene el estilo de DaisyUI.
+                */}
+                <Link href="/utilities/biblequiz" className="btn btn-primary btn-wide">
+                  Ir al Juego
+                </Link>
               </div>
             </div>
           ) : (
             // --- VISTA: PREGUNTA ---
             <div className="space-y-6">
               
-              {/* Barra de Progreso y Contador */}
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between text-sm opacity-70">
                   <span>Pregunta {currentQuestion + 1} de {questions.length}</span>
@@ -122,14 +110,12 @@ export default function BqSPABasic() {
                 ></progress>
               </div>
 
-              {/* Texto de la Pregunta */}
               <div className="py-4 min-h-[100px] flex items-center justify-center">
                 <h3 className="text-xl font-medium text-center">
                   {questions[currentQuestion].questionText}
                 </h3>
               </div>
 
-              {/* Botones de Respuesta */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {questions[currentQuestion].answerOptions.map((option, index) => (
                   <button
