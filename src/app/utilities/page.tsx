@@ -8,16 +8,13 @@ import PrincipalFooter from "@/components/PrincipalFooter";
 import ImagenSlider, { SliderItem } from "@/components/ImagenSlider"; 
 
 export default function Utilities() {
-   
- const promoImages: SliderItem[] = [
-
-    {
-      id: 2,
-      src: "https://img.daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.webp",
-      alt: "Solo Imagen",
-      url: "/nuevo"
-    }
-  ];
+      const misImagenes = [
+    { id: 1, src: "/ytfimagens/capturaFilter1.jpg", alt: "Filtro 1" },
+    { id: 2, src: "/ytfimagens/capturaFilter2.jpg", alt: "Filtro 2" },
+    { id: 3, src: "/ytfimagens/capturaFilter3.jpg", alt: "Filtro 3" },
+    { id: 4, src: "/ytfimagens/capturaFilter4.jpg", alt: "Filtro 4" },
+    // ... más imágenes
+  ];   
     return (
         <div className="min-h-screen p-8 flex flex-col gap-8">
             
