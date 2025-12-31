@@ -18,13 +18,14 @@ export default function Utilities() {
     return (
         <div className="min-h-screen p-8 flex flex-col gap-8">
             
-            <h1 className="text-5xl font-bold">Utilidades</h1>
+            <h1 className="text-5xl text-center font-bold">Utilidades</h1>
             <BqSPABasic />
             <div className="divider"></div>
             <FilterButton />
             <ImagenCarrusel
                 titulo="imagenes" 
                 imagenes={misImagenes}/>
+            <div className="divider"></div>
             <PrincipalFooter />
             
         </div>
