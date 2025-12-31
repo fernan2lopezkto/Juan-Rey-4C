@@ -66,7 +66,7 @@ export default function BqSPABasic() {
 
   // --- 5. Renderizado ---
   return (
-    <div className="w-full max-w-2xl bg-base-200 mx-auto my-10 p-4">
+    <div className="w-full max-w-2xl mx-auto my-10 p-4">
       <div className="card w-full bg-base-100 shadow-xl border border-base-300">
         <div className="card-body">
           

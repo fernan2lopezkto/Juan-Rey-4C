@@ -87,7 +87,9 @@ export const aboutTexts: AboutTexts = {
   preTitle: "Hola Mundo!",
   title: "For Christ",
   parrafos: [
-    "Soy Juan Rey, Uruguayo, padre de dos hermanos hijos. Fui musico, fotógrafo, emprendedor y varias cosas mas, y hoy a través de esta plataforma, quiero aprovechar mi pasion por el desarrollo de software, para unificar ideas, proyectos y portafolio.",
+    "Soy Juan Rey, Uruguayo, padre de dos hermosos hijos. Fui musico, fotógrafo, emprendedor y varias cosas mas, y hoy a través de esta plataforma, quiero aprovechar mi pasion por el desarrollo de software, para unificar ideas, proyectos y portafolio.",
+    "Con 12 añitos comencé a aprender música, mi tío Luis, me regaló un órgano y un cancionero, de esos que venían con todos las notas arriba de la letra y al final dibujos de como hacer los acordes, así comenzó algo que cambio el resto de mi vida,",
+    "Luego aprendí a tocar la guitarra viendo como tocaban mis compañeros en el grupo, y hace unos cuantos años (cuando necesite tocar bajo, porque era necesario en el grupo de alabanza donde estaba) descubrí cuánto amo ese instrumento de CUATRO CUERDAS. Lo que dió inicio al canal de YouTube ",
     
   ],
 };
