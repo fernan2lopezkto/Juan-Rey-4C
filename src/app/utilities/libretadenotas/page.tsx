@@ -1,5 +1,6 @@
 // utilities/libretadenotas/page.tsx
 import NoteApp from '@/components/libretaDeNotas/NoteApp';
+import PrincipalFooter from "@/components/PrincipalFooter";
 
 export const metadata = {
   title: 'Libreta de Acordes | Juan Rey',
@@ -18,6 +19,7 @@ export default function LibretaPage() {
 
       {/* Aquí cargamos la lógica cliente */}
       <NoteApp />
+      <PrincipalFooter />
     </section>
   );
 }
