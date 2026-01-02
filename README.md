@@ -9,7 +9,7 @@
     <strong>A modern, responsive web application built with Next.js, Tailwind CSS, and DaisyUI.</strong>
   </p>
 
-  <a href="https://your-deployment-url.com" target="_blank">
+  <a href="https://juan-rey-4c.vercel.app" target="_blank">
     <img src="https://img.shields.io/badge/Visit%20Site-Click%20Here-blue?style=for-the-badge&logo=vercel" alt="Visit Site" />
   </a>
 </div>
