@@ -1,41 +1,37 @@
-// utilities/libretadenotas/components/NoteList.tsx
 'use client';
-import { Song } from '@/components/libretaDeNotas/types';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { getSongs, Song } from '@/components/libretaDeNotas/storage';
 
-interface NoteListProps {
-  songs: Song[];
-  onDelete: (id: string) => void;
-}
+export default function ListaCanciones() {
+  const [songs, setSongs] = useState<Song[]>([]);
+  const [search, setSearch] = useState('');
 
-export default function NoteList({ songs, onDelete }: NoteListProps) {
-  if (songs.length === 0) {
-    return <div className="text-center opacity-50">No hay canciones guardadas.</div>;
-  }
+  useEffect(() => { setSongs(getSongs()); }, []);
+
+  const filtered = songs.filter(s => s.title.toLowerCase().includes(search.toLowerCase()));
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {songs.map((song) => (
-        <div key={song.id} className="card bg-base-100 shadow-xl border border-base-300">
-          <div className="card-body">
-            <div className="flex justify-between items-start">
-              <h2 className="card-title">{song.title}</h2>
-              <button 
-                onClick={() => onDelete(song.id)}
-                className="btn btn-square btn-ghost btn-sm text-error"
-                aria-label="Borrar"
-              >
-                ✕
-              </button>
+    <div className="max-w-2xl mx-auto">
+      <input
+        type="search"
+        placeholder="Buscar canción..."
+        className="input input-bordered w-full mb-6"
+        onChange={(e) => setSearch(e.target.value)}
+      />
+      
+      <div className="flex flex-col gap-3">
+        {filtered.map((song) => (
+          <Link key={song.id} href={`/utilities/libretadenotas/cancion/${song.id}`}>
+            <div className="card bg-base-100 border border-base-300 hover:bg-base-200 transition-colors cursor-pointer">
+              <div className="card-body p-4 flex-row justify-between items-center">
+                <h3 className="font-bold text-lg">{song.title}</h3>
+                <span className="badge badge-ghost font-mono">{song.chords.slice(0, 15)}...</span>
+              </div>
             </div>
-            <div className="p-4 bg-neutral text-neutral-content rounded-box mt-2">
-              <p className="font-mono text-lg tracking-wider">{song.chords}</p>
-            </div>
-            <div className="card-actions justify-end mt-2">
-              <span className="text-xs opacity-60">Creado: {song.notes}</span>
-            </div>
-          </div>
-        </div>
-      ))}
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }
