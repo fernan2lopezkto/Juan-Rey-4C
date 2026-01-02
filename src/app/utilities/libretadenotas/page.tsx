@@ -1,5 +1,5 @@
 // utilities/libretadenotas/page.tsx
-import NoteApp from '@/components/libretaDeNotas/NoteApp';
+//import NoteApp from '@/components/libretaDeNotas/NoteApp';
 import PrincipalFooter from "@/components/PrincipalFooter";
 
 export const metadata = {
@@ -18,7 +18,7 @@ export default function LibretaPage() {
       </div>
 
       {/* Aquí cargamos la lógica cliente */}
-      <NoteApp />
+
       <PrincipalFooter />
     </section>
   );
