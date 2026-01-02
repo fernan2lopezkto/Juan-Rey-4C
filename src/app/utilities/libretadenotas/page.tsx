@@ -1,5 +1,3 @@
-// utilities/libretadenotas/page.tsx
-//import NoteApp from '@/components/libretaDeNotas/NoteApp';
 import PrincipalFooter from "@/components/PrincipalFooter";
 
 export const metadata = {
