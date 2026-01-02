@@ -1,5 +1,5 @@
 // utilities/libretadenotas/page.tsx
-import NoteApp from '@/components/NoteApp';
+import NoteApp from '@/components/libretaDeNotas/NoteApp';
 
 export const metadata = {
   title: 'Libreta de Acordes | Juan Rey',
