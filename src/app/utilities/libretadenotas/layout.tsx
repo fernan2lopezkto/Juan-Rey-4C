@@ -1,5 +1,5 @@
 // utilities/libretadenotas/layout.tsx
-import MenuFlotante from './components/MenuFlotante';
+import MenuFlotante from '@components/libretadenotas/MenuFlotante';
 
 export default function NotesLayout({ children }: { children: React.ReactNode }) {
   return (
