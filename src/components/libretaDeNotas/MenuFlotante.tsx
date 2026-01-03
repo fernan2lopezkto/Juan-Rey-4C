@@ -20,7 +20,7 @@ export default function MenuFlotante() {
         className={`btn btn-circle btn-primary btn-lg shadow-lg transition-transform ${open ? 'rotate-45' : ''}`}
         onClick={() => setOpen(!open)}
       >
-        <span className="text-3xl">+</span>
+        <span className="text-4xl">+</span>
       </button>
     </div>
   );
