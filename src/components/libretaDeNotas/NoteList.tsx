@@ -46,7 +46,7 @@ export default function ListaCanciones() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 pb-48">
+    <div className="max-w-2xl mx-auto px-2 pb-10">
       <div className="sticky top-0 bg-base-100/80 backdrop-blur-md pt-4 z-10 mb-6">
         <input
           type="search"
