@@ -1,5 +1,7 @@
 import ImagenCarrusel from "@/components/ImagenCarrusel"
 
+import FormularioCancion from '@/components/libretaDeNotas/NoteForm';
+
 import BqSPABasic from "@/components/spaPilotos/BqSPABasic"
 
 import PrincipalHero from "@/components/PrincipalHero";
@@ -27,6 +29,7 @@ export default function Home() {
         titulo="imagenes" 
         imagenes={misImagenes}/>
       <BqSPABasic />
+      <FormularioCancion />
       
       <PrincipalFooter />
       

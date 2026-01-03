@@ -1,5 +1,6 @@
 // utilities/libretadenotas/layout.tsx
 import MenuFlotante from '@/components/libretaDeNotas/MenuFlotante';
+import PrincipalFooter from "@/components/PrincipalFooter";
 
 export default function NotesLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -11,6 +12,7 @@ export default function NotesLayout({ children }: { children: React.ReactNode })
       </main>
 
       <MenuFlotante />
+      <PrincipalFooter />
     </div>
   );
 }
