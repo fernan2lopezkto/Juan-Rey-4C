@@ -29,7 +29,9 @@ export default function Home() {
         titulo="imagenes" 
         imagenes={misImagenes}/>
       <BqSPABasic />
+      <div className="divider"></div>
       <FormularioCancion />
+      <div className="divider"></div>
       
       <PrincipalFooter />
       

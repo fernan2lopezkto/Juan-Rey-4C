@@ -1,4 +1,4 @@
-import VistaCancion from '@/components/libretaDeNotas/VistaCancion';
+import NoteList from '@/components/libretaDeNotas/NoteList';
 
 export const metadata = {
   title: 'Vista de Canción',
@@ -10,7 +10,7 @@ export default function Page() {
   // El componente cliente se encargará de acceder a localStorage
   return (
     <div className="container mx-auto p-4 min-h-screen">
-      <VistaCancion />
+      <NoteList />
     </div>
   );
 }

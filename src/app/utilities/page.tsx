@@ -1,5 +1,6 @@
 import BqSPABasic from "@/components/spaPilotos/BqSPABasic"
 
+import NoteForm from '@/components/libretaDeNotas/NoteForm'
 import FilterButton from "@/components/FilterButton";
 import ImagenCarrusel from "@/components/ImagenCarrusel"
 
@@ -25,6 +26,8 @@ export default function Utilities() {
             <ImagenCarrusel
                 titulo="imagenes" 
                 imagenes={misImagenes}/>
+            <div className="divider"></div>
+            <NoteForm />
             <div className="divider"></div>
             <PrincipalFooter />
             
