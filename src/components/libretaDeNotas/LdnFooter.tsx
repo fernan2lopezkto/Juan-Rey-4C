@@ -34,7 +34,7 @@ export default function PrincipalFooter() {
   ];
 
   return (
-    <footer className="footer footer-center p-10 bg-base-100 text-base-content border-t border-base-300">
+    <footer className="footer footer-horizontal footer-center p-10 bg-base-100 text-base-content border-t border-base-300">
       {/* Sección de Navegación con estilo de botones fantasma */}
       <nav className="flex flex-wrap justify-center gap-6">
         {navLinks.map((link) => (
