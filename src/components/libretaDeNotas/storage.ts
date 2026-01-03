@@ -1,15 +1,16 @@
+// utilities/libretadenotas/utils/storage.ts
 export interface Song {
   id: string;
   title: string;
-  chords: string; // Ej: "C G Am F"
-  notes: string;  // Letra y anotaciones
+  chords: string;
+  notes: string;
   date: string;
+  tags: string[]; // Nuevo: Soporte para etiquetas
 }
 
 const KEY = 'my_songs_db';
 const CURRENT_SONG_KEY = 'current_active_song_id';
 
-// --- LECTURA ---
 export const getSongs = (): Song[] => {
   if (typeof window === 'undefined') return [];
   const data = localStorage.getItem(KEY);
@@ -21,7 +22,6 @@ export const getSongById = (id: string): Song | undefined => {
   return songs.find((s) => s.id === id);
 };
 
-// --- ESCRITURA ---
 export const saveSong = (song: Song) => {
   const songs = getSongs();
   localStorage.setItem(KEY, JSON.stringify([song, ...songs]));
@@ -36,29 +36,23 @@ export const updateSong = (updatedSong: Song) => {
   }
 };
 
-// --- BORRADO ---
 export const deleteSong = (id: string) => {
   const songs = getSongs();
   const newSongs = songs.filter((s) => s.id !== id);
   localStorage.setItem(KEY, JSON.stringify(newSongs));
 };
 
-// --- IMPORTACIÓN / EXPORTACIÓN ---
 export const importSongsData = (jsonData: string): boolean => {
   try {
     const parsed = JSON.parse(jsonData);
     if (Array.isArray(parsed)) {
-      // Opcional: Validar que los objetos tengan la estructura correcta
       localStorage.setItem(KEY, JSON.stringify(parsed));
       return true;
     }
-  } catch (e) {
-    console.error("Error importando JSON", e);
-  }
+  } catch (e) { console.error("Error importando:", e); }
   return false;
 };
 
-// --- GESTIÓN DE SELECCIÓN ACTIVA (Para pasar datos entre páginas) ---
 export const saveCurrentSongId = (id: string) => {
   if (typeof window === 'undefined') return;
   localStorage.setItem(CURRENT_SONG_KEY, id);
