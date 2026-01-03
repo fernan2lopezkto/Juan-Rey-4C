@@ -1,5 +1,5 @@
 import VistaCancion from '@/components/libretaDeNotas/VistaCancion';
-import AccionesCancion from '@/components/libretaDeNotas/AccionesCancione';
+import AccionesCancion from '@/components/libretaDeNotas/AccionesCancion';
 export const metadata = {
   title: 'Vista de Canción',
   description: 'Detalles de la canción seleccionada',
