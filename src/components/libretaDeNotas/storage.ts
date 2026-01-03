@@ -5,7 +5,7 @@ export interface Song {
   chords: string;
   notes: string;
   date: string;
-  tags: string[]; // Nuevo: Soporte para etiquetas
+  tags: string[]; // Sistema de etiquetas
 }
 
 const KEY = 'my_songs_db';

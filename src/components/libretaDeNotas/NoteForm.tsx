@@ -1,12 +1,19 @@
+// components/libretaDeNotas/NoteForm.tsx
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { saveSong, updateSong, getSongById, getCurrentSongId } from '@/components/libretaDeNotas/storage';
+import { saveSong, updateSong, getSongById, getCurrentSongId } from './storage';
+import TagManager from './TagManager';
 
 export default function FormularioCancion({ mode = 'create' }: { mode?: 'create' | 'edit' }) {
   const router = useRouter();
-  const [form, setForm] = useState({ title: '', chords: '', notes: '', tags: '' });
   const [currentId, setCurrentId] = useState<string | null>(null);
+  const [form, setForm] = useState({
+    title: '',
+    chords: '',
+    notes: '',
+    tags: [] as string[]
+  });
 
   useEffect(() => {
     if (mode === 'edit') {
@@ -19,7 +26,7 @@ export default function FormularioCancion({ mode = 'create' }: { mode?: 'create'
             title: song.title, 
             chords: song.chords, 
             notes: song.notes,
-            tags: song.tags ? song.tags.join(', ') : '' 
+            tags: song.tags || [] 
           });
         }
       }
@@ -28,14 +35,8 @@ export default function FormularioCancion({ mode = 'create' }: { mode?: 'create'
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Limpiamos y convertimos el string de tags a un array
-    const tagArray = form.tags.split(',').map(t => t.trim()).filter(t => t !== '');
-    
     const songData = {
-      title: form.title,
-      chords: form.chords,
-      notes: form.notes,
-      tags: tagArray,
+      ...form,
       date: new Date().toLocaleDateString()
     };
 
@@ -48,30 +49,36 @@ export default function FormularioCancion({ mode = 'create' }: { mode?: 'create'
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5 max-w-lg mx-auto p-4 bg-base-100 rounded-box border border-base-300 shadow-sm">
-      <h2 className="text-3xl font-black text-primary">{mode === 'edit' ? 'Editar' : 'Nueva'} Canción</h2>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-5 max-w-lg mx-auto p-6 bg-base-100 rounded-box border border-base-300 shadow-xl mb-10">
+      <h2 className="text-3xl font-black text-primary mb-2">
+        {mode === 'edit' ? '✏️ Editar' : '🎵 Nueva'} Canción
+      </h2>
       
       <div className="form-control">
-        <label className="label text-xs uppercase font-bold opacity-40">Título</label>
+        <label className="label text-xs uppercase font-bold opacity-40 tracking-widest">Título</label>
         <input required className="input input-bordered" value={form.title} onChange={e => setForm({...form, title: e.target.value})} />
       </div>
 
       <div className="form-control">
-        <label className="label text-xs uppercase font-bold opacity-40">Chords Progression</label>
+        <label className="label text-xs uppercase font-bold opacity-40 tracking-widest">Progresión</label>
         <input className="input input-bordered font-mono font-bold text-accent" value={form.chords} onChange={e => setForm({...form, chords: e.target.value})} />
       </div>
 
-      <div className="form-control">
-        <label className="label text-xs uppercase font-bold opacity-40">Etiquetas (separadas por comas)</label>
-        <input placeholder="ej: domingo, lento, alabanza" className="input input-bordered input-sm" value={form.tags} onChange={e => setForm({...form, tags: e.target.value})} />
-      </div>
+      {/* USO DEL COMPONENTE TAGS */}
+      <TagManager 
+        tags={form.tags} 
+        onChange={(newTags) => setForm({...form, tags: newTags})} 
+      />
 
       <div className="form-control">
-        <label className="label text-xs uppercase font-bold opacity-40">Letra y Notas</label>
+        <label className="label text-xs uppercase font-bold opacity-40 tracking-widest">Contenido</label>
         <textarea className="textarea textarea-bordered h-48 leading-relaxed font-medium" value={form.notes} onChange={e => setForm({...form, notes: e.target.value})} />
       </div>
 
-      <button className="btn btn-primary shadow-lg mt-4">Guardar Cambios</button>
+      <div className="flex gap-2">
+        <button type="button" onClick={() => router.back()} className="btn btn-ghost flex-1">Cancelar</button>
+        <button type="submit" className="btn btn-primary flex-[2] shadow-lg">Guardar Canción</button>
+      </div>
     </form>
   );
 }
