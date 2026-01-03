@@ -4,6 +4,7 @@ import {
   getSongs, 
   saveCurrentSongId, 
   importSongsData, 
+  deleteSong,
   Song 
 } from '@/components/libretaDeNotas/storage';
 
