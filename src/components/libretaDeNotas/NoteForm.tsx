@@ -1,26 +1,44 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { saveSong, updateSong, getSongById, getCurrentSongId, Song } from '@/components/libretaDeNotas/storage';
+import { 
+  saveSong, 
+  updateSong, 
+  getSongById, 
+  getCurrentSongId, 
+  Song 
+} from '@/components/libretaDeNotas/storage';
 
 interface NoteFormProps {
   mode?: 'create' | 'edit';
 }
 
-export default function NoteForm({ mode = 'create' }: NoteFormProps) {
+export default function FormularioCancion({ mode = 'create' }: NoteFormProps) {
   const router = useRouter();
-  const [form, setForm] = useState<Omit<Song, 'id' | 'date'>>({ title: '', chords: '', notes: '' });
+  
+  // Estado del formulario
+  const [form, setForm] = useState<Omit<Song, 'id' | 'date'>>({ 
+    title: '', 
+    chords: '', 
+    notes: '' 
+  });
+  
+  // ID actual (solo para modo edición)
   const [currentId, setCurrentId] = useState<string | null>(null);
 
-  // Si estamos en modo editar, cargamos los datos
+  // Efecto: Si es modo edición, cargar datos
   useEffect(() => {
     if (mode === 'edit') {
       const id = getCurrentSongId();
       if (id) {
-        const song = getSongById(id);
-        if (song) {
+        const songData = getSongById(id);
+        if (songData) {
           setCurrentId(id);
-          setForm({ title: song.title, chords: song.chords, notes: song.notes });
+          setForm({ 
+            title: songData.title, 
+            chords: songData.chords, 
+            notes: songData.notes 
+          });
         }
       }
     }
@@ -30,31 +48,40 @@ export default function NoteForm({ mode = 'create' }: NoteFormProps) {
     e.preventDefault();
     
     if (mode === 'create') {
+      // Crear nueva
       saveSong({
         id: crypto.randomUUID(),
         ...form,
         date: new Date().toLocaleDateString()
       });
     } else if (mode === 'edit' && currentId) {
+      // Actualizar existente
       updateSong({
         id: currentId,
         ...form,
-        date: new Date().toLocaleDateString() // Actualizamos la fecha de edición
+        date: new Date().toLocaleDateString() // Actualiza fecha a "hoy" al editar
       });
     }
 
+    // Redirección
     router.push('/utilities/libretadenotas/listadecanciones');
-    router.refresh(); // Refresca para mostrar cambios
+    router.refresh(); 
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-lg mx-auto bg-base-100 p-6 rounded-box shadow-lg border border-base-200">
-      <h2 className="text-2xl font-bold text-primary">
-        {mode === 'edit' ? 'Editar Canción' : 'Nueva Canción'}
+    <form 
+      onSubmit={handleSubmit} 
+      className="flex flex-col gap-4 max-w-lg mx-auto bg-base-100 p-6 rounded-box shadow-lg border border-base-200"
+    >
+      <h2 className="text-2xl font-bold text-primary mb-2">
+        {mode === 'edit' ? '✏️ Editar Canción' : '🎵 Agregar Canción'}
       </h2>
       
-      <div className="form-control">
-        <label className="label"><span className="label-text">Título</span></label>
+      {/* Título */}
+      <div className="form-control w-full">
+        <label className="label">
+          <span className="label-text font-semibold">Título</span>
+        </label>
         <input
           required
           value={form.title}
@@ -64,30 +91,43 @@ export default function NoteForm({ mode = 'create' }: NoteFormProps) {
         />
       </div>
 
-      <div className="form-control">
-        <label className="label"><span className="label-text">Progresión</span></label>
+      {/* Acordes */}
+      <div className="form-control w-full">
+        <label className="label">
+          <span className="label-text font-semibold">Progresión de Acordes</span>
+        </label>
         <input
           value={form.chords}
           placeholder="Ej: Bm G D A"
-          className="input input-bordered w-full font-mono text-secondary font-bold"
+          className="input input-bordered w-full font-mono text-secondary font-bold text-lg"
           onChange={e => setForm({ ...form, chords: e.target.value })}
         />
       </div>
 
-      <div className="form-control">
-        <label className="label"><span className="label-text">Contenido</span></label>
+      {/* Letra y Notas */}
+      <div className="form-control w-full">
+        <label className="label">
+          <span className="label-text font-semibold">Letra y Notas</span>
+        </label>
         <textarea
           value={form.notes}
-          placeholder="Letra y notas..."
-          className="textarea textarea-bordered h-48 w-full leading-relaxed"
+          placeholder="Escribe aquí la letra o detalles de la canción..."
+          className="textarea textarea-bordered h-48 w-full leading-relaxed text-base"
           onChange={e => setForm({ ...form, notes: e.target.value })}
         />
       </div>
 
-      <div className="flex gap-2 mt-4">
-        <button type="button" onClick={() => router.back()} className="btn btn-ghost flex-1">Cancelar</button>
-        <button type="submit" className="btn btn-primary flex-1">
-            {mode === 'edit' ? 'Actualizar' : 'Guardar'}
+      {/* Botones */}
+      <div className="flex gap-3 mt-6">
+        <button 
+          type="button" 
+          onClick={() => router.back()} 
+          className="btn btn-ghost flex-1"
+        >
+          Cancelar
+        </button>
+        <button type="submit" className="btn btn-primary flex-1 shadow-md">
+            {mode === 'edit' ? 'Actualizar Cambios' : 'Guardar Canción'}
         </button>
       </div>
     </form>
