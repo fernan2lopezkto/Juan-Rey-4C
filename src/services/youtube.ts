@@ -151,3 +151,31 @@ export async function rateVideo(id: string, rating: 'like' | 'dislike' | 'none',
         throw new Error('Failed to rate video');
     }
 }
+
+export async function getVideoDetails(videoId: string, accessToken: string): Promise<Video> {
+    const res = await fetch(
+        `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${videoId}`,
+        {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                Accept: 'application/json',
+            },
+        }
+    );
+
+    if (!res.ok) throw new Error('Failed to fetch video details');
+    const data = await res.json();
+    const item = data.items[0];
+
+    if (!item) throw new Error('Video not found');
+
+    return {
+        id: item.id,
+        title: item.snippet.title,
+        description: item.snippet.description,
+        thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
+        channelTitle: item.snippet.channelTitle,
+        publishedAt: item.snippet.publishedAt,
+    };
+}
+

@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { getVideoDetails, getRelatedVideos } from '@/services/youtube'; // Asegúrate de tener getVideoDetails
+import { getVideoDetails, getRelatedVideos } from '@/services/youtube';
 import { useYoutube } from '@/context/YoutubeContext';
 import YoutubePlayer from '@/components/youtube/YoutubePlayer';
 import VideoList from '@/components/youtube/VideoList';
@@ -12,40 +12,67 @@ export default function WatchPage() {
     const params = useParams();
     const videoId = params.id as string;
     const { accessToken, addToHistory, filterAndDislike } = useYoutube();
+    
     const [video, setVideo] = useState<Video | null>(null);
     const [related, setRelated] = useState<Video[]>([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        // Necesitamos el ID y el Token para poder pedir la info a Google
         if (!videoId || !accessToken) return;
 
-        const loadData = async () => {
-            // 1. Obtener detalles del video actual (necesitas crear esta funcion en tu service o reusar search)
-            // Esto es un placeholder, deberías implementar getVideoDetailsById en tu servicio
-            // const current = await getVideoDetailsById(videoId, accessToken); 
-            // setVideo(current);
-            // addToHistory(current);
+        const loadVideoData = async () => {
+            setLoading(true);
+            try {
+                // 1. Traer detalles del video actual
+                const currentVideo = await getVideoDetails(videoId, accessToken);
+                setVideo(currentVideo);
+                addToHistory(currentVideo); // Guardar en historial automáticamente
 
-            // 2. Obtener relacionados
-            // const rawRelated = await getRelatedVideos(current.title, accessToken);
-            // setRelated(await filterAndDislike(rawRelated));
+                // 2. Traer videos relacionados (usando el título para buscar similares)
+                const rawRelated = await getRelatedVideos(currentVideo.title, accessToken);
+                const filtered = await filterAndDislike(rawRelated);
+                setRelated(filtered);
+            } catch (err) {
+                console.error("Error cargando video:", err);
+            } finally {
+                setLoading(false);
+            }
         };
-        
-        // loadData(); 
-        // Nota para Fernan: Como getVideoDetails no estaba en tu snippet original, 
-        // aquí tendrás que implementarlo o pasar la data completa por estado global.
-        // Lo ideal es hacer un fetch al endpoint 'videos' de la API de youtube con el ID.
+
+        loadVideoData();
     }, [videoId, accessToken]);
 
-    if (!video) return <div>Loading player... (Implementa getVideoDetails en tu servicio)</div>;
+    if (loading) return (
+        <div className="flex flex-col items-center justify-center min-h-[50vh]">
+            <span className="loading loading-ring loading-lg text-primary"></span>
+            <p className="mt-4 opacity-70">Cargando video...</p>
+        </div>
+    );
+
+    if (!video) return <div className="alert alert-error">No se pudo cargar el video. Revisa tu conexión o sesión.</div>;
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Columna del Reproductor */}
             <div className="lg:col-span-2">
-                <YoutubePlayer video={video} />
+                <YoutubePlayer 
+                    video={video} 
+                    onEnded={() => {
+                        // Opcional: Autoplay al siguiente relacionado
+                        if (related.length > 0) window.location.href = `/youtube/watch/${related[0].id}`;
+                    }}
+                />
             </div>
+
+            {/* Columna de Sugerencias */}
             <div className="lg:col-span-1">
-                <h3 className="font-bold text-lg mb-4">Related Videos</h3>
-                <VideoList videos={related} />
+                <h3 className="font-bold text-xl mb-4 flex items-center gap-2">
+                    Videos Relacionados
+                </h3>
+                <div className="max-h-screen overflow-y-auto pr-2">
+                    <VideoList videos={related} />
+                </div>
             </div>
         </div>
     );
