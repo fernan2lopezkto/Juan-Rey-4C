@@ -13,7 +13,7 @@ function SearchResults() {
     const query = searchParams.get('q');
     const { data: session } = useSession();
     const { accessToken, filterAndDislike } = useYoutube();
-    
+
     const [videos, setVideos] = useState<Video[]>([]);
     const [loading, setLoading] = useState(false);
 
@@ -47,11 +47,18 @@ function SearchResults() {
     );
 }
 
+import SearchHeader from '@/components/youtube/SearchHeader';
+import YoutubeNav from '@/components/youtube/YoutubeNav';
+
 // Es necesario envolver en Suspense para usar useSearchParams en Next.js
 export default function SearchPage() {
     return (
-        <Suspense fallback={<div className="p-10 text-center">Cargando buscador...</div>}>
-            <SearchResults />
-        </Suspense>
+        <div>
+            <SearchHeader />
+            <YoutubeNav />
+            <Suspense fallback={<div className="p-10 text-center">Cargando buscador...</div>}>
+                <SearchResults />
+            </Suspense>
+        </div>
     );
 }

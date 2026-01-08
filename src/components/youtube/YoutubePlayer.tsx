@@ -50,9 +50,6 @@ export default function YoutubePlayer({ video, onEnded }: PlayerProps) {
                         <FaThumbsDown /> Not Interested
                     </button>
                 </div>
-                <p className="text-sm text-base-content/80 bg-base-200 p-4 rounded-lg whitespace-pre-wrap">
-                    {video.description}
-                </p>
             </div>
         </div>
     );

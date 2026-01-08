@@ -4,16 +4,21 @@ import { useYoutube } from '@/context/YoutubeContext';
 import VideoList from '@/components/youtube/VideoList';
 import { FaTrash } from 'react-icons/fa';
 
+import SearchHeader from '@/components/youtube/SearchHeader';
+import YoutubeNav from '@/components/youtube/YoutubeNav';
+
 export default function HistoryPage() {
     const { history, removeFromHistory, clearHistory } = useYoutube();
 
     return (
         <div>
+            <SearchHeader />
+            <YoutubeNav />
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">Historial de Reproducción</h2>
                 {history.length > 0 && (
-                    <button 
-                        onClick={clearHistory} 
+                    <button
+                        onClick={clearHistory}
                         className="btn btn-sm btn-outline btn-error gap-2"
                     >
                         <FaTrash /> Borrar Todo
@@ -27,9 +32,9 @@ export default function HistoryPage() {
                     <p className="text-sm">Tus videos vistos aparecerán aquí.</p>
                 </div>
             ) : (
-                <VideoList 
-                    videos={history} 
-                    onRemove={removeFromHistory} 
+                <VideoList
+                    videos={history}
+                    onRemove={removeFromHistory}
                 />
             )}
         </div>

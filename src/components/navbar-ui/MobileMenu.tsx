@@ -3,9 +3,15 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
+interface NavLink {
+    name: string;
+    href: string;
+    sublinks?: NavLink[];
+}
+
 interface MobileMenuProps {
-    navLinks: { name: string; href: string }[];
-    session: any; // Using any for simplicity with NextAuth session type, strictly could be Session | null
+    navLinks: NavLink[];
+    session: any;
 }
 
 export default function MobileMenu({ navLinks, session }: MobileMenuProps) {
@@ -40,12 +46,27 @@ export default function MobileMenu({ navLinks, session }: MobileMenuProps) {
 
                     {/* Enlaces del menú centrados */}
                     <div className="flex flex-col items-center justify-center flex-grow">
-                        <ul className="menu menu-vertical items-center gap-6">
+                        <ul className="menu menu-vertical items-center gap-4 w-full text-center">
                             {navLinks.map((link) => (
-                                <li key={link.href}>
-                                    <Link href={link.href} onClick={closeMenu} className="text-2xl">
-                                        {link.name}
-                                    </Link>
+                                <li key={link.name} className="w-full">
+                                    {link.sublinks ? (
+                                        <details>
+                                            <summary className="text-2xl justify-center py-4">{link.name}</summary>
+                                            <ul>
+                                                {link.sublinks.map(sublink => (
+                                                    <li key={sublink.href}>
+                                                        <Link href={sublink.href} onClick={closeMenu} className="text-xl">
+                                                            {sublink.name}
+                                                        </Link>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </details>
+                                    ) : (
+                                        <Link href={link.href} onClick={closeMenu} className="text-2xl justify-center">
+                                            {link.name}
+                                        </Link>
+                                    )}
                                 </li>
                             ))}
                             {session?.user && (

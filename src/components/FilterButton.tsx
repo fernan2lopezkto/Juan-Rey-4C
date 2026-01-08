@@ -7,19 +7,19 @@ export default function FilterButton() {
                 Youtube kid filter!
             </h3>
             <p className="m-4 italic">
-                Aplicación que te permite 
-                filtrar el contenido no deseado 
-                en Youtube, no solo te oculta los 
-                videos que tengan en su titulo o 
-                descripción esas palabras que tu 
+                Aplicación que te permite
+                filtrar el contenido no deseado
+                en Youtube, no solo te oculta los
+                videos que tengan en su titulo o
+                descripción esas palabras que tu
                 quieras evitar, por ejemplo "halloween",
-                sino que te las marca como "no me 
-                gusta", para que al navegar en la app 
-                oficial de Youtube tampoco te 
-                aparezcan. Ideal para cuidar lo que 
+                sino que te las marca como "no me
+                gusta", para que al navegar en la app
+                oficial de Youtube tampoco te
+                aparezcan. Ideal para cuidar lo que
                 ven nuestros hijos.
             </p>
-            <Link href="/youtube-filter" className="btn btn-primary my-4 btn-lg">
+            <Link href="/youtube" className="btn btn-primary my-4 btn-lg">
                 Ir a Filtro de YouTube
             </Link>
         </div>

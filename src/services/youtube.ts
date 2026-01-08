@@ -1,12 +1,5 @@
 
-export interface Video {
-    id: string;
-    title: string;
-    description: string;
-    thumbnail: string;
-    channelTitle: string;
-    publishedAt: string;
-}
+import { Video } from '@/types/youtube';
 
 export async function searchVideos(query: string, token: string): Promise<Video[]> {
     const params = new URLSearchParams({
@@ -60,15 +53,17 @@ export async function searchVideos(query: string, token: string): Promise<Video[
 }
 
 export async function getRelatedVideos(videoTitle: string, token: string): Promise<Video[]> {
-    const params = new URLSearchParams({
-        part: 'snippet',
-        maxResults: '100',
-        q: videoTitle, // Search for the video title to find related/similar content
-        type: 'video',
-        key: process.env.NEXT_PUBLIC_YOUTUBE_API_KEY || '',
-    });
+    const fetchPage = async (pageToken?: string) => {
+        const params = new URLSearchParams({
+            part: 'snippet',
+            maxResults: '50',
+            q: videoTitle,
+            type: 'video',
+            videoEmbeddable: 'true',
+            key: process.env.NEXT_PUBLIC_YOUTUBE_API_KEY || '',
+        });
+        if (pageToken) params.append('pageToken', pageToken);
 
-    try {
         const response = await fetch(`https://www.googleapis.com/youtube/v3/search?${params.toString()}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -78,11 +73,21 @@ export async function getRelatedVideos(videoTitle: string, token: string): Promi
 
         if (!response.ok) {
             console.error('YouTube Related Videos Error', await response.text());
-            return [];
+            return { items: [], nextPageToken: undefined };
+        }
+        return response.json();
+    };
+
+    try {
+        const page1 = await fetchPage();
+        let items = page1.items || [];
+
+        if (page1.nextPageToken) {
+            const page2 = await fetchPage(page1.nextPageToken);
+            items = [...items, ...(page2.items || [])];
         }
 
-        const data = await response.json();
-        return data.items.map((item: any) => ({
+        return items.map((item: any) => ({
             id: item.id.videoId,
             title: item.snippet.title,
             description: item.snippet.description,

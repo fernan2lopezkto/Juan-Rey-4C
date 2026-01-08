@@ -1,14 +1,4 @@
-export type AnswerOption = {
-  answerText: string;
-  isCorrect: boolean;
-};
-
-export type Question = {
-  questionText: string;
-  answerOptions: AnswerOption[];
-  id?: number; // Opcional por si lo necesitas
-  dificultad?: string; // Opcional
-};
+import { Question } from '@/types/biblequiz';
 
 export const bibleQuestions: Question[] = [
   // --- FÁCILES (1-34) ---
@@ -640,7 +630,7 @@ export const bibleQuestions: Question[] = [
       { answerText: "Guejazí", isCorrect: false },
     ],
   },
-    {
+  {
     questionText: "¿Cuántos años tenía Abraham cuando nació Isaac?",
     answerOptions: [
       { answerText: "75", isCorrect: false },

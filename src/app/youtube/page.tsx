@@ -5,6 +5,9 @@ import { getPopularVideos } from '@/services/youtube';
 import { useYoutube } from '@/context/YoutubeContext';
 import VideoList from '@/components/youtube/VideoList';
 import { Video } from '@/types/youtube';
+import AuthPlaceholder from '@/components/AuthPlaceholder';
+import SearchHeader from '@/components/youtube/SearchHeader';
+import YoutubeNav from '@/components/youtube/YoutubeNav';
 
 export default function YoutubeHome() {
     const { data: session } = useSession();
@@ -28,12 +31,14 @@ export default function YoutubeHome() {
             }
         };
         fetchPopular();
-    }, [session, accessToken, filterAndDislike]); // Nota: filterAndDislike debe ser estable o usar useCallback en Context
+    }, [session, accessToken, filterAndDislike]);
 
-    if (!session) return <div className="text-center mt-10"><button className="btn btn-primary" onClick={() => signIn('google')}>Iniciar Sesión con Google</button></div>;
+    if (!session) return <AuthPlaceholder message="Debes loguearte para usar las funciones de Youtube Kid Filter." />;
 
     return (
         <div>
+            <SearchHeader />
+            <YoutubeNav />
             <h2 className="text-2xl font-bold mb-4">Popular Videos</h2>
             <VideoList videos={videos} loading={loading} />
         </div>

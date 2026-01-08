@@ -11,11 +11,16 @@ export default async function Navbar() {
 
   const navLinks = [
     { name: 'Home', href: '/' },
-    { name: 'Youtube kid Filter', href: '/youtube-filter' },
-    { name: 'Bible Quiz', href:'/utilities/biblequiz'},
-    { name: 'Libreta de Acordes', href:'/utilities/libretadenotas'},
     { name: 'About', href: '/about' },
-    { name: 'Utilidades', href: '/utilities' },
+    {
+      name: 'Utilidades',
+      href: '#', // Submenu parent
+      sublinks: [
+        { name: 'Youtube Kid Filter', href: '/youtube' },
+        { name: 'Bible Quiz', href: '/utilities/biblequiz' },
+        { name: 'Libreta de Acordes', href: '/utilities/libretadenotas' },
+      ]
+    },
   ];
 
   return (
@@ -36,10 +41,23 @@ export default async function Navbar() {
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
           {navLinks.map((link) => (
-            <li key={link.href}>
-              <Link href={link.href} className="text-base font-medium">
-                {link.name}
-              </Link>
+            <li key={link.name}>
+              {link.sublinks ? (
+                <details>
+                  <summary className="text-base font-medium">{link.name}</summary>
+                  <ul className="p-2 bg-base-100 rounded-box z-[1] w-52 shadow">
+                    {link.sublinks.map(sublink => (
+                      <li key={sublink.href}>
+                        <Link href={sublink.href}>{sublink.name}</Link>
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              ) : (
+                <Link href={link.href} className="text-base font-medium">
+                  {link.name}
+                </Link>
+              )}
             </li>
           ))}
         </ul>

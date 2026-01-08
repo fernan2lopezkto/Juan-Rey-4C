@@ -1,12 +1,4 @@
-// utilities/libretadenotas/utils/storage.ts
-export interface Song {
-  id: string;
-  title: string;
-  chords: string;
-  notes: string;
-  date: string;
-  tags: string[]; // Sistema de etiquetas
-}
+import { Song } from '@/types/notebook';
 
 const KEY = 'my_songs_db';
 const CURRENT_SONG_KEY = 'current_active_song_id';
