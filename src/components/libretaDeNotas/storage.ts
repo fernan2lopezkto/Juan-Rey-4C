@@ -1,4 +1,5 @@
 import { Song } from '@/types/notebook';
+export type { Song };
 
 const KEY = 'my_songs_db';
 const CURRENT_SONG_KEY = 'current_active_song_id';
