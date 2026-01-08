@@ -7,7 +7,7 @@ import {
   deleteSong, 
   importSongsData, 
   Song 
-} from './storage';
+} from '../storage';
 
 export default function ListaCanciones() {
   const [songs, setSongs] = useState<Song[]>([]);

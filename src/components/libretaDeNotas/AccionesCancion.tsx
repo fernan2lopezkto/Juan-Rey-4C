@@ -1,7 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { deleteSong, getCurrentSongId } from './storage';
+import { deleteSong, getCurrentSongId } from '..storage.ts';
 
 export default function AccionesCancion() {
   const router = useRouter();

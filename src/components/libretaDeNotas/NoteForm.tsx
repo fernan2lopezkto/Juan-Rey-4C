@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { saveSong, updateSong, getSongById, getCurrentSongId } from './storage';
-import TagManager from './TagManager';
+import TagManager from '../TagManager';
 
 export default function FormularioCancion({ mode = 'create' }: { mode?: 'create' | 'edit' }) {
   const router = useRouter();

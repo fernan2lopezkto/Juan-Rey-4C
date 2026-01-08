@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { getSongById, getCurrentSongId, Song } from '@/components/libretaDeNotas/storage';
-import AccionesCancion from './AccionesCancion';
+import AccionesCancion from '../AccionesCancion';
 
 export default function VistaCancion() {
   const [song, setSong] = useState<Song | null>(null);
