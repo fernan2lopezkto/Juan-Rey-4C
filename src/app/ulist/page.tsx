@@ -1,64 +1,63 @@
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { desc } from "drizzle-orm";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { redirect } from "next/navigation";
 
-// Forzamos que no se guarde en caché para ver los usuarios nuevos al instante
 export const revalidate = 0;
 
 export default async function UsersListPage() {
-  // Consultamos todos los usuarios ordenados por el más reciente
+  // 1. Verificamos la sesión en el servidor
+  const session = await getServerSession(authOptions);
+
+  // 2. Si no hay sesión, redirigimos al login de Google inmediatamente
+  if (!session) {
+    redirect("/api/auth/signin");
+  }
+
+  // Opcional: Si quieres que SOLO TÚ (por tu correo) veas la lista
+  // if (session.user?.email !== "tu-correo@gmail.com") {
+  //   return <div className="p-8 text-center">No tienes permiso para ver esto.</div>;
+  // }
+
   const allUsers = await db.select().from(users).orderBy(desc(users.createdAt));
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-6 text-center">Usuarios Registrados</h1>
+      <h1 className="text-2xl font-bold mb-6 text-center text-primary">
+        Panel de Control: Usuarios
+      </h1>
       
-      <div className="overflow-x-auto shadow-lg rounded-lg">
+      <div className="overflow-x-auto shadow-xl rounded-box border border-base-300">
         <table className="table w-full bg-base-100">
-          <thead className="bg-primary text-primary-content">
+          <thead className="bg-secondary text-secondary-content">
             <tr>
-              <th className="p-4 text-left">Foto</th>
-              <th className="p-4 text-left">Nombre</th>
-              <th className="p-4 text-left">Email</th>
-              <th className="p-4 text-left">Registro</th>
+              <th>Foto</th>
+              <th>Nombre</th>
+              <th>Email</th>
+              <th>Fecha Registro</th>
             </tr>
           </thead>
           <tbody>
             {allUsers.map((user) => (
-              <tr key={user.id} className="border-b border-base-200 hover:bg-base-200">
-                <td className="p-4">
-                  {user.image ? (
-                    <img 
-                      src={user.image} 
-                      alt={user.name ?? 'User'} 
-                      className="w-10 h-10 rounded-full border border-gray-300"
-                    />
-                  ) : (
-                    <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
-                      ?
+              <tr key={user.id} className="hover">
+                <td>
+                  <div className="avatar">
+                    <div className="mask mask-squircle w-10 h-10">
+                      <img src={user.image || ""} alt="Avatar" />
                     </div>
-                  )}
+                  </div>
                 </td>
-                <td className="p-4 font-medium">{user.name || "Sin nombre"}</td>
-                <td className="p-4 text-gray-600">{user.email}</td>
-                <td className="p-4 text-sm text-gray-500">
+                <td className="font-bold">{user.name}</td>
+                <td>{user.email}</td>
+                <td>
                   {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "-"}
                 </td>
               </tr>
             ))}
-            {allUsers.length === 0 && (
-              <tr>
-                <td colSpan={4} className="p-8 text-center text-gray-500">
-                  No hay usuarios registrados aún.
-                </td>
-              </tr>
-            )}
           </tbody>
         </table>
-      </div>
-      
-      <div className="mt-6 text-center text-sm text-gray-400">
-        Total: {allUsers.length} usuarios
       </div>
     </div>
   );
