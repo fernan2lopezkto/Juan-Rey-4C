@@ -73,6 +73,13 @@ export const homeTexts: HomeTexts = {
     "Aquí te equipamos con ideas, reflexiones y materiales para que puedas iniciar conversaciones, compartir tu testimonio y presentar el evangelio de una manera clara y efectiva. ¡Sé un instrumento en las manos de Dios para alcanzar almas para Cristo!",
   ],
 
+  // Cards - Crecimiento
+  creceTitle: "Reflexiones",
+  creceSubtitle: "Conociendo más de Dios",
+  creceDescription: [
+    "Aquí encontrarás reflexiones bíblicas y formas de aprender más de la palabra de Dios.",
+    " Desde estudios bíblicos hasta reflexiones devocionales, nuestro objetivo es que crezcas en el conocimiento de nuestro Señor Jesús.",
+  ],
 };
 
 // ABOUT
@@ -82,7 +89,7 @@ export const aboutTexts: AboutTexts = {
   parrafos: [
     "Soy Juan Rey, Uruguayo, padre de dos hermosos hijos. Fui musico, fotógrafo, emprendedor y varias cosas mas, y hoy a través de esta plataforma, quiero aprovechar mi pasion por el desarrollo de software, para unificar ideas, proyectos y portafolio.",
     "Con 12 añitos comencé a aprender música, mi tío Luis, me regaló un órgano y un cancionero, de esos que venían con todas las notas arriba de la letra y al final dibujos de como hacer los acordes, así comenzó algo que cambio el resto de mi vida. Luego aprendí a tocar la guitarra viendo como tocaban mis compañeros en el grupo, y hace unos cuantos años (cuando necesite tocar bajo, porque era necesario en el grupo de alabanza donde estaba) descubrí cuánto amo ese instrumento de CUATRO CUERDAS lo que dió inicio al canal de YouTube ",
-
+    
   ],
 };
 
@@ -95,9 +102,9 @@ export const apoyanosTexts: Record<string, any> = {};
 export const tiendaTexts: Record<string, any> = {};
 
 // NOMBRE
-export const proyectNames = {
-  long: "4C-ForChrist",
-  short: "4C"
+export const proyectNames = { 
+  long: "4C-ForChrist", 
+  short: "4C" 
 } as const;
 
 // Footer
