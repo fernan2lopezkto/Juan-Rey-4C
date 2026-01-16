@@ -20,7 +20,7 @@ export default async function UsersListPage({
   console.log("SESIÓN ACTUAL:", session?.user?.email);
 
   // 2. Seguridad de Email (IMPORTANTE: Pon tu correo real aquí)
-  const ADMIN_EMAIL = "tu-correo-real@gmail.com"; 
+  const ADMIN_EMAIL = "fernan2lopezkto@gmail.com"; 
 
   if (!session || session.user?.email !== ADMIN_EMAIL) {
     console.log("Redirigiendo porque no es el admin o no hay sesión");
