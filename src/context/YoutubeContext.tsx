@@ -2,8 +2,10 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { rateVideo } from '@/services/youtube'; // Tu servicio actual
+import { rateVideo } from '@/services/youtube'; 
 import { Video } from '@/types/youtube';
+// Importamos las Server Actions
+import { getBlacklist, addWordServer, removeWordServer } from '@/app/actions/filterActions';
 
 interface YoutubeContextType {
     blacklist: string[];
@@ -25,29 +27,67 @@ export function YoutubeProvider({ children }: { children: React.ReactNode }) {
     const [history, setHistory] = useState<Video[]>([]);
     const [isLoaded, setIsLoaded] = useState(false);
 
-    // Cargar datos al inicio
+    // 1. CARGA INICIAL DE DATOS
     useEffect(() => {
-        const savedBlacklist = localStorage.getItem('yt-blacklist');
+        // Historial sigue en LocalStorage (opcional)
         const savedHistory = localStorage.getItem('yt-history');
-        if (savedBlacklist) setBlacklist(JSON.parse(savedBlacklist));
         if (savedHistory) setHistory(JSON.parse(savedHistory));
-        setIsLoaded(true);
-    }, []);
 
-    // Persistir datos
+        // Blacklist viene de la BD si hay usuario
+        if (session?.user?.email) {
+            getBlacklist().then(serverWords => {
+                setBlacklist(serverWords);
+            });
+        } else {
+            // Si no hay usuario, podrías usar localStorage temporalmente o dejarlo vacío
+            const localBlacklist = localStorage.getItem('yt-blacklist');
+            if (localBlacklist) setBlacklist(JSON.parse(localBlacklist));
+        }
+        
+        setIsLoaded(true);
+    }, [session]);
+
+    // 2. PERSISTENCIA DEL HISTORIAL (Solo historial en local)
     useEffect(() => {
         if (isLoaded) {
-            localStorage.setItem('yt-blacklist', JSON.stringify(blacklist));
             localStorage.setItem('yt-history', JSON.stringify(history));
+            // Si no hay sesión, guardamos blacklist en local por si acaso
+            if (!session?.user?.email) {
+                localStorage.setItem('yt-blacklist', JSON.stringify(blacklist));
+            }
         }
-    }, [blacklist, history, isLoaded]);
+    }, [history, blacklist, isLoaded, session]);
 
-    const addToBlacklist = (word: string) => {
-        if (!blacklist.includes(word)) setBlacklist([...blacklist, word]);
+    // 3. AGREGAR PALABRA (Lógica Optimista + Server Action)
+    const addToBlacklist = async (word: string) => {
+        const cleanWord = word.trim().toLowerCase();
+        if (blacklist.includes(cleanWord)) return;
+
+        // Guardamos el estado anterior por si hay error
+        const prevBlacklist = [...blacklist];
+
+        // UI Optimista: Actualizamos visualmente YA
+        setBlacklist(prev => [...prev, cleanWord]);
+
+        // Si hay usuario logueado, guardamos en DB
+        if (session?.user?.email) {
+            const response = await addWordServer(cleanWord);
+            
+            // Si hubo error (ej: Límite PRO alcanzado), revertimos
+            if (response?.error) {
+                alert(response.error); // Aquí podrías usar un Toast más bonito
+                setBlacklist(prevBlacklist); // Revertir cambio visual
+            }
+        }
     };
 
-    const removeFromBlacklist = (word: string) => {
-        setBlacklist(blacklist.filter(w => w !== word));
+    // 4. ELIMINAR PALABRA
+    const removeFromBlacklist = async (word: string) => {
+        setBlacklist(prev => prev.filter(w => w !== word));
+        
+        if (session?.user?.email) {
+            await removeWordServer(word);
+        }
     };
 
     const addToHistory = (video: Video) => {

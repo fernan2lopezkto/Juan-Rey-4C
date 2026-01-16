@@ -1,20 +1,21 @@
 import { pgTable, serial, text, timestamp, integer, primaryKey, uniqueIndex } from 'drizzle-orm/pg-core';
 
-// 1. Tabla de Usuarios (la que ya tenías)
+// 1. Tabla de Usuarios (Actualizada con campo PLAN)
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
   name: text('name'),
   email: text('email').notNull().unique(),
   image: text('image'),
+  // Agregamos el plan para diferenciar usuarios gratuitos de premium
+  plan: text('plan').default('free').notNull(), 
   createdAt: timestamp('created_at').defaultNow(),
   lastLogin: timestamp('last_login').defaultNow(),
 });
 
 // 2. Tabla de Palabras Clave (Diccionario global)
-// Aquí guardamos la palabra una sola vez para todos los usuarios
 export const keywords = pgTable('keywords', {
   id: serial('id').primaryKey(),
-  name: text('name').notNull().unique(), // "unique" asegura que no haya duplicados
+  name: text('name').notNull().unique(),
   createdAt: timestamp('created_at').defaultNow(),
 }, (table) => {
   return {
@@ -23,7 +24,6 @@ export const keywords = pgTable('keywords', {
 });
 
 // 3. Tabla Intermedia (Relación Muchos a Muchos)
-// Vincula qué usuario tiene qué palabras
 export const userKeywords = pgTable('user_keywords', {
   userId: integer('user_id')
     .notNull()
@@ -34,8 +34,6 @@ export const userKeywords = pgTable('user_keywords', {
   assignedAt: timestamp('assigned_at').defaultNow(),
 }, (table) => {
   return {
-    // Definimos una llave primaria compuesta para que un usuario 
-    // no pueda tener la misma palabra vinculada dos veces
     pk: primaryKey({ columns: [table.userId, table.keywordId] }),
   };
 });
