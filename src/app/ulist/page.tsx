@@ -16,7 +16,7 @@ export default async function UsersListPage({
   const session = await getServerSession(authOptions);
 
   // 1. Verificación de Email (Solo TÚ)
-  if (!session || session.user?.email !== "tu-correo@gmail.com") {
+  if (!session || session.user?.email !== "fernan2lopezkto@gmail.com") {
     redirect("/"); // Si no eres tú, fuera.
   }
 
