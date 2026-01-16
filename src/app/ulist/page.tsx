@@ -11,22 +11,24 @@ export const revalidate = 0;
 export default async function UsersListPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const session = await getServerSession(authOptions);
+  const params = await searchParams;
 
-  // 1. Verificación de Email (Solo TÚ)
-  if (!session || session.user?.email !== "fernan2lopezkto@gmail.com") {
-    redirect("/"); // Si no eres tú, fuera.
+  // 1. Verificación de Email (Seguridad Nivel 1)
+  if (!session || session.user?.email !== "tu-correo@gmail.com") {
+    redirect("/"); 
   }
 
-  // 2. Verificación de Contraseña vía URL (ej: /ulist?key=tu_password)
-  const adminKey = (await searchParams).key;
-  if (adminKey !== process.env.ADMIN_PASSWORD) {
+  // 2. Verificación de Llave en URL (Seguridad Nivel 2)
+  // Comprueba si existe la propiedad 'miclave' en la URL
+  const hasKey = params.hasOwnProperty('miclave'); 
+  if (!hasKey) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="alert alert-error w-96">
-          <span>Acceso denegado: Llave de administrador incorrecta.</span>
+      <div className="flex h-screen items-center justify-center bg-base-300">
+        <div className="alert alert-error shadow-lg w-auto">
+          <span>⚠️ Acceso restringido. Se requiere llave de administrador.</span>
         </div>
       </div>
     );
@@ -35,50 +37,51 @@ export default async function UsersListPage({
   const allUsers = await db.select().from(users).orderBy(desc(users.createdAt));
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-black mb-6 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
-        Súper Mega Panel de Control
-      </h1>
+    <div className="p-4 md:p-8 max-w-5xl mx-auto">
+      <header className="mb-8 text-center">
+        <h1 className="text-4xl font-black text-primary mb-2">Admin Panel</h1>
+        <p className="opacity-60">Gestionando {allUsers.length} usuarios registrados</p>
+      </header>
       
-      <div className="overflow-x-auto shadow-2xl rounded-3xl border border-base-300">
-        <table className="table w-full bg-base-100">
-          <thead className="bg-neutral text-neutral-content">
-            <tr>
+      <div className="overflow-x-auto shadow-2xl rounded-3xl border border-base-300 bg-base-100">
+        <table className="table table-zebra w-full">
+          <thead>
+            <tr className="bg-base-200">
               <th>Usuario</th>
-              <th>Email</th>
               <th>Plan Actual</th>
-              <th>Acciones</th>
+              <th className="text-center">Acciones</th>
             </tr>
           </thead>
           <tbody>
             {allUsers.map((user) => (
-              <tr key={user.id} className="hover:bg-base-200 transition-colors">
+              <tr key={user.id} className="hover">
                 <td>
                   <div className="flex items-center gap-3">
                     <div className="avatar">
-                      <div className="mask mask-hexagon w-12 h-12">
-                        <img src={user.image || ""} alt="Avatar" />
+                      <div className="mask mask-squircle w-12 h-12">
+                        <img src={user.image || "/api/placeholder/48/48"} alt="Avatar" />
                       </div>
                     </div>
-                    <div className="font-bold">{user.name}</div>
-                  </div>
-                </td>
-                <td className="opacity-70">{user.email}</td>
-                <td>
-                  <div className={`badge ${user.plan === 'pro' ? 'badge-primary' : 'badge-ghost'} font-bold`}>
-                    {user.plan?.toUpperCase()}
+                    <div>
+                      <div className="font-bold">{user.name}</div>
+                      <div className="text-xs opacity-50">{user.email}</div>
+                    </div>
                   </div>
                 </td>
                 <td>
-                   <form action={async (formData) => {
-                     'use server'
-                     const nextPlan = user.plan === 'pro' ? 'free' : 'pro';
-                     await updateUserPlan(user.id, nextPlan);
-                   }}>
-                     <button className={`btn btn-sm ${user.plan === 'pro' ? 'btn-outline' : 'btn-primary'}`}>
-                       Hacer {user.plan === 'pro' ? 'FREE' : 'PRO'}
-                     </button>
-                   </form>
+                  <span className={`badge font-bold p-3 ${user.plan === 'pro' ? 'badge-primary' : 'badge-ghost'}`}>
+                    {user.plan?.toUpperCase() || 'FREE'}
+                  </span>
+                </td>
+                <td className="text-center">
+                  <form action={async () => {
+                    'use server'
+                    await updateUserPlan(user.id, user.plan || 'free');
+                  }}>
+                    <button className={`btn btn-sm md:btn-md ${user.plan === 'pro' ? 'btn-outline btn-error' : 'btn-primary'}`}>
+                      {user.plan === 'pro' ? 'Degradar a Free' : 'Subir a Pro'}
+                    </button>
+                  </form>
                 </td>
               </tr>
             ))}
