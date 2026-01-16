@@ -4,55 +4,81 @@ import { desc } from "drizzle-orm";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
+import { updateUserPlan } from "@/app/actions/adminActions";
 
 export const revalidate = 0;
 
-export default async function UsersListPage() {
-  // 1. Verificamos la sesión en el servidor
+export default async function UsersListPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   const session = await getServerSession(authOptions);
 
-  // 2. Si no hay sesión, redirigimos al login de Google inmediatamente
-  if (!session) {
-    redirect("/api/auth/signin");
+  // 1. Verificación de Email (Solo TÚ)
+  if (!session || session.user?.email !== "tu-correo@gmail.com") {
+    redirect("/"); // Si no eres tú, fuera.
   }
 
-  // Opcional: Si quieres que SOLO TÚ (por tu correo) veas la lista
-  // if (session.user?.email !== "tu-correo@gmail.com") {
-  //   return <div className="p-8 text-center">No tienes permiso para ver esto.</div>;
-  // }
+  // 2. Verificación de Contraseña vía URL (ej: /ulist?key=tu_password)
+  const adminKey = (await searchParams).key;
+  if (adminKey !== process.env.ADMIN_PASSWORD) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="alert alert-error w-96">
+          <span>Acceso denegado: Llave de administrador incorrecta.</span>
+        </div>
+      </div>
+    );
+  }
 
   const allUsers = await db.select().from(users).orderBy(desc(users.createdAt));
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-6 text-center text-primary">
-        Panel de Control: Usuarios
+      <h1 className="text-3xl font-black mb-6 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+        Súper Mega Panel de Control
       </h1>
       
-      <div className="overflow-x-auto shadow-xl rounded-box border border-base-300">
+      <div className="overflow-x-auto shadow-2xl rounded-3xl border border-base-300">
         <table className="table w-full bg-base-100">
-          <thead className="bg-secondary text-secondary-content">
+          <thead className="bg-neutral text-neutral-content">
             <tr>
-              <th>Foto</th>
-              <th>Nombre</th>
+              <th>Usuario</th>
               <th>Email</th>
-              <th>Fecha Registro</th>
+              <th>Plan Actual</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {allUsers.map((user) => (
-              <tr key={user.id} className="hover">
+              <tr key={user.id} className="hover:bg-base-200 transition-colors">
                 <td>
-                  <div className="avatar">
-                    <div className="mask mask-squircle w-10 h-10">
-                      <img src={user.image || ""} alt="Avatar" />
+                  <div className="flex items-center gap-3">
+                    <div className="avatar">
+                      <div className="mask mask-hexagon w-12 h-12">
+                        <img src={user.image || ""} alt="Avatar" />
+                      </div>
                     </div>
+                    <div className="font-bold">{user.name}</div>
                   </div>
                 </td>
-                <td className="font-bold">{user.name}</td>
-                <td>{user.email}</td>
+                <td className="opacity-70">{user.email}</td>
                 <td>
-                  {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "-"}
+                  <div className={`badge ${user.plan === 'pro' ? 'badge-primary' : 'badge-ghost'} font-bold`}>
+                    {user.plan?.toUpperCase()}
+                  </div>
+                </td>
+                <td>
+                   <form action={async (formData) => {
+                     'use server'
+                     const nextPlan = user.plan === 'pro' ? 'free' : 'pro';
+                     await updateUserPlan(user.id, nextPlan);
+                   }}>
+                     <button className={`btn btn-sm ${user.plan === 'pro' ? 'btn-outline' : 'btn-primary'}`}>
+                       Hacer {user.plan === 'pro' ? 'FREE' : 'PRO'}
+                     </button>
+                   </form>
                 </td>
               </tr>
             ))}
