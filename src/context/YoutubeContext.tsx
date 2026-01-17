@@ -1,21 +1,19 @@
 "use client";
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { rateVideo } from '@/services/youtube'; 
 import { Video } from '@/types/youtube';
-// Importamos las Server Actions
 import { getBlacklist, addWordServer, removeWordServer } from '@/app/actions/filterActions';
+import { getHistoryServer, addToHistoryServer, deleteFromHistoryServer } from '@/app/actions/historyActions';
 
 interface YoutubeContextType {
     blacklist: string[];
     history: Video[];
+    userPlan: string;
     addToBlacklist: (word: string) => void;
     removeFromBlacklist: (word: string) => void;
     addToHistory: (video: Video) => void;
     removeFromHistory: (videoId: string) => void;
     clearHistory: () => void;
-    filterAndDislike: (rawVideos: Video[]) => Promise<Video[]>;
     accessToken: string | null;
 }
 
@@ -25,122 +23,69 @@ export function YoutubeProvider({ children }: { children: React.ReactNode }) {
     const { data: session } = useSession();
     const [blacklist, setBlacklist] = useState<string[]>([]);
     const [history, setHistory] = useState<Video[]>([]);
+    const [userPlan, setUserPlan] = useState<string>('free');
     const [isLoaded, setIsLoaded] = useState(false);
 
-    // 1. CARGA INICIAL DE DATOS
     useEffect(() => {
-        // Historial sigue en LocalStorage (opcional)
-        const savedHistory = localStorage.getItem('yt-history');
-        if (savedHistory) setHistory(JSON.parse(savedHistory));
+        const loadInitialData = async () => {
+            // 1. Cargar lo que haya en local por defecto
+            const localHist = localStorage.getItem('yt-history');
+            if (localHist) setHistory(JSON.parse(localHist));
 
-        // Blacklist viene de la BD si hay usuario
-        if (session?.user?.email) {
-            getBlacklist().then(serverWords => {
-                setBlacklist(serverWords);
-            });
-        } else {
-            // Si no hay usuario, podrías usar localStorage temporalmente o dejarlo vacío
-            const localBlacklist = localStorage.getItem('yt-blacklist');
-            if (localBlacklist) setBlacklist(JSON.parse(localBlacklist));
-        }
-        
-        setIsLoaded(true);
+            if (session?.user?.email) {
+                // 2. Traer Blacklist
+                const words = await getBlacklist();
+                setBlacklist(words);
+
+                // 3. En un caso real, aquí obtendrías el plan desde tu tabla users
+                // Por ahora, si quieres probarlo, cambia manualmente este estado a 'pro'
+                // setUserPlan('pro'); 
+
+                // 4. Si es Pro, sobreescribir historial local con el de la nube
+                const cloudHist = await getHistoryServer();
+                if (cloudHist.length > 0) setHistory(cloudHist);
+            }
+            setIsLoaded(true);
+        };
+        loadInitialData();
     }, [session]);
 
-    // 2. PERSISTENCIA DEL HISTORIAL (Solo historial en local)
-    useEffect(() => {
-        if (isLoaded) {
-            localStorage.setItem('yt-history', JSON.stringify(history));
-            // Si no hay sesión, guardamos blacklist en local por si acaso
-            if (!session?.user?.email) {
-                localStorage.setItem('yt-blacklist', JSON.stringify(blacklist));
-            }
-        }
-    }, [history, blacklist, isLoaded, session]);
+    const addToHistory = async (video: Video) => {
+        // Actualización de UI (Instantánea)
+        setHistory(prev => [video, ...prev.filter(v => v.id !== video.id)].slice(0, 50));
 
-    // 3. AGREGAR PALABRA (Lógica Optimista + Server Action)
-    const addToBlacklist = async (word: string) => {
-        const cleanWord = word.trim().toLowerCase();
-        if (blacklist.includes(cleanWord)) return;
-
-        // Guardamos el estado anterior por si hay error
-        const prevBlacklist = [...blacklist];
-
-        // UI Optimista: Actualizamos visualmente YA
-        setBlacklist(prev => [...prev, cleanWord]);
-
-        // Si hay usuario logueado, guardamos en DB
-        if (session?.user?.email) {
-            const response = await addWordServer(cleanWord);
-            
-            // Si hubo error (ej: Límite PRO alcanzado), revertimos
-            if (response?.error) {
-                alert(response.error); // Aquí podrías usar un Toast más bonito
-                setBlacklist(prevBlacklist); // Revertir cambio visual
-            }
+        if (session?.user?.email && userPlan === 'pro') {
+            await addToHistoryServer(video);
+        } else {
+            // Guardado en LocalStorage para Free
+            const saved = JSON.parse(localStorage.getItem('yt-history') || '[]');
+            const updated = [video, ...saved.filter((v:any) => v.id !== video.id)].slice(0, 50);
+            localStorage.setItem('yt-history', JSON.stringify(updated));
         }
     };
 
-    // 4. ELIMINAR PALABRA
-    const removeFromBlacklist = async (word: string) => {
-        setBlacklist(prev => prev.filter(w => w !== word));
-        
-        if (session?.user?.email) {
-            await removeWordServer(word);
-        }
-    };
-
-    const addToHistory = (video: Video) => {
-        setHistory(prev => {
-            const filtered = prev.filter(v => v.id !== video.id);
-            return [video, ...filtered].slice(0, 50);
-        });
-    };
-
-    const removeFromHistory = (videoId: string) => {
+    const removeFromHistory = async (videoId: string) => {
         setHistory(prev => prev.filter(v => v.id !== videoId));
+        if (session?.user?.email && userPlan === 'pro') {
+            await deleteFromHistoryServer(videoId);
+        } else {
+            const saved = JSON.parse(localStorage.getItem('yt-history') || '[]');
+            localStorage.setItem('yt-history', JSON.stringify(saved.filter((v:any) => v.id !== videoId)));
+        }
     };
-    
-    const clearHistory = () => setHistory([]);
 
-    const filterAndDislike = async (rawVideos: Video[]): Promise<Video[]> => {
-        const allowed: Video[] = [];
-        const toDislike: string[] = [];
-
-        for (const video of rawVideos) {
-            const text = (video.title + ' ' + video.description).toLowerCase();
-            const isBlacklisted = blacklist.some(word => text.includes(word.toLowerCase()));
-
-            if (isBlacklisted) {
-                toDislike.push(video.id);
-            } else {
-                allowed.push(video);
-            }
-        }
-
-        // Auto-dislike en segundo plano
-        // @ts-ignore
-        if (toDislike.length > 0 && session?.accessToken) {
-             Promise.all(toDislike.map(id =>
-                // @ts-ignore
-                rateVideo(id, 'dislike', session.accessToken as string).catch(e => console.error(`Error disliking ${id}`, e))
-            ));
-        }
-        return allowed;
+    const clearHistory = () => {
+        setHistory([]);
+        localStorage.removeItem('yt-history');
+        // Para Pro podrías añadir una acción de "borrar todo"
     };
 
     return (
         <YoutubeContext.Provider value={{
-            blacklist,
-            history,
-            addToBlacklist,
-            removeFromBlacklist,
-            addToHistory,
-            removeFromHistory,
-            clearHistory,
-            filterAndDislike,
-            // @ts-ignore
-            accessToken: session?.accessToken as string || null
+            blacklist, history, userPlan,
+            addToBlacklist, removeFromBlacklist,
+            addToHistory, removeFromHistory, clearHistory,
+            accessToken: (session as any)?.accessToken || null
         }}>
             {children}
         </YoutubeContext.Provider>
