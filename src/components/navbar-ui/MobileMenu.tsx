@@ -3,14 +3,10 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
-interface NavLink {
-    name: string;
-    href: string;
-    sublinks?: NavLink[];
-}
+import { NavigationItem } from '@/utils/texts';
 
 interface MobileMenuProps {
-    navLinks: NavLink[];
+    navLinks: NavigationItem[];
     session: any;
 }
 
@@ -48,15 +44,15 @@ export default function MobileMenu({ navLinks, session }: MobileMenuProps) {
                     <div className="flex flex-col items-center justify-center flex-grow">
                         <ul className="menu menu-vertical items-center gap-4 w-full text-center">
                             {navLinks.map((link) => (
-                                <li key={link.name} className="w-full">
-                                    {link.sublinks ? (
+                                <li key={link.label} className="w-full">
+                                    {link.submenu ? (
                                         <details>
-                                            <summary className="text-2xl justify-center py-4">{link.name}</summary>
+                                            <summary className="text-2xl justify-center py-4">{link.label}</summary>
                                             <ul>
-                                                {link.sublinks.map(sublink => (
+                                                {link.submenu.map(sublink => (
                                                     <li key={sublink.href}>
                                                         <Link href={sublink.href} onClick={closeMenu} className="text-xl">
-                                                            {sublink.name}
+                                                            {sublink.label}
                                                         </Link>
                                                     </li>
                                                 ))}
@@ -64,7 +60,7 @@ export default function MobileMenu({ navLinks, session }: MobileMenuProps) {
                                         </details>
                                     ) : (
                                         <Link href={link.href} onClick={closeMenu} className="text-2xl justify-center">
-                                            {link.name}
+                                            {link.label}
                                         </Link>
                                     )}
                                 </li>

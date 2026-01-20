@@ -1,14 +1,15 @@
 'use server'
 
 import { getServerSession } from "next-auth";
-import { db } from "@/db"; 
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { db } from "@/db";
 import { users, keywords, userKeywords } from "@/db/schema";
 import { eq, and, sql } from "drizzle-orm";
 
 const FREE_LIMIT = 5;
 
 export async function getBlacklist() {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
   if (!session?.user?.email) return [];
 
   // Consulta con JOIN para traer los nombres de las palabras del usuario
@@ -23,7 +24,7 @@ export async function getBlacklist() {
 }
 
 export async function addWordServer(wordName: string) {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
   if (!session?.user?.email) return { error: "No autorizado" };
 
   const cleanWord = wordName.trim().toLowerCase();
@@ -50,7 +51,7 @@ export async function addWordServer(wordName: string) {
       .values({ name: cleanWord })
       .onConflictDoUpdate({ target: keywords.name, set: { name: cleanWord } })
       .returning();
-    
+
     const keywordId = keywordInsert[0].id;
 
     // 4. Vincular palabra al usuario
@@ -65,7 +66,7 @@ export async function addWordServer(wordName: string) {
 }
 
 export async function removeWordServer(wordName: string) {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
   if (!session?.user?.email) return;
 
   // Buscamos el ID de la palabra y el ID del usuario para romper el vínculo

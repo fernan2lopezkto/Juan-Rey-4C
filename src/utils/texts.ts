@@ -1,6 +1,6 @@
 // --- INTERFACES ---
 
-interface NavigationItem {
+export interface NavigationItem {
   label: string;
   href: string;
   submenu?: NavigationItem[];
@@ -16,18 +16,17 @@ interface AboutTexts {
 
 // NavBars
 export const navigationItems: NavigationItem[] = [
-  { label: "Inicio", href: "/" },
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
   {
-    label: "Material",
-    href: "/material",
+    label: "Utilidades",
+    href: "#",
     submenu: [
-      { label: "Tutoriales", href: "/tutoriales" },
-      { label: "Material Evangelístico", href: "/evangelismo" },
-      { label: "Contenido Edificante", href: "/edificante" },
+      { label: "Youtube Kid Filter", href: "/youtube" },
+      { label: "Bible Quiz", href: "/utilities/biblequiz" },
+      { label: "Libreta de Acordes", href: "/utilities/libretadenotas" },
     ],
   },
-  { label: "Acerca de", href: "/about" },
-  { label: "Apóyanos", href: "/support" },
 ];
 
 // ABOUT

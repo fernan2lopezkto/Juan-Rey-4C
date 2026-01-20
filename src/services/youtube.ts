@@ -1,5 +1,5 @@
 
-import { Video } from '@/types/youtube';
+import { Video } from '@/components/youtube/types';
 
 export async function searchVideos(query: string, token: string): Promise<Video[]> {
     const params = new URLSearchParams({

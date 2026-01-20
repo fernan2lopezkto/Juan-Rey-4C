@@ -1,7 +1,7 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { Video } from '@/types/youtube';
+import { Video } from '@/components/youtube/types';
 import { getBlacklist, addWordServer, removeWordServer } from '@/app/actions/filterActions';
 import { getHistoryServer, addToHistoryServer, deleteFromHistoryServer } from '@/app/actions/historyActions';
 
@@ -15,6 +15,7 @@ interface YoutubeContextType {
     removeFromHistory: (videoId: string) => void;
     clearHistory: () => void;
     accessToken: string | null;
+    filterAndDislike: (videos: Video[]) => Promise<Video[]>;
 }
 
 const YoutubeContext = createContext<YoutubeContextType | undefined>(undefined);
@@ -50,6 +51,17 @@ export function YoutubeProvider({ children }: { children: React.ReactNode }) {
         loadInitialData();
     }, [session]);
 
+    const filterAndDislike = async (videos: Video[]): Promise<Video[]> => {
+        if (!blacklist.length) return videos;
+        const lowerBlacklist = blacklist.map(w => w.toLowerCase());
+
+        return videos.filter(video => {
+            const title = video.title.toLowerCase();
+            const desc = video.description.toLowerCase();
+            return !lowerBlacklist.some(word => title.includes(word) || desc.includes(word));
+        });
+    };
+
     const addToHistory = async (video: Video) => {
         // Actualización de UI (Instantánea)
         setHistory(prev => [video, ...prev.filter(v => v.id !== video.id)].slice(0, 50));
@@ -59,7 +71,7 @@ export function YoutubeProvider({ children }: { children: React.ReactNode }) {
         } else {
             // Guardado en LocalStorage para Free
             const saved = JSON.parse(localStorage.getItem('yt-history') || '[]');
-            const updated = [video, ...saved.filter((v:any) => v.id !== video.id)].slice(0, 50);
+            const updated = [video, ...saved.filter((v: any) => v.id !== video.id)].slice(0, 50);
             localStorage.setItem('yt-history', JSON.stringify(updated));
         }
     };
@@ -70,7 +82,7 @@ export function YoutubeProvider({ children }: { children: React.ReactNode }) {
             await deleteFromHistoryServer(videoId);
         } else {
             const saved = JSON.parse(localStorage.getItem('yt-history') || '[]');
-            localStorage.setItem('yt-history', JSON.stringify(saved.filter((v:any) => v.id !== videoId)));
+            localStorage.setItem('yt-history', JSON.stringify(saved.filter((v: any) => v.id !== videoId)));
         }
     };
 
@@ -85,7 +97,8 @@ export function YoutubeProvider({ children }: { children: React.ReactNode }) {
             blacklist, history, userPlan,
             addToBlacklist, removeFromBlacklist,
             addToHistory, removeFromHistory, clearHistory,
-            accessToken: (session as any)?.accessToken || null
+            accessToken: (session as any)?.accessToken || null,
+            filterAndDislike
         }}>
             {children}
         </YoutubeContext.Provider>
