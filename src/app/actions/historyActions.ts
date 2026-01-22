@@ -2,7 +2,7 @@
 
 import { db } from "@/db";
 import { youtubeHistory, users } from "@/db/schema";
-import { eq, desc, and, sql } from "drizzle-orm";
+import { eq, desc, and } from "drizzle-orm";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
@@ -59,5 +59,17 @@ export async function deleteFromHistoryServer(videoId: string) {
     if (user) {
         await db.delete(youtubeHistory)
             .where(and(eq(youtubeHistory.userId, user.id), eq(youtubeHistory.videoId, videoId)));
+    }
+}
+
+// NUEVA FUNCIÓN PARA BORRAR TODO
+export async function clearHistoryServer() {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) return;
+
+    const user = await db.query.users.findFirst({ where: eq(users.email, session.user.email) });
+    if (user) {
+        await db.delete(youtubeHistory)
+            .where(eq(youtubeHistory.userId, user.id));
     }
 }

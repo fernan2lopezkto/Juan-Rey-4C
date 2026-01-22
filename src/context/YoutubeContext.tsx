@@ -3,7 +3,12 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { Video } from '@/types/youtube';
 import { getBlacklist, addWordServer, removeWordServer } from '@/app/actions/filterActions';
-import { getHistoryServer, addToHistoryServer, deleteFromHistoryServer } from '@/app/actions/historyActions';
+import { 
+    getHistoryServer, 
+    addToHistoryServer, 
+    deleteFromHistoryServer, 
+    clearHistoryServer
+} from '@/app/actions/historyActions';
 import { getUserPlan } from '@/app/actions/userActions'; // Importa la nueva acción
 
 interface YoutubeContextType {
@@ -102,11 +107,22 @@ export function YoutubeProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
-    const clearHistory = () => {
-        setHistory([]);
-        localStorage.removeItem('yt-history');
-        // Aquí podrías llamar a una acción de servidor si quieres borrar todo en PRO
-    };
+const clearHistory = async () => {
+    // 1. Limpiar UI instantáneamente
+    setHistory([]);
+    
+    // 2. Limpiar LocalStorage siempre (por si acaso)
+    localStorage.removeItem('yt-history');
+
+    // 3. Limpiar Nube si es Pro
+    if (session?.user?.email && userPlan === 'pro') {
+        try {
+            await clearHistoryServer();
+        } catch (error) {
+            console.error("Error al borrar historial en la nube:", error);
+        }
+    }
+};
 
     const addToBlacklist = async (word: string) => {
         const normalizedWord = word.trim().toLowerCase();
