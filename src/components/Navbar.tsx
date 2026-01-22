@@ -8,6 +8,8 @@ import MobileMenu from "./navbar-ui/MobileMenu";
 
 import { navigationItems } from "@/utils/texts";
 
+import DesktopMenu from "./navbar-ui/DesktopMenu";
+
 export default async function Navbar() {
   const session = await getServerSession(authOptions);
 
@@ -27,37 +29,7 @@ export default async function Navbar() {
 
       {/* Menú Desktop */}
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal px-1">
-          {navigationItems.map((link) => (
-            <li key={link.label}>
-              {link.submenu ? (
-                <details>
-                  <summary className="text-base font-medium">{link.label}</summary>
-                  <ul className="p-2 bg-base-100 rounded-box z-[1] w-52 shadow">
-                    {link.submenu.map(sublink => (
-                      <li key={sublink.href}>
-                        <Link
-                          href={sublink.href}
-                          onClick={(e) => {
-                            // Cierra el menú details al hacer click
-                            const details = e.currentTarget.closest('details');
-                            if (details) details.removeAttribute('open');
-                          }}
-                        >
-                          {sublink.label}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </details>
-              ) : (
-                <Link href={link.href} className="text-base font-medium">
-                  {link.label}
-                </Link>
-              )}
-            </li>
-          ))}
-        </ul>
+        <DesktopMenu navLinks={navigationItems} />
       </div>
 
       <div className="navbar-end gap-2">
