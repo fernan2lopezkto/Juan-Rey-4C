@@ -66,7 +66,7 @@ export function YoutubeProvider({ children }: { children: React.ReactNode }) {
         // Actualización de UI (Instantánea)
         setHistory(prev => [video, ...prev.filter(v => v.id !== video.id)].slice(0, 50));
 
-        if (session?.user?.email && userPlan === 'pro') {
+        if (session.user.email && userPlan === 'pro') {
             await addToHistoryServer(video);
         } else {
             // Guardado en LocalStorage para Free
