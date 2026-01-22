@@ -1,7 +1,7 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { Video } from '@/components/youtube/types';
+import { Video } from '@/types/youtube';
 import { getBlacklist, addWordServer, removeWordServer } from '@/app/actions/filterActions';
 import { getHistoryServer, addToHistoryServer, deleteFromHistoryServer } from '@/app/actions/historyActions';
 
@@ -57,7 +57,7 @@ export function YoutubeProvider({ children }: { children: React.ReactNode }) {
 
         return videos.filter(video => {
             const title = video.title.toLowerCase();
-            const desc = video.description.toLowerCase();
+            const desc = (video.description || '').toLowerCase();
             return !lowerBlacklist.some(word => title.includes(word) || desc.includes(word));
         });
     };
@@ -90,6 +90,26 @@ export function YoutubeProvider({ children }: { children: React.ReactNode }) {
         setHistory([]);
         localStorage.removeItem('yt-history');
         // Para Pro podrías añadir una acción de "borrar todo"
+    };
+
+    const addToBlacklist = async (word: string) => {
+        if (blacklist.includes(word)) return;
+        setBlacklist(prev => [...prev, word]);
+
+        if (session?.user?.email) {
+            const res = await addWordServer(word);
+            if (res?.error) {
+                setBlacklist(prev => prev.filter(w => w !== word));
+                alert(res.error);
+            }
+        }
+    };
+
+    const removeFromBlacklist = async (word: string) => {
+        setBlacklist(prev => prev.filter(w => w !== word));
+        if (session?.user?.email) {
+            await removeWordServer(word);
+        }
     };
 
     return (

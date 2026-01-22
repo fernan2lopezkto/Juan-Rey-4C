@@ -4,7 +4,7 @@ import { useSession, signIn } from 'next-auth/react';
 import { getPopularVideos } from '@/services/youtube';
 import { useYoutube } from '@/context/YoutubeContext';
 import VideoList from '@/components/youtube/VideoList';
-import { Video } from '@/components/youtube/types';
+import { Video } from '@/types/youtube';
 import AuthPlaceholder from '@/components/AuthPlaceholder';
 import SearchHeader from '@/components/youtube/SearchHeader';
 import YoutubeNav from '@/components/youtube/YoutubeNav';
