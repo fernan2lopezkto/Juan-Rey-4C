@@ -24,7 +24,7 @@ export function YoutubeProvider({ children }: { children: React.ReactNode }) {
     const { data: session } = useSession();
     const [blacklist, setBlacklist] = useState<string[]>([]);
     const [history, setHistory] = useState<Video[]>([]);
-    const [userPlan, setUserPlan] = useState<string>('free');
+    const [userPlan, setUserPlan] = useState<string>('pro');
     const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
@@ -66,7 +66,7 @@ export function YoutubeProvider({ children }: { children: React.ReactNode }) {
         // Actualización de UI (Instantánea)
         setHistory(prev => [video, ...prev.filter(v => v.id !== video.id)].slice(0, 50));
 
-        if (userPlan === 'pro') {
+        if (session?.user?.email && userPlan === 'pro') {
             await addToHistoryServer(video);
         } else {
             // Guardado en LocalStorage para Free
