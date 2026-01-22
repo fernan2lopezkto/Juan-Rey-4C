@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react';
 import { Video } from '@/types/youtube';
 import { getBlacklist, addWordServer, removeWordServer } from '@/app/actions/filterActions';
 import { getHistoryServer, addToHistoryServer, deleteFromHistoryServer } from '@/app/actions/historyActions';
+import { getUserPlan } from '@/app/actions/userActions'; // Importa la nueva acción
 
 interface YoutubeContextType {
     blacklist: string[];
@@ -24,27 +25,39 @@ export function YoutubeProvider({ children }: { children: React.ReactNode }) {
     const { data: session } = useSession();
     const [blacklist, setBlacklist] = useState<string[]>([]);
     const [history, setHistory] = useState<Video[]>([]);
-    const [userPlan, setUserPlan] = useState<string>('pro');
+    const [userPlan, setUserPlan] = useState<string>('free');
     const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
         const loadInitialData = async () => {
-            // 1. Cargar lo que haya en local por defecto
+            // 1. Cargar historial local por defecto
             const localHist = localStorage.getItem('yt-history');
             if (localHist) setHistory(JSON.parse(localHist));
 
             if (session?.user?.email) {
-                // 2. Traer Blacklist
-                const words = await getBlacklist();
-                setBlacklist(words);
+                try {
+                    // 2. Obtener el plan real del usuario desde la DB
+                    const plan = await getUserPlan();
+                    setUserPlan(plan);
 
-                // 3. En un caso real, aquí obtendrías el plan desde tu tabla users
-                // Por ahora, si quieres probarlo, cambia manualmente este estado a 'pro'
-                // setUserPlan('pro'); 
+                    // 3. Traer Blacklist
+                    const words = await getBlacklist();
+                    setBlacklist(words);
 
-                // 4. Si es Pro, sobreescribir historial local con el de la nube
-                const cloudHist = await getHistoryServer();
-                if (cloudHist.length > 0) setHistory(cloudHist);
+                    // 4. Si es Pro, cargar historial de la nube
+                    if (plan === 'pro') {
+                        const cloudHist = await getHistoryServer();
+                        if (cloudHist && cloudHist.length > 0) {
+                            setHistory(cloudHist);
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error cargando datos de usuario:", error);
+                }
+            } else {
+                // Si cierra sesión, volvemos a free y limpiamos estados
+                setUserPlan('free');
+                setBlacklist([]);
             }
             setIsLoaded(true);
         };
@@ -63,43 +76,48 @@ export function YoutubeProvider({ children }: { children: React.ReactNode }) {
     };
 
     const addToHistory = async (video: Video) => {
-        // Actualización de UI (Instantánea)
-        setHistory(prev => [video, ...prev.filter(v => v.id !== video.id)].slice(0, 50));
+        // Actualización optimista de la UI
+        setHistory(prev => [video, ...prev.filter(v => v.id !== (video.id || (video as any).videoId))].slice(0, 50));
 
         if (session?.user?.email && userPlan === 'pro') {
+            // Guardar en Postgres si es PRO
             await addToHistoryServer(video);
         } else {
             // Guardado en LocalStorage para Free
             const saved = JSON.parse(localStorage.getItem('yt-history') || '[]');
-            const updated = [video, ...saved.filter((v: any) => v.id !== video.id)].slice(0, 50);
+            const updated = [video, ...saved.filter((v: any) => (v.id || v.videoId) !== (video.id || (video as any).videoId))].slice(0, 50);
             localStorage.setItem('yt-history', JSON.stringify(updated));
         }
     };
 
     const removeFromHistory = async (videoId: string) => {
-        setHistory(prev => prev.filter(v => v.id !== videoId));
+        setHistory(prev => prev.filter(v => (v.id || (v as any).videoId) !== videoId));
+        
         if (session?.user?.email && userPlan === 'pro') {
             await deleteFromHistoryServer(videoId);
         } else {
             const saved = JSON.parse(localStorage.getItem('yt-history') || '[]');
-            localStorage.setItem('yt-history', JSON.stringify(saved.filter((v: any) => v.id !== videoId)));
+            const filtered = saved.filter((v: any) => (v.id || v.videoId) !== videoId);
+            localStorage.setItem('yt-history', JSON.stringify(filtered));
         }
     };
 
     const clearHistory = () => {
         setHistory([]);
         localStorage.removeItem('yt-history');
-        // Para Pro podrías añadir una acción de "borrar todo"
+        // Aquí podrías llamar a una acción de servidor si quieres borrar todo en PRO
     };
 
     const addToBlacklist = async (word: string) => {
-        if (blacklist.includes(word)) return;
-        setBlacklist(prev => [...prev, word]);
+        const normalizedWord = word.trim().toLowerCase();
+        if (!normalizedWord || blacklist.includes(normalizedWord)) return;
+        
+        setBlacklist(prev => [...prev, normalizedWord]);
 
         if (session?.user?.email) {
-            const res = await addWordServer(word);
+            const res = await addWordServer(normalizedWord);
             if (res?.error) {
-                setBlacklist(prev => prev.filter(w => w !== word));
+                setBlacklist(prev => prev.filter(w => w !== normalizedWord));
                 alert(res.error);
             }
         }
