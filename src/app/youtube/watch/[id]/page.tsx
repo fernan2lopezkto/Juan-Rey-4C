@@ -56,7 +56,7 @@ export default function WatchPage() {
     if (!video) return <div className="alert alert-error">No se pudo cargar el video. Revisa tu conexión o sesión.</div>;
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 auto-rows-min">
+        <div className="grid grid-cols-1 lg:grid-cols-3 auto-rows-min">
             {/* Search - Mobile: 1, Desktop: Right Col 1 */}
             <div className="lg:col-start-3 lg:row-start-1">
                 <SearchHeader />
