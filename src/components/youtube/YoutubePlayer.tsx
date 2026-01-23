@@ -35,7 +35,7 @@ export default function YoutubePlayer({ video, onEnded }: PlayerProps) {
 
     return (
         <div className="space-y-4">
-            <div className="aspect-video w-full bg-black overflow-hidden shadow-2xl relative border-4 border-base-300">
+            <div className="aspect-video w-full bg-black rounded-xl overflow-hidden shadow-2xl relative border-4 border-base-300">
                 <ReactPlayer
                     src={`https://www.youtube.com/watch?v=${video.id}`}
                     width="100%"
