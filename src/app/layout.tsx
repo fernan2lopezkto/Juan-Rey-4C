@@ -7,6 +7,7 @@ import { Analytics } from '@vercel/analytics/next';
 
 import Navbar from "@/components/Navbar";
 import Providers from "@/components/Providers";
+import { SongsProvider } from "@/context/SongsContext"; // Asegúrate de que la ruta sea /context/
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,10 +35,12 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>
-          <Navbar />
-          {children}
-          <SpeedInsights />
-          <Analytics />
+          <SongsProvider>
+            <Navbar />
+            {children}
+            <SpeedInsights />
+            <Analytics />
+          </SongsProvider>
         </Providers>
       </body>
     </html>
