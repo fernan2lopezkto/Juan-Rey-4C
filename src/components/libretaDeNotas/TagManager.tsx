@@ -1,4 +1,3 @@
-// components/libretaDeNotas/TagManager.tsx
 'use client';
 import { useState } from 'react';
 
@@ -11,9 +10,15 @@ export default function TagManager({ tags, onChange }: TagManagerProps) {
   const [inputValue, setInputValue] = useState('');
 
   const addTag = () => {
+    // Normalizamos: quitamos espacios y evitamos vacíos
     const trimmed = inputValue.trim();
+    
+    // Solo añadimos si hay texto y si no existe ya en la lista
     if (trimmed && !tags.includes(trimmed)) {
       onChange([...tags, trimmed]);
+      setInputValue('');
+    } else {
+      // Si ya existe, simplemente limpiamos el input para no confundir
       setInputValue('');
     }
   };
@@ -23,6 +28,7 @@ export default function TagManager({ tags, onChange }: TagManagerProps) {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Permitimos añadir etiquetas con la tecla Enter
     if (e.key === 'Enter') {
       e.preventDefault();
       addTag();
@@ -38,8 +44,8 @@ export default function TagManager({ tags, onChange }: TagManagerProps) {
       <div className="flex gap-2 mb-3">
         <input
           type="text"
-          placeholder="Ej: Domingo mañana, Lentas..."
-          className="input input-bordered input-sm flex-1"
+          placeholder="Ej: Domingo, Lentas, Adoración..."
+          className="input input-bordered input-sm flex-1 focus:border-primary"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -47,28 +53,32 @@ export default function TagManager({ tags, onChange }: TagManagerProps) {
         <button 
           type="button" 
           onClick={addTag} 
-          className="btn btn-sm btn-primary"
+          className="btn btn-sm btn-primary shadow-sm"
         >
           Añadir
         </button>
       </div>
 
       <div className="flex flex-wrap gap-2">
-        {tags.length === 0 && (
-          <span className="text-xs opacity-30 italic">Sin etiquetas todavía...</span>
-        )}
-        {tags.map((tag) => (
-          <div key={tag} className="badge badge-primary gap-1 py-3 pr-1 pl-3 shadow-sm">
-            <span className="text-xs font-bold">{tag}</span>
-            <button 
-              type="button" 
-              onClick={() => removeTag(tag)}
-              className="btn btn-ghost btn-xs btn-circle hover:bg-primary-focus"
+        {tags.length === 0 ? (
+          <span className="text-xs opacity-30 italic px-1">Sin etiquetas todavía...</span>
+        ) : (
+          tags.map((tag) => (
+            <div 
+              key={tag} 
+              className="badge badge-primary badge-outline gap-1 py-3 pr-1 pl-3 shadow-sm hover:bg-primary hover:text-primary-content transition-colors"
             >
-              ✕
-            </button>
-          </div>
-        ))}
+              <span className="text-[10px] font-black uppercase tracking-tight">{tag}</span>
+              <button 
+                type="button" 
+                onClick={() => removeTag(tag)}
+                className="btn btn-ghost btn-xs btn-circle hover:bg-error hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

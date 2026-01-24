@@ -1,13 +1,16 @@
-// components/libretaDeNotas/NoteForm.tsx
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { saveSong, updateSong, getSongById, getCurrentSongId } from './storage';
+import { useSongs } from '@/context/SongsContext'; // Usamos el nuevo contexto
+import { getCurrentSongId } from './storage';
 import TagManager from './TagManager';
 
 export default function FormularioCancion({ mode = 'create' }: { mode?: 'create' | 'edit' }) {
   const router = useRouter();
+  const { songs, saveSong, updateSong } = useSongs(); // Funciones del contexto
   const [currentId, setCurrentId] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const [form, setForm] = useState({
     title: '',
     chords: '',
@@ -19,7 +22,8 @@ export default function FormularioCancion({ mode = 'create' }: { mode?: 'create'
     if (mode === 'edit') {
       const id = getCurrentSongId();
       if (id) {
-        const song = getSongById(id);
+        // Buscamos la canción directamente del estado global del contexto
+        const song = songs.find(s => s.id === id);
         if (song) {
           setCurrentId(id);
           setForm({ 
@@ -31,21 +35,36 @@ export default function FormularioCancion({ mode = 'create' }: { mode?: 'create'
         }
       }
     }
-  }, [mode]);
+  }, [mode, songs]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const songData = {
-      ...form,
-      date: new Date().toLocaleDateString()
-    };
+    if (isSubmitting) return;
 
-    if (mode === 'create') {
-      saveSong({ id: crypto.randomUUID(), ...songData });
-    } else if (currentId) {
-      updateSong({ id: currentId, ...songData });
+    try {
+      setIsSubmitting(true);
+      
+      const songData = {
+        title: form.title,
+        chords: form.chords,
+        notes: form.notes,
+        tags: form.tags
+      };
+
+      if (mode === 'create') {
+        await saveSong(songData);
+      } else if (currentId) {
+        await updateSong(currentId, songData);
+      }
+
+      // Redirigir solo después de que el contexto confirme el guardado
+      router.push('/utilities/libretadenotas/listadecanciones');
+    } catch (error) {
+      console.error("Error al guardar:", error);
+      alert("Hubo un error al guardar la canción.");
+    } finally {
+      setIsSubmitting(false);
     }
-    router.push('/utilities/libretadenotas/listadecanciones');
   };
 
   return (
@@ -56,15 +75,25 @@ export default function FormularioCancion({ mode = 'create' }: { mode?: 'create'
       
       <div className="form-control">
         <label className="label text-xs uppercase font-bold opacity-40 tracking-widest">Título</label>
-        <input required className="input input-bordered" value={form.title} onChange={e => setForm({...form, title: e.target.value})} />
+        <input 
+          required 
+          disabled={isSubmitting}
+          className="input input-bordered focus:input-primary" 
+          value={form.title} 
+          onChange={e => setForm({...form, title: e.target.value})} 
+        />
       </div>
 
       <div className="form-control">
         <label className="label text-xs uppercase font-bold opacity-40 tracking-widest">Progresión</label>
-        <input className="input input-bordered font-mono font-bold text-accent" value={form.chords} onChange={e => setForm({...form, chords: e.target.value})} />
+        <input 
+          disabled={isSubmitting}
+          className="input input-bordered font-mono font-bold text-accent focus:input-accent" 
+          value={form.chords} 
+          onChange={e => setForm({...form, chords: e.target.value})} 
+        />
       </div>
 
-      {/* USO DEL COMPONENTE TAGS */}
       <TagManager 
         tags={form.tags} 
         onChange={(newTags) => setForm({...form, tags: newTags})} 
@@ -72,12 +101,30 @@ export default function FormularioCancion({ mode = 'create' }: { mode?: 'create'
 
       <div className="form-control">
         <label className="label text-xs uppercase font-bold opacity-40 tracking-widest">Contenido</label>
-        <textarea className="textarea textarea-bordered h-48 leading-relaxed font-medium" value={form.notes} onChange={e => setForm({...form, notes: e.target.value})} />
+        <textarea 
+          disabled={isSubmitting}
+          className="textarea textarea-bordered h-48 leading-relaxed font-medium focus:textarea-primary" 
+          value={form.notes} 
+          onChange={e => setForm({...form, notes: e.target.value})} 
+        />
       </div>
 
       <div className="flex gap-2">
-        <button type="button" onClick={() => router.back()} className="btn btn-ghost flex-1">Cancelar</button>
-        <button type="submit" className="btn btn-primary flex-[2] shadow-lg">Guardar Canción</button>
+        <button 
+          type="button" 
+          onClick={() => router.back()} 
+          className="btn btn-ghost flex-1"
+          disabled={isSubmitting}
+        >
+          Cancelar
+        </button>
+        <button 
+          type="submit" 
+          className="btn btn-primary flex-[2] shadow-lg"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? <span className="loading loading-spinner"></span> : 'Guardar Canción'}
+        </button>
       </div>
     </form>
   );

@@ -1,20 +1,20 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { deleteSong, getCurrentSongId } from './storage';
+import { useSongs } from '@/context/SongsContext';
 
 export default function AccionesCancion() {
   const router = useRouter();
-  const id = getCurrentSongId();
+  const { currentSong, deleteSong } = useSongs();
 
-  const handleDelete = () => {
-    if (id && confirm('¿Eliminar esta canción permanentemente?')) {
-      deleteSong(id);
+  const handleDelete = async () => {
+    if (currentSong?.id && confirm('¿Eliminar esta canción permanentemente?')) {
+      await deleteSong(currentSong.id);
       router.push('/utilities/libretadenotas/listadecanciones');
     }
   };
 
-  if (!id) return null;
+  if (!currentSong) return null;
 
   return (
     <div className="flex gap-4 justify-center mt-8 border-t border-base-300 pt-6">

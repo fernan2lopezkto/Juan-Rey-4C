@@ -1,4 +1,4 @@
-import { pgTable, serial, text, timestamp, integer, primaryKey, uniqueIndex } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, timestamp, integer, primaryKey, uniqueIndex, json } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -39,3 +39,22 @@ export const youtubeHistory = pgTable('youtube_history', {
   // Evita duplicados: un usuario + un video = una fila que se actualiza
   uniqueVideoUser: uniqueIndex('unique_video_user_idx').on(table.userId, table.videoId),
 }));
+
+// libreta de notas
+export const songs = pgTable('songs', {
+  // Usamos text para el ID porque tu app genera UUIDs en el cliente (crypto.randomUUID())
+  id: text('id').primaryKey(), 
+  
+  userId: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  
+  title: text('title').notNull(),
+  chords: text('chords').default(''),
+  notes: text('notes').default(''),
+  
+  // Guardamos las etiquetas como un array de strings en formato JSON
+  tags: json('tags').$type<string[]>().default([]),
+  
+  // Fechas de auditoría
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
