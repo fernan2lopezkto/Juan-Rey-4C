@@ -15,7 +15,7 @@ export default function VistaCancion() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6 px-4">
+    <div className="max-w-2xl mx-auto space-y-6">
       <div className="text-center">
         <h1 className="text-4xl font-bold text-primary">{currentSong.title}</h1>
         <div className="flex justify-center gap-2 mt-2">

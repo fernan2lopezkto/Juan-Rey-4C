@@ -19,7 +19,7 @@ export default async function Page() {
   // Al ser un Server Component, simplemente renderiza el componente cliente
   // El componente cliente se encargará de acceder a localStorage
   return (
-    <div className="container mx-auto p-4 min-h-screen">
+    <div className="container mx-auto min-h-screen">
       <NoteList />
     </div>
   );
