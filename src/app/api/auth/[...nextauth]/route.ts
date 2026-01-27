@@ -7,6 +7,7 @@ import { users, accounts } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 
+// Función para refrescar el token si caducó
 async function refreshAccessToken(token: any) {
     try {
         const url = "https://oauth2.googleapis.com/token?" +
@@ -25,6 +26,8 @@ async function refreshAccessToken(token: any) {
         const refreshedTokens = await response.json();
         if (!response.ok) throw refreshedTokens;
 
+        console.log("Token refrescado con éxito");
+
         return {
             ...token,
             accessToken: refreshedTokens.access_token,
@@ -40,12 +43,13 @@ async function refreshAccessToken(token: any) {
 export const authOptions: NextAuthOptions = {
     adapter: DrizzleAdapter(db) as any,
     session: {
-        strategy: "jwt", // Obligatorio para usar Credentials
+        strategy: "jwt",
     },
     providers: [
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+            allowDangerousEmailAccountLinking: true, // IMPORTANTE: Permite unir cuentas por email
             authorization: {
                 params: {
                     scope: "openid email profile https://www.googleapis.com/auth/youtube.force-ssl",
@@ -63,6 +67,7 @@ export const authOptions: NextAuthOptions = {
             async authorize(credentials) {
                 if (!credentials?.email || !credentials?.password) return null;
 
+                // Buscamos usuario
                 const user = await db.query.users.findFirst({
                     where: eq(users.email, credentials.email),
                 }) as any;
@@ -83,52 +88,68 @@ export const authOptions: NextAuthOptions = {
     ],
     callbacks: {
         async jwt({ token, account, user, trigger }) {
-            // Inicio de sesión inicial
+            // 1. PRIMER LOGIN (Google o Credenciales)
             if (account && user) {
+                console.log("Inicio de sesión detectado. Provider:", account.provider);
                 return {
+                    ...token,
                     accessToken: account.access_token,
                     expiresAt: (account.expires_at ?? 0) * 1000,
                     refreshToken: account.refresh_token,
-                    userId: user.id,
-                    user: {
-                        name: user.name,
-                        email: user.email,
-                        image: user.image
-                    }
+                    userId: user.id, // Guardamos el ID para usarlo después
                 };
             }
 
-            // Si es usuario de Google, verificar si el token expiró
-            if (token.refreshToken && Date.now() > (token.expiresAt as number)) {
-                return refreshAccessToken(token);
+            // 2. TOKEN EXISTENTE: Verificar si expiró (Solo si es token de Google)
+            if (token.accessToken && token.refreshToken) {
+                if (Date.now() > (token.expiresAt as number)) {
+                    console.log("El token expiró, refrescando...");
+                    return refreshAccessToken(token);
+                }
             }
 
-            // Si el usuario se logueó con credenciales, intentamos buscar si tiene una cuenta de Google vinculada
-            // para recuperar el accessToken de YouTube de la base de datos
-            if (!token.accessToken && token.userId) {
-                const [googleAccount] = await db
-                    .select()
-                    .from(accounts)
-                    .where(
-                        and(
-                            eq(accounts.userId, Number(token.userId)),
-                            eq(accounts.provider, "google")
-                        )
-                    );
+            // 3. RECUPERACIÓN DE TOKEN (El paso crítico)
+            // Si no tenemos accessToken en el JWT (login con credenciales), lo buscamos en la DB
+            if (!token.accessToken && token.sub) {
+                try {
+                    // Convertimos token.sub (string) a Number porque tu DB usa IDs numéricos
+                    const userIdNum = parseInt(token.sub); 
+                    
+                    if (!isNaN(userIdNum)) {
+                        const [googleAccount] = await db
+                            .select()
+                            .from(accounts)
+                            .where(
+                                and(
+                                    eq(accounts.userId, userIdNum),
+                                    eq(accounts.provider, "google")
+                                )
+                            );
 
-                if (googleAccount) {
-                    token.accessToken = googleAccount.access_token;
+                        if (googleAccount && googleAccount.access_token) {
+                            console.log("Token de Google recuperado de la DB para usuario:", userIdNum);
+                            token.accessToken = googleAccount.access_token;
+                            token.refreshToken = googleAccount.refresh_token;
+                            token.expiresAt = (googleAccount.expires_at ?? 0) * 1000;
+                        } else {
+                            // console.log("No se encontró cuenta de Google vinculada para usuario:", userIdNum);
+                        }
+                    }
+                } catch (e) {
+                    console.error("Error recuperando token de DB:", e);
                 }
             }
 
             return token;
         },
         async session({ session, token }) {
-            // Pasamos los datos del JWT a la sesión del cliente
+            // Pasar datos del JWT a la sesión del cliente
+            if (session.user) {
+                // @ts-ignore
+                session.user.id = token.sub ?? token.userId;
+            }
             // @ts-ignore
             session.accessToken = token.accessToken;
-            // @ts-ignore
-            session.user.id = token.userId;
             // @ts-ignore
             session.error = token.error;
             
@@ -138,7 +159,7 @@ export const authOptions: NextAuthOptions = {
     pages: {
         signIn: '/auth/login', 
     },
-    debug: process.env.NODE_ENV === 'development',
+    debug: true, // Activa logs detallados en Vercel
 };
 
 const handler = NextAuth(authOptions);
