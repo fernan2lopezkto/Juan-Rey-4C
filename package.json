@@ -4,15 +4,17 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "drizzle-kit push && next build",
     "start": "next start",
     "lint": "eslint",
     "db:push": "drizzle-kit push"
   },
   "dependencies": {
+    "@auth/drizzle-adapter": "latest",
     "@vercel/analytics": "^1.6.1",
     "@vercel/postgres": "latest",
     "@vercel/speed-insights": "latest",
+    "bcryptjs": "^2.4.3",
     "drizzle-orm": "latest",
     "next": "^16.0.10",
     "next-auth": "^4.24.13",
@@ -23,6 +25,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

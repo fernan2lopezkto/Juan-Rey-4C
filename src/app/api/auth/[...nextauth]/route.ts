@@ -1,8 +1,11 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { db } from "@/db"; // Asegúrate que esta ruta sea correcta según tu Spck
+import CredentialsProvider from "next-auth/providers/credentials";
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import { db } from "@/db"; 
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import bcrypt from "bcryptjs";
 
 async function refreshAccessToken(token: any) {
     try {
@@ -44,6 +47,11 @@ async function refreshAccessToken(token: any) {
 }
 
 export const authOptions: NextAuthOptions = {
+    // Usamos el adaptador para que NextAuth gestione las tablas automáticamente
+    adapter: DrizzleAdapter(db) as any,
+    session: {
+        strategy: "jwt", // Requerido para Credentials
+    },
     providers: [
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -56,33 +64,40 @@ export const authOptions: NextAuthOptions = {
                 },
             },
         }),
+        CredentialsProvider({
+            name: "Email y Contraseña",
+            credentials: {
+                email: { label: "Email", type: "email" },
+                password: { label: "Contraseña", type: "password" }
+            },
+            async authorize(credentials) {
+                if (!credentials?.email || !credentials?.password) return null;
+
+                // Buscamos al usuario en la base de datos
+                const user = await db.query.users.findFirst({
+                    where: eq(users.email, credentials.email),
+                });
+
+                // Si no existe o no tiene password (login con Google), denegamos
+                if (!user || !user.password) return null;
+
+                // Verificamos la contraseña
+                const isValid = await bcrypt.compare(credentials.password, user.password);
+
+                if (!isValid) return null;
+
+                return {
+                    id: user.id.toString(),
+                    name: user.name,
+                    email: user.email,
+                    image: user.image,
+                };
+            }
+        }),
     ],
     callbacks: {
-        async signIn({ user }) {
-            if (!user.email) return false;
-            try {
-                // Verificar si el usuario ya existe en Postgres (Neon)
-                const existingUser = await db
-                    .select()
-                    .from(users)
-                    .where(eq(users.email, user.email))
-                    .limit(1);
-
-                if (existingUser.length === 0) {
-                    // Si es nuevo, lo guardamos
-                    await db.insert(users).values({
-                        name: user.name,
-                        email: user.email,
-                        image: user.image,
-                    });
-                }
-                return true;
-            } catch (error) {
-                console.error("Error saving user to DB:", error);
-                return true; // Permitimos el login aunque falle el guardado para no bloquear al usuario
-            }
-        },
         async jwt({ token, account, user }) {
+            // Logueo inicial (Google o Credenciales)
             if (account && user) {
                 const expiresAt = account.expires_at
                     ? account.expires_at * 1000
@@ -93,14 +108,16 @@ export const authOptions: NextAuthOptions = {
                     accessToken: account.access_token,
                     expiresAt: expiresAt,
                     refreshToken: account.refresh_token,
+                    userId: user.id
                 };
             }
 
-            // @ts-ignore
-            if (Date.now() < (token.expiresAt as number)) {
+            // Si es un usuario de credenciales o el token no ha expirado
+            if (!token.refreshToken || Date.now() < (token.expiresAt as number)) {
                 return token;
             }
 
+            // Si es usuario de Google y el token expiró, refrescamos
             return refreshAccessToken(token);
         },
         async session({ session, token }) {
@@ -108,8 +125,14 @@ export const authOptions: NextAuthOptions = {
             session.accessToken = token.accessToken;
             // @ts-ignore
             session.error = token.error;
+            // @ts-ignore
+            session.user.id = token.userId;
             return session;
         },
+    },
+    // Opcional: define páginas personalizadas si no quieres las de NextAuth
+    pages: {
+        signIn: '/auth/login', 
     },
 };
 
