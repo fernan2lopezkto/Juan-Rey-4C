@@ -76,7 +76,7 @@ export const authOptions: NextAuthOptions = {
                 // Buscamos al usuario en la base de datos
                 const user = await db.query.users.findFirst({
                     where: eq(users.email, credentials.email),
-                });
+                }) as any;
 
                 // Si no existe o no tiene password (login con Google), denegamos
                 if (!user || !user.password) return null;
