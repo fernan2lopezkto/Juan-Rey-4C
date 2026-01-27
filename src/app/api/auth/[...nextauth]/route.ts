@@ -3,14 +3,13 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db } from "@/db"; 
-import { users } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { users, accounts } from "@/db/schema";
+import { eq, and } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 
 async function refreshAccessToken(token: any) {
     try {
-        const url =
-            "https://oauth2.googleapis.com/token?" +
+        const url = "https://oauth2.googleapis.com/token?" +
             new URLSearchParams({
                 client_id: process.env.GOOGLE_CLIENT_ID!,
                 client_secret: process.env.GOOGLE_CLIENT_SECRET!,
@@ -19,17 +18,12 @@ async function refreshAccessToken(token: any) {
             });
 
         const response = await fetch(url, {
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
             method: "POST",
         });
 
         const refreshedTokens = await response.json();
-
-        if (!response.ok) {
-            throw refreshedTokens;
-        }
+        if (!response.ok) throw refreshedTokens;
 
         return {
             ...token,
@@ -38,19 +32,15 @@ async function refreshAccessToken(token: any) {
             refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
         };
     } catch (error) {
-        console.log("Error refreshing access token", error);
-        return {
-            ...token,
-            error: "RefreshAccessTokenError",
-        };
+        console.error("Error refreshing access token", error);
+        return { ...token, error: "RefreshAccessTokenError" };
     }
 }
 
 export const authOptions: NextAuthOptions = {
-    // Usamos el adaptador para que NextAuth gestione las tablas automáticamente
     adapter: DrizzleAdapter(db) as any,
     session: {
-        strategy: "jwt", // Requerido para Credentials
+        strategy: "jwt", // Obligatorio para usar Credentials
     },
     providers: [
         GoogleProvider({
@@ -73,17 +63,13 @@ export const authOptions: NextAuthOptions = {
             async authorize(credentials) {
                 if (!credentials?.email || !credentials?.password) return null;
 
-                // Buscamos al usuario en la base de datos
                 const user = await db.query.users.findFirst({
                     where: eq(users.email, credentials.email),
                 }) as any;
 
-                // Si no existe o no tiene password (login con Google), denegamos
                 if (!user || !user.password) return null;
 
-                // Verificamos la contraseña
                 const isValid = await bcrypt.compare(credentials.password, user.password);
-
                 if (!isValid) return null;
 
                 return {
@@ -96,46 +82,64 @@ export const authOptions: NextAuthOptions = {
         }),
     ],
     callbacks: {
-        async jwt({ token, account, user }) {
-            // Logueo inicial (Google o Credenciales)
+        async jwt({ token, account, user, trigger }) {
+            // Inicio de sesión inicial
             if (account && user) {
-                const expiresAt = account.expires_at
-                    ? account.expires_at * 1000
-                    : Date.now() + 3600 * 1000;
-
                 return {
-                    ...token,
                     accessToken: account.access_token,
-                    expiresAt: expiresAt,
+                    expiresAt: (account.expires_at ?? 0) * 1000,
                     refreshToken: account.refresh_token,
-                    userId: user.id
+                    userId: user.id,
+                    user: {
+                        name: user.name,
+                        email: user.email,
+                        image: user.image
+                    }
                 };
             }
 
-            // Si es un usuario de credenciales o el token no ha expirado
-            if (!token.refreshToken || Date.now() < (token.expiresAt as number)) {
-                return token;
+            // Si es usuario de Google, verificar si el token expiró
+            if (token.refreshToken && Date.now() > (token.expiresAt as number)) {
+                return refreshAccessToken(token);
             }
 
-            // Si es usuario de Google y el token expiró, refrescamos
-            return refreshAccessToken(token);
+            // Si el usuario se logueó con credenciales, intentamos buscar si tiene una cuenta de Google vinculada
+            // para recuperar el accessToken de YouTube de la base de datos
+            if (!token.accessToken && token.userId) {
+                const [googleAccount] = await db
+                    .select()
+                    .from(accounts)
+                    .where(
+                        and(
+                            eq(accounts.userId, Number(token.userId)),
+                            eq(accounts.provider, "google")
+                        )
+                    );
+
+                if (googleAccount) {
+                    token.accessToken = googleAccount.access_token;
+                }
+            }
+
+            return token;
         },
         async session({ session, token }) {
+            // Pasamos los datos del JWT a la sesión del cliente
             // @ts-ignore
             session.accessToken = token.accessToken;
             // @ts-ignore
-            session.error = token.error;
-            // @ts-ignore
             session.user.id = token.userId;
+            // @ts-ignore
+            session.error = token.error;
+            
             return session;
         },
     },
-    // Opcional: define páginas personalizadas si no quieres las de NextAuth
     pages: {
         signIn: '/auth/login', 
     },
+    debug: process.env.NODE_ENV === 'development',
 };
 
 const handler = NextAuth(authOptions);
-
 export { handler as GET, handler as POST };
