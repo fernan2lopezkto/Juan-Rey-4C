@@ -3,7 +3,7 @@
 'use server';
  
 import db from '@/db';
-import { user } from '@/db/schema';
+import { users } from '@/db/schema';
 import { nanoid } from 'nanoid';
  
 type TFormData = {
@@ -13,7 +13,7 @@ type TFormData = {
 };
  
 const action = async (formData: TFormData) => {
-  const isAlreadyRegistered = (await db.select().from(user)).find(
+  const isAlreadyRegistered = (await db.select().from(users)).find(
     (user) => user.email === formData.email
   );
  
@@ -24,7 +24,7 @@ const action = async (formData: TFormData) => {
     };
   }
  
-  await db.insert(user).values({
+  await db.insert(users).values({
     ...formData,
   });
  

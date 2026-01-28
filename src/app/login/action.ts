@@ -4,7 +4,7 @@
  
 import { signIn } from "@/auth/auth";
 import db from "@/db";
-import { user } from "@/db/schema";
+import { users } from "@/db/schema";
  
 type TFormData = {
 email: string;
@@ -14,7 +14,7 @@ password: string;
 const action = async (formData: TFormData) => {
  
  const { password, email } = formData;
- const isUserExist = (await db.select().from(user)).find(
+ const isUserExist = (await db.select().from(users)).find(
    (user) => user.email === email
  );
  
