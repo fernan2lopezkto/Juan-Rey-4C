@@ -3,7 +3,7 @@
 "use server";
  
 import { signIn } from "@/auth/auth";
-import db from "@/db";
+import { db } from "@/db";
 import { users } from "@/db/schema";
  
 type TFormData = {
