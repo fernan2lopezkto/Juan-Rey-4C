@@ -1,14 +1,14 @@
 "use client";
 
-import Link from "next/link";
+import { signIn } from "next-auth/react";
 
 export default function LoginButton() {
     return (
-        <Link
-            href="/auth/login"
+        <button
             className="btn btn-sm btn-primary animate-pulse hover:animate-none"
+            onClick={() => signIn("google")}
         >
             Sign In
-        </Link>
+        </button>
     );
 }
