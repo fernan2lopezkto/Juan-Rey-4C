@@ -1,5 +1,6 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "@/db"; // Asegúrate que esta ruta sea correcta según tu Spck
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -56,7 +57,41 @@ export const authOptions: NextAuthOptions = {
                 },
             },
         }),
+        CredentialsProvider({
+            name: "Credentials",
+            credentials: {
+                email: { label: "Email", type: "email" },
+                password: { label: "Password", type: "password" }
+            },
+            async authorize(credentials) {
+                if (!credentials?.email || !credentials?.password) return null;
+
+                // 1. Buscar usuario en DB
+                const user = (await db.select().from(users))
+                    .find(u => u.email === credentials.email);
+
+                if (!user) return null;
+
+                // 2. Validar contraseña (¡Ojo! Deberías usar bcrypt para comparar)
+                const isPasswordMatch = user.password === credentials.password;
+
+                if (!isPasswordMatch) return null;
+
+                // 3. Retornar el objeto usuario para la sesión
+                return {
+                    id: user.id,
+                    email: user.email,
+                    name: user.name,
+                };
+            }
+        }),
     ],
+    pages: {
+        signIn: '/login', // Le decimos a NextAuth que use TU página
+    },
+    session: {
+        strategy: "jwt", // Obligatorio para Credentials
+    },
     callbacks: {
         async signIn({ user }) {
             if (!user.email) return false;
