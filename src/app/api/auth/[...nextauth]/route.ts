@@ -79,7 +79,7 @@ export const authOptions: NextAuthOptions = {
 
                 // 3. Retornar el objeto usuario para la sesión
                 return {
-                    id: user.id,
+                    id: String(user.id),
                     email: user.email,
                     name: user.name,
                 };
