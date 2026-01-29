@@ -37,7 +37,7 @@ const RegisterPage = () => {
         return;
       }
       push('/login');
-    } catch (error) {
+    } catch (error: any) {
       console.error(error.message || 'Something went wrong');
     }
   };
