@@ -23,7 +23,7 @@ const RegisterPage = () => {
     const password = data.get('password') as string;
     const name = data.get('name') as string;
  
-    await action({ email, password });
+    await action({ email, password, name });
  
     try {
       const schemaResult = schema.safeParse({ email, password, name });
