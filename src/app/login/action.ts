@@ -2,7 +2,7 @@
  
 "use server";
  
-import { signIn } from "@/auth/auth";
+import { signIn } from "next-auth/react";
 import { db } from "@/db";
 import { users } from "@/db/schema";
  
