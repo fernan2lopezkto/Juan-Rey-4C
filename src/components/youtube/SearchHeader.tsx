@@ -21,6 +21,16 @@ export default function SearchHeader() {
 
     return (
         <div className="flex flex-col md:flex-row gap-4 mb-6 items-center justify-between bg-base-100 p-4 rounded-xl shadow-sm border border-base-200">
+            // Mostrar invitación a conectar con Google
+                <div className="flex flex-col sm:flex-row items-center gap-3">
+                    <span className="text-sm opacity-70">Conéctate para buscar:</span>
+                    <button 
+                        onClick={() => signIn("google")}
+                        className="btn btn-outline btn-error btn-sm gap-2"
+                    >
+                        <FaGoogle /> Conectar Google
+                    </button>
+                </div>
             <h1 
                 className="text-2xl font-bold text-base-content flex items-center gap-2 cursor-pointer" 
                 onClick={() => router.push('/youtube')}
