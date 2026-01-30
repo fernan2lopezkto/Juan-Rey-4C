@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-
 import { NavigationItem } from '@/utils/texts';
 
 interface MobileMenuProps {
@@ -65,10 +64,31 @@ export default function MobileMenu({ navLinks, session }: MobileMenuProps) {
                                     )}
                                 </li>
                             ))}
+
+                            {/* SECCIÓN DE USUARIO COMO ENLACE AL PERFIL */}
                             {session?.user && (
-                                <li className="mt-4 flex flex-col items-center gap-2">
-                                    <img src={session.user.image || ""} alt="User" className="w-16 h-16 rounded-full border-2 border-primary" />
-                                    <span className="text-xl font-bold">{session.user.name}</span>
+                                <li className="mt-8 w-full">
+                                    <Link 
+                                        href="/profile" 
+                                        onClick={closeMenu}
+                                        className="flex flex-col items-center gap-3 active:scale-95 transition-transform"
+                                    >
+                                        <div className="avatar">
+                                            <div className="w-20 h-20 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                                                {session.user.image ? (
+                                                    <img src={session.user.image} alt="User avatar" />
+                                                ) : (
+                                                    <div className="bg-neutral text-neutral-content flex items-center justify-center h-full text-2xl uppercase">
+                                                        {session.user.name?.[0] || "U"}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <span className="text-2xl font-bold text-base-content group-hover:text-primary transition-colors">
+                                            {session.user.name}
+                                        </span>
+                                        <span className="badge badge-primary badge-outline">Ver Perfil</span>
+                                    </Link>
                                 </li>
                             )}
                         </ul>
