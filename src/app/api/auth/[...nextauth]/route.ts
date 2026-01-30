@@ -1,9 +1,10 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { db } from "@/db"; // Asegúrate que esta ruta sea correcta según tu Spck
+import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import bcrypt from "bcrypt";
 
 async function refreshAccessToken(token: any) {
     try {
@@ -17,17 +18,13 @@ async function refreshAccessToken(token: any) {
             });
 
         const response = await fetch(url, {
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
             method: "POST",
         });
 
         const refreshedTokens = await response.json();
 
-        if (!response.ok) {
-            throw refreshedTokens;
-        }
+        if (!response.ok) throw refreshedTokens;
 
         return {
             ...token,
@@ -37,10 +34,7 @@ async function refreshAccessToken(token: any) {
         };
     } catch (error) {
         console.log("Error refreshing access token", error);
-        return {
-            ...token,
-            error: "RefreshAccessTokenError",
-        };
+        return { ...token, error: "RefreshAccessTokenError" };
     }
 }
 
@@ -66,18 +60,21 @@ export const authOptions: NextAuthOptions = {
             async authorize(credentials) {
                 if (!credentials?.email || !credentials?.password) return null;
 
-                // 1. Buscar usuario en DB
-                const user = (await db.select().from(users))
-                    .find(u => u.email === credentials.email);
+                // Buscar usuario directamente por email en la DB
+                const [user] = await db
+                    .select()
+                    .from(users)
+                    .where(eq(users.email, credentials.email))
+                    .limit(1);
 
-                if (!user) return null;
+                // Si no existe o no tiene password (caso de usuario solo Google)
+                if (!user || !user.password) return null;
 
-                // 2. Validar contraseña (¡Ojo! Deberías usar bcrypt para comparar)
-                const isPasswordMatch = user.password === credentials.password;
+                // Comparación segura con bcrypt
+                const isPasswordMatch = await bcrypt.compare(credentials.password, user.password);
 
                 if (!isPasswordMatch) return null;
 
-                // 3. Retornar el objeto usuario para la sesión
                 return {
                     id: String(user.id),
                     email: user.email,
@@ -87,16 +84,16 @@ export const authOptions: NextAuthOptions = {
         }),
     ],
     pages: {
-        signIn: '/login', // Le decimos a NextAuth que use TU página
+        signIn: '/login',
     },
     session: {
-        strategy: "jwt", // Obligatorio para Credentials
+        strategy: "jwt",
     },
     callbacks: {
-        async signIn({ user }) {
+        async signIn({ user, account }) {
             if (!user.email) return false;
+
             try {
-                // Verificar si el usuario ya existe en Postgres (Neon)
                 const existingUser = await db
                     .select()
                     .from(users)
@@ -104,29 +101,27 @@ export const authOptions: NextAuthOptions = {
                     .limit(1);
 
                 if (existingUser.length === 0) {
-                    // Si es nuevo, lo guardamos
-                    await db.insert(users).values({
-                        name: user.name,
-                        email: user.email,
-                        image: user.image,
-                    });
+                    // Solo insertamos si es login con Google (account.provider !== "credentials")
+                    if (account?.provider !== "credentials") {
+                        await db.insert(users).values({
+                            name: user.name,
+                            email: user.email,
+                            image: user.image,
+                        });
+                    }
                 }
                 return true;
             } catch (error) {
                 console.error("Error saving user to DB:", error);
-                return true; // Permitimos el login aunque falle el guardado para no bloquear al usuario
+                return true;
             }
         },
         async jwt({ token, account, user }) {
             if (account && user) {
-                const expiresAt = account.expires_at
-                    ? account.expires_at * 1000
-                    : Date.now() + 3600 * 1000;
-
                 return {
                     ...token,
                     accessToken: account.access_token,
-                    expiresAt: expiresAt,
+                    expiresAt: account.expires_at ? account.expires_at * 1000 : Date.now() + 3600 * 1000,
                     refreshToken: account.refresh_token,
                 };
             }
