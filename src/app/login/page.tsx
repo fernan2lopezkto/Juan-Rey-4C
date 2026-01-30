@@ -91,7 +91,7 @@ const LoginPage = () => {
 
             <button 
               type="submit" 
-              className={`btn btn-primary w-full ${loading ? 'loading' : ''}`}
+              className={`btn btn-primary mt-2 w-full ${loading ? 'loading' : ''}`}
               disabled={loading}
             >
               {loading ? "" : "Entrar"}

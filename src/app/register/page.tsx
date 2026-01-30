@@ -84,7 +84,7 @@ const RegisterPage = () => {
 
             <button 
               type="submit" 
-              className={`btn btn-primary w-full mt-2 ${loading ? 'loading' : ''}`}
+              className={`btn btn-primary mt-2 w-full mt-2 ${loading ? 'loading' : ''}`}
               disabled={loading}
             >
               {loading ? "" : "Registrarse"}
