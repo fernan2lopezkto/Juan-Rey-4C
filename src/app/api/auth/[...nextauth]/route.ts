@@ -60,17 +60,14 @@ export const authOptions: NextAuthOptions = {
             async authorize(credentials) {
                 if (!credentials?.email || !credentials?.password) return null;
 
-                // Buscar usuario directamente por email en la DB
                 const [user] = await db
                     .select()
                     .from(users)
                     .where(eq(users.email, credentials.email))
                     .limit(1);
 
-                // Si no existe o no tiene password (caso de usuario solo Google)
                 if (!user || !user.password) return null;
 
-                // Comparación segura con bcrypt
                 const isPasswordMatch = await bcrypt.compare(credentials.password, user.password);
 
                 if (!isPasswordMatch) return null;
@@ -101,7 +98,6 @@ export const authOptions: NextAuthOptions = {
                     .limit(1);
 
                 if (existingUser.length === 0) {
-                    // Solo insertamos si es login con Google (account.provider !== "credentials")
                     if (account?.provider !== "credentials") {
                         await db.insert(users).values({
                             name: user.name,
@@ -118,6 +114,9 @@ export const authOptions: NextAuthOptions = {
         },
         async jwt({ token, account, user }) {
             if (account && user) {
+                // Inyectamos el provider en el token
+                token.provider = account.provider;
+                
                 return {
                     ...token,
                     accessToken: account.access_token,
@@ -126,7 +125,10 @@ export const authOptions: NextAuthOptions = {
                 };
             }
 
-            // @ts-ignore
+            // Si es Credentials, no refrescamos nada
+            if (token.provider === "credentials") return token;
+
+            // @ts-ignore (Si es Google, verificamos expiración)
             if (Date.now() < (token.expiresAt as number)) {
                 return token;
             }
@@ -134,6 +136,8 @@ export const authOptions: NextAuthOptions = {
             return refreshAccessToken(token);
         },
         async session({ session, token }) {
+            // @ts-ignore
+            session.user.provider = token.provider;
             // @ts-ignore
             session.accessToken = token.accessToken;
             // @ts-ignore
