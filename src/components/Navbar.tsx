@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import ThemeSwitcher from "./navbar-ui/ThemeSwitcher";
-import UserMenu from "./navbar-ui/UserMenu";
+//import UserMenu from "./navbar-ui/UserMenu";
 import LoginButton from "./navbar-ui/LoginButton";
 import MobileMenu from "./navbar-ui/MobileMenu";
 
@@ -36,7 +36,7 @@ export default async function Navbar() {
         <ThemeSwitcher />
 
         {session?.user ? (
-          <UserMenu user={session.user} />
+          <></>
         ) : (
           <LoginButton />
         )}
