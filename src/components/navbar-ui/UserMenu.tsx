@@ -11,13 +11,13 @@ interface UserMenuProps {
 
 export default function UserMenu({ user }: UserMenuProps) {
     return (
-        <Link 
-            href="/profile" 
+        <Link
+            href="/profile"
             className="flex items-center gap-2 group cursor-pointer transition-all active:scale-95"
         >
-            <span className="hidden md:block text-sm font-medium opacity-90 group-hover:text-primary transition-colors">
+            {/* <span className="hidden md:block text-sm font-medium opacity-90 group-hover:text-primary transition-colors">
                 {user.name}
-            </span>
+            </span> */}
 
             {user.image ? (
                 <img
