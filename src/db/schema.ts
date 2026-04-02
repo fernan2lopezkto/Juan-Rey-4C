@@ -1,4 +1,4 @@
-import { pgTable, serial, text, timestamp, integer, primaryKey, uniqueIndex, json } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, timestamp, integer, primaryKey, uniqueIndex, json, boolean } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -7,6 +7,7 @@ export const users = pgTable('users', {
   password: text('password'),
   image: text('image'),
   plan: text('plan').default('free').notNull(), 
+  emailVerified: timestamp('emailVerified', { mode: 'date' }),
   createdAt: timestamp('created_at').defaultNow(),
   lastLogin: timestamp('last_login').defaultNow(),
 });
@@ -58,4 +59,14 @@ export const songs = pgTable('songs', {
   // Fechas de auditoría
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+// Tabla para códigos de verificación de email (registro)
+export const emailVerifications = pgTable('email_verifications', {
+  id:        serial('id').primaryKey(),
+  email:     text('email').notNull(),
+  code:      text('code').notNull(),
+  expiresAt: timestamp('expires_at').notNull(),
+  used:      boolean('used').default(false).notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
 });
