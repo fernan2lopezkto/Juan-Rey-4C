@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
 import { updateUserPlan } from "@/app/actions/adminActions";
+import EmailForm from "@/components/ulist/EmailForm";
 
 export const revalidate = 0;
 
@@ -117,6 +118,11 @@ export default async function UsersListPage({
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Sección de envío de emails */}
+      <div className="mt-10">
+        <EmailForm users={allUsers.map((u) => ({ email: u.email, name: u.name }))} />
       </div>
     </div>
   );
