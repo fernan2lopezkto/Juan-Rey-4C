@@ -138,24 +138,7 @@ export async function getPopularVideos(token: string): Promise<Video[]> {
     }
 }
 
-export async function rateVideo(id: string, rating: 'like' | 'dislike' | 'none', token: string) {
-    const params = new URLSearchParams({
-        id: id,
-        rating: rating,
-    });
 
-    const response = await fetch(`https://www.googleapis.com/youtube/v3/videos/rate?${params.toString()}`, {
-        method: 'POST',
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
-
-    if (!response.ok) {
-        console.error('YouTube Rate Error', await response.text());
-        throw new Error('Failed to rate video');
-    }
-}
 
 export async function getVideoDetails(videoId: string, accessToken: string): Promise<Video> {
     const res = await fetch(

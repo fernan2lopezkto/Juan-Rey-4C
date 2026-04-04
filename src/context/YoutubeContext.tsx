@@ -73,50 +73,11 @@ export function YoutubeProvider({ children }: { children: React.ReactNode }) {
         if (!blacklist.length) return videos;
         const lowerBlacklist = blacklist.map(w => w.toLowerCase());
 
-        const allowedVideos: Video[] = [];
-        const blockedVideos: Video[] = [];
-
-        videos.forEach(video => {
+        return videos.filter(video => {
             const title = video.title.toLowerCase();
             const desc = (video.description || '').toLowerCase();
-            if (lowerBlacklist.some(word => title.includes(word) || desc.includes(word))) {
-                blockedVideos.push(video);
-            } else {
-                allowedVideos.push(video);
-            }
+            return !lowerBlacklist.some(word => title.includes(word) || desc.includes(word));
         });
-
-        // Manejar sistema de dislikes controlados (anti-spam)
-        if (blockedVideos.length > 0 || localStorage.getItem('yt-pending-dislikes')) {
-            const pendingRaw = localStorage.getItem('yt-pending-dislikes');
-            let pending: Video[] = pendingRaw ? JSON.parse(pendingRaw) : [];
-
-            // Añadir nuevos bloqueados que no estén en la cola
-            blockedVideos.forEach(bv => {
-                if (!pending.find(p => p.id === bv.id)) {
-                    pending.push(bv);
-                }
-            });
-
-            // Procesar un solo dislike por ejecución
-            if (pending.length > 0 && (session as any)?.accessToken) {
-                const videoToDislike = pending.shift(); // Saca el primero
-                if (videoToDislike) {
-                    try {
-                        const { rateVideo } = await import('@/services/youtube');
-                        await rateVideo(videoToDislike.id, 'dislike', (session as any).accessToken);
-                        console.log(`[Filtro Anti-Spam] Dislike aplicado a: ${videoToDislike.title}`);
-                    } catch (error) {
-                        console.error("Error al aplicar dislike", error);
-                    }
-                }
-            }
-
-            // Guardar el resto de la cola
-            localStorage.setItem('yt-pending-dislikes', JSON.stringify(pending));
-        }
-
-        return allowedVideos;
     };
 
     const addToHistory = async (video: Video) => {
