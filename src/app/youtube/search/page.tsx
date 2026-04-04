@@ -12,7 +12,7 @@ function SearchResults() {
     const searchParams = useSearchParams();
     const query = searchParams.get('q');
     const { data: session } = useSession();
-    const { accessToken, filterAndDislike } = useYoutube();
+    const { accessToken, filterAndDislike, blacklist } = useYoutube();
 
     const [videos, setVideos] = useState<Video[]>([]);
     const [loading, setLoading] = useState(false);
@@ -23,8 +23,23 @@ function SearchResults() {
         const doSearch = async () => {
             setLoading(true);
             try {
+                // Filtrado explícito: Eliminar palabras blacklist de la query de búsqueda
+                let safeQuery = query;
+                if (blacklist && blacklist.length > 0) {
+                    blacklist.forEach(word => {
+                        const regex = new RegExp(`\\b${word}\\b`, 'gi');
+                        safeQuery = safeQuery.replace(regex, '').trim();
+                    });
+                }
+
+                // Si la búsqueda queda vacía tras eliminar palabras bloqueadas, no buscamos
+                if (!safeQuery) {
+                    setVideos([]);
+                    return;
+                }
+
                 // @ts-ignore
-                const results = await searchVideos(query, accessToken);
+                const results = await searchVideos(safeQuery, accessToken);
                 const filtered = await filterAndDislike(results);
                 setVideos(filtered);
             } catch (error) {
