@@ -1,12 +1,12 @@
-# Juan Rey 4C
+# Juan Rey 4C - Utilities & Portfolio
 
 <div align="center">
   <img src="public/fondoCrucesUno.jpg" alt="Banner" width="100%" />
 
-  <h1>🚀 Juan Rey 4C - Utilities & Portfolio</h1>
+  <h1>🚀 Juan Rey 4C - Digital Utilities & Professional Portfolio</h1>
 
   <p>
-    <strong>A modern, responsive web application built with Next.js, Tailwind CSS, and DaisyUI.</strong>
+    <strong>Una plataforma moderna y reactiva diseñada para centralizar herramientas útiles y mostrar proyectos personales.</strong>
   </p>
 
   <a href="https://juan-rey-4c.vercel.app" target="_blank">
@@ -16,23 +16,37 @@
 
 ---
 
-## ✨ Features
+## 🌟 Sobre la Plataforma
 
-*   **Responsive Design**: Built with Tailwind CSS and DaisyUI for a beautiful experience on any device.
-*   **YouTube Filter**: A specialized tool for filtering YouTube content.
-*   **Authentication**: Secure Google login with NextAuth.
-*   **Utilities**: A collection of useful tools and calculators.
-*   **Dark Mode**: Fully supported dark/light theme switching.
+**Juan Rey 4C** es un ecosistema digital que combina un portafolio profesional con una serie de herramientas prácticas de uso diario. El objetivo principal es ofrecer una experiencia de usuario fluida, rápida y estéticamente atractiva, integrando funcionalidades que van desde el filtrado de contenido hasta la gestión administrativa.
 
-## 🛠️ Tech Stack
+### 🛠️ Herramientas Principales
 
-*   **Framework**: Next.js 14
-*   **Styling**: Tailwind CSS, DaisyUI
-*   **Auth**: NextAuth.js (Google Provider)
-*   **Language**: TypeScript
+*   **🔍 YouTube Filter**: Una herramienta especializada diseñada para filtrar y organizar contenido de YouTube, permitiendo una navegación más enfocada y personalizada.
+*   **📝 Libreta de Notas**: Un sistema de notas integrado para capturar ideas, recordatorios o fragmentos de código de forma rápida y sencilla.
+*   **📊 Súper Panel (Admin)**: Un panel de administración avanzado para la gestión de usuarios, control de planes (PRO/Gratis) y comunicación directa vía email.
+*   **🔧 Utilidades Varias**: Una colección de componentes interactivos, visualizadores de imágenes (Carruseles y Sliders) y herramientas de cálculo optimizadas.
+*   **🌗 Modo Oscuro Nativo**: Soporte completo para temas claros y oscuros, adaptándose a las preferencias del usuario para una lectura cómoda en cualquier entorno.
+
+---
+
+## 💻 Descripción Técnica
+
+Esta aplicación ha sido construida siguiendo los más altos estándares de desarrollo web moderno, priorizando el rendimiento, la escalabilidad y la experiencia del desarrollador.
+
+### 🚀 Stack Tecnológico
+
+*   **Framework**: [Next.js 16](https://nextjs.org/) (App Router) para una renderización híbrida ultra rápida.
+*   **Lenguaje**: [TypeScript](https://www.typescriptlang.org/) para un desarrollo robusto y tipado.
+*   **Estilos**: [Tailwind CSS 4](https://tailwindcss.com/) y [DaisyUI 5](https://daisyui.com/) para una interfaz moderna y componentes pre-estilizados de alta fidelidad.
+*   **Base de Datos**: [Vercel Postgres](https://vercel.com/docs/storage/vercel-postgres) (Serverless SQL).
+*   **ORM**: [Drizzle ORM](https://orm.drizzle.team/) para una interacción con la base de datos segura y eficiente.
+*   **Autenticación**: [NextAuth.js](https://next-auth.js.org/) con integración de Google OAuth.
+*   **Comunicaciones**: [Nodemailer](https://nodemailer.com/) para el sistema de notificaciones y gestión de correos electrónicos.
+*   **Analíticas**: Integración nativa con Vercel Analytics y Speed Insights para monitoreo continuo.
 
 ---
 
 <div align="center">
-  <sub>Built with ❤️ by Juan Rey</sub>
+  <sub>Desarrollado con ❤️ por Juan Rey</sub>
 </div>
