@@ -27,6 +27,7 @@ interface SongsContextType {
     deleteSong: (id: string) => Promise<void>;
     setCurrentSongById: (id: string) => void;
     refreshSongs: () => Promise<void>;
+    importSongs: (importedSongs: Song[]) => Promise<void>;
 }
 
 const SongsContext = createContext<SongsContextType | undefined>(undefined);
@@ -123,11 +124,36 @@ export function SongsProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
+    const importSongs = async (importedSongs: Song[]) => {
+        if (!Array.isArray(importedSongs)) return;
+        
+        let validSongs = importedSongs.filter(s => s.id && s.title); // Validación básica
+        
+        if (session?.user?.email && userPlan === 'pro') {
+            // Sincroniza cada una en la DB
+            await Promise.all(validSongs.map(song => syncSongServer(song)));
+            // Refresca la lista desde el servidor para estar sincronizados
+            const res = await getSongsServer();
+            setSongs(res);
+        } else {
+            // Importación en LocalStorage
+            const currentLocal = getLocalSongs();
+            // Filtrar duplicados por ID
+            const newLocal = [...validSongs, ...currentLocal.filter(c => !validSongs.find(s => s.id === c.id))];
+            
+            // Reutilizar lógica existente para guardar el string JSON final
+            import ('@/components/libretaDeNotas/storage').then(mod => {
+                 mod.importSongsData(JSON.stringify(newLocal));
+                 setSongs(newLocal);
+            });
+        }
+    };
+
     return (
         <SongsContext.Provider value={{
             songs, currentSong, userPlan, loading,
             saveSong, updateSong, deleteSong,
-            setCurrentSongById, refreshSongs
+            setCurrentSongById, refreshSongs, importSongs
         }}>
             {children}
         </SongsContext.Provider>

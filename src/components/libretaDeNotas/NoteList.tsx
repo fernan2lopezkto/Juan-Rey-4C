@@ -5,7 +5,7 @@ import { Song } from '@/types/notebook';
 import Link from 'next/link';
 
 export default function ListaCanciones() {
-  const { songs, deleteSong, setCurrentSongById, loading } = useSongs();
+  const { songs, deleteSong, setCurrentSongById, loading, importSongs } = useSongs();
   const [search, setSearch] = useState('');
   const [selectedPreview, setSelectedPreview] = useState<Song | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -23,6 +23,28 @@ export default function ListaCanciones() {
     downloadAnchorNode.setAttribute("download", `backup_canciones_${new Date().toLocaleDateString()}.json`);
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
+  };
+
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const json = JSON.parse(event.target?.result as string);
+        if (Array.isArray(json)) {
+            await importSongs(json);
+            alert("Canciones importadas correctamente.");
+        } else {
+            alert("Formato incorrecto. Se esperaba una lista de canciones.");
+        }
+      } catch (error) {
+        alert("Error al leer el archivo. Asegúrate de que es un JSON válido.");
+      }
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    };
+    reader.readAsText(file);
   };
 
   if (loading && songs.length === 0) {
@@ -82,8 +104,13 @@ export default function ListaCanciones() {
       <div className="divider mt-16 opacity-30 text-xs font-mono uppercase">Gestión de datos</div>
       <div className="flex gap-4 justify-center pb-10">
         <button onClick={() => fileInputRef.current?.click()} className="btn btn-sm btn-ghost border-dashed border-base-300">📤 Importar</button>
-        {/* Aquí podrías conectar la importación a una acción masiva en la nube si quisieras más adelante */}
-        <input type="file" ref={fileInputRef} className="hidden" accept=".json,application/json,text/plain" />
+        <input 
+          type="file" 
+          ref={fileInputRef} 
+          className="hidden" 
+          onChange={handleImport}
+          // Removed restrictive accept attribute to fix Android file manager issue where it grays out .json files
+        />
         <button onClick={handleExport} className="btn btn-sm btn-ghost border-dashed border-base-300">📥 Exportar</button>
       </div>
 
