@@ -1,10 +1,9 @@
 "use client";
 import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import { FaThumbsDown } from 'react-icons/fa';
+
 import { Video } from '@/types/youtube';
 import { useYoutube } from '@/context/YoutubeContext';
-import { rateVideo } from '@/services/youtube';
 
 const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
 
@@ -23,15 +22,7 @@ export default function YoutubePlayer({ video, onEnded }: PlayerProps) {
         }
     }, [video.id]); // Solo se dispara si cambia el ID del video
 
-    const handleDislike = async () => {
-        if (!accessToken) return alert("Inicia sesión para usar esto");
-        try {
-            await rateVideo(video.id, 'dislike', accessToken);
-            alert('Video descartado del algoritmo');
-        } catch (error) {
-            alert('Error al calificar');
-        }
-    };
+
 
     return (
         <div className="space-y-4">
@@ -49,9 +40,6 @@ export default function YoutubePlayer({ video, onEnded }: PlayerProps) {
                 <h2 className="text-2xl font-black text-base-content leading-tight mb-2">{video.title}</h2>
                 <div className="flex justify-between items-center bg-base-200 p-4 rounded-2xl">
                     <span className="font-bold opacity-60 text-sm">{video.channelTitle}</span>
-                    <button className="btn btn-error btn-sm rounded-xl gap-2" onClick={handleDislike}>
-                        <FaThumbsDown /> Not Interested
-                    </button>
                 </div>
             </div>
         </div>
