@@ -127,7 +127,13 @@ export function SongsProvider({ children }: { children: React.ReactNode }) {
     const importSongs = async (importedSongs: Song[]) => {
         if (!Array.isArray(importedSongs)) return;
         
-        let validSongs = importedSongs.filter(s => s.id && s.title); // Validación básica
+        let validSongs = importedSongs
+            .filter(s => s.title) // Validación básica
+            .map(s => ({
+                ...s,
+                id: crypto.randomUUID(), // Asignamos siempre ID nuevo
+                date: new Date().toLocaleDateString()
+            }));
         
         if (session?.user?.email && userPlan === 'pro') {
             // Sincroniza cada una en la DB
@@ -138,8 +144,7 @@ export function SongsProvider({ children }: { children: React.ReactNode }) {
         } else {
             // Importación en LocalStorage
             const currentLocal = getLocalSongs();
-            // Filtrar duplicados por ID
-            const newLocal = [...validSongs, ...currentLocal.filter(c => !validSongs.find(s => s.id === c.id))];
+            const newLocal = [...validSongs, ...currentLocal];
             
             // Reutilizar lógica existente para guardar el string JSON final
             import ('@/components/libretaDeNotas/storage').then(mod => {

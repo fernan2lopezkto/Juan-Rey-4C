@@ -14,15 +14,28 @@ export default function AccionesCancion() {
     }
   };
 
+  const handleExport = () => {
+    if (!currentSong) return;
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify([currentSong]));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", `cancion_${currentSong.title.replace(/\s+/g, '_')}.json`);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  };
+
   if (!currentSong) return null;
 
   return (
-    <div className="flex gap-4 justify-center mt-8 border-t border-base-300 pt-6">
+    <div className="flex flex-wrap gap-4 justify-center mt-8 border-t border-base-300 pt-6">
       <button onClick={handleDelete} className="btn btn-error btn-outline flex-1">
-        🗑 Borrar Canción
+        🗑 Borrar
+      </button>
+      <button onClick={handleExport} className="btn btn-info btn-outline flex-1">
+        📥 Exportar
       </button>
       <Link href="/utilities/libretadenotas/editar" className="btn btn-warning btn-outline flex-1">
-        ✏️ Editar Datos
+        ✏️ Editar
       </Link>
     </div>
   );
