@@ -2,42 +2,21 @@ import PrincipalHero from "@/components/PrincipalHero";
 import PrincipalFooter from "@/components/PrincipalFooter";
 import Link from "next/link";
 import Image from "next/image";
-
-const TOOLS = [
-  {
-    title: "Filtro de YouTube",
-    description: "Protege lo que ven los más pequeños. Filtra contenido por palabras clave y mejora el algoritmo oficial marcando automáticamente como 'No me gusta'.",
-    image: "/ytfimagens/capturaFilter1.jpg",
-    href: "/youtube",
-    badge: "Familiar"
-  },
-  {
-    title: "Quiz Bíblico",
-    description: "Pon a prueba tus conocimientos de las Escrituras con retos interactivos. Una forma divertida de aprender sobre la Biblia en familia.",
-    image: "/thumbnails/bible_quiz.png",
-    href: "/utilities/biblequiz",
-    badge: "Juego"
-  },
-  {
-    title: "Libreta de Acordes",
-    description: "Tu repertorio personal siempre a mano. Organiza canciones, progresiones y notas musicales de forma rápida y sencilla.",
-    image: "/thumbnails/chords_notebook.png",
-    href: "/utilities/libretadenotas",
-    badge: "Música"
-  }
-];
+import ToolsCarousel from "@/components/ToolsCarousel";
+import { TOOLS } from "@/data/tools";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-base-200 flex flex-col">
+    <div className="min-h-screen bg-base-200 flex flex-col overflow-x-hidden">
       <PrincipalHero />
 
       <main className="container mx-auto px-4 py-12 flex-grow">
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Mobile View: Grid */}
+        <section className="grid grid-cols-1 gap-8 md:hidden">
           {TOOLS.map((tool, index) => (
             <div 
               key={index}
-              className="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-base-300 group"
+              className="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 border border-base-300 group"
             >
               <figure className="relative h-48 overflow-hidden">
                 <img 
@@ -67,6 +46,11 @@ export default function Home() {
               </div>
             </div>
           ))}
+        </section>
+
+        {/* Desktop View: Carousel */}
+        <section className="hidden md:block">
+          <ToolsCarousel tools={TOOLS} />
         </section>
       </main>
 
