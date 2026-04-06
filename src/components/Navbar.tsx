@@ -10,6 +10,8 @@ import { navigationItems } from "@/utils/texts";
 
 import DesktopMenu from "./navbar-ui/DesktopMenu";
 
+import { ADMIN_EMAILS } from "@/utils/admin";
+
 export default async function Navbar() {
   const session = await getServerSession(authOptions);
 
@@ -35,7 +37,7 @@ export default async function Navbar() {
       <div className="navbar-end gap-2">
         <ThemeSwitcher />
 
-        {session?.user?.email === "fernan2lopezkto@gmail.com" && (
+        {session?.user?.email && ADMIN_EMAILS.includes(session.user.email) && (
           <Link href="/ulist" className="btn btn-outline btn-warning btn-sm hidden md:flex">
             Dashboard
           </Link>

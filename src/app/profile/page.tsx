@@ -1,12 +1,23 @@
 "use client";
 
+import React, { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { FaUser, FaEnvelope, FaShieldAlt, FaSignOutAlt, FaGoogle, FaKey } from "react-icons/fa";
+import { getLiveUserPlan } from "@/app/actions/adminActions";
 
 export default function ProfilePage() {
     const { data: session, status } = useSession();
     const router = useRouter();
+    const [livePlan, setLivePlan] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (session?.user?.email) {
+            getLiveUserPlan(session.user.email).then(plan => {
+                setLivePlan(plan);
+            });
+        }
+    }, [session?.user?.email]);
 
     if (status === "loading") {
         return (
@@ -16,7 +27,6 @@ export default function ProfilePage() {
         );
     }
 
-    // Aunque el middleware protege la ruta, este check extra evita flashes de contenido
     if (!session) {
         router.push("/login");
         return null;
@@ -25,8 +35,8 @@ export default function ProfilePage() {
     const user = session.user;
     // @ts-ignore
     const provider = user?.provider;
-    // @ts-ignore
-    const userPlan = (user?.plan === 'free' ? 'basic' : user?.plan) || 'basic';
+    const userPlan = livePlan || (user as any)?.plan || 'basic';
+    const displayPlan = userPlan === 'free' ? 'basic' : userPlan;
 
     return (
         <div className="min-h-screen bg-base-200 py-12 px-4">
@@ -113,11 +123,11 @@ export default function ProfilePage() {
                                 <div className="flex justify-between text-sm">
                                     <span className="opacity-70">Tipo de cuenta:</span>
                                     <span className={`badge badge-sm uppercase flex items-center font-bold ${
-                                        ['pro', 'creador', 'admin'].includes(userPlan) ? 'badge-primary'
-                                        : userPlan !== 'basic' ? 'badge-secondary'
+                                        ['pro', 'creador', 'admin'].includes(displayPlan) ? 'badge-primary'
+                                        : displayPlan !== 'basic' ? 'badge-secondary'
                                         : 'badge-ghost'
                                     }`}>
-                                        {userPlan}
+                                        {displayPlan}
                                     </span>
                                 </div>
                             </div>
