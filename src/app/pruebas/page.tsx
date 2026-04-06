@@ -1,8 +1,8 @@
 import PrincipalFooter from "@/components/PrincipalFooter";
 
-import BqSPAComponent from "@/components/spaPilotos/BqSPAComponent"
-import RulesComponent from "@/components/spaPilotos/RulesComponent"
-import { bibleQuestions } from '@/data/questions';
+import BibleQuizComponent from "@/components/bible-quiz/BibleQuizComponent"
+import RulesComponent from "@/components/bible-quiz/RulesComponent"
+import { bibleQuestions } from '@/data/bible-questions';
 
 import ImagenCarrusel from "@/components/ImagenCarrusel"
 export default function Pruebas() {
@@ -21,7 +21,7 @@ export default function Pruebas() {
                 Pruebas
             </h1>
             
-            <BqSPAComponent 
+            <BibleQuizComponent 
             questions={bibleQuestions}
             />
             <RulesComponent />
