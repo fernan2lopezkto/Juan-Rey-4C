@@ -42,7 +42,7 @@ const questions: Question[] = [
   },
 ];
 
-export default function BqSPABasic() {
+export default function BibleQuizBase() {
   // --- 3. Estados ---
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [showScore, setShowScore] = useState(false);
@@ -71,7 +71,7 @@ export default function BqSPABasic() {
         <div className="card-body">
           
           <h2 className="card-title text-2xl font-bold text-primary mb-4 justify-center">
-            Mini  📖 Quiz Bíblico
+            Mini  📖 BibleQuiz
           </h2>
 
           {showScore ? (
@@ -89,7 +89,7 @@ export default function BqSPABasic() {
                 {/* Usamos Link para navegar a la ruta deseada. 
                    El botón mantiene el estilo de DaisyUI.
                 */}
-                <Link href="/utilities/biblequiz" className="btn btn-primary btn-wide">
+                <Link href="/utilities/bible-quiz" className="btn btn-primary btn-wide">
                   Ir al Juego
                 </Link>
               </div>

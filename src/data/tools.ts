@@ -8,17 +8,17 @@ export interface Tool {
 
 export const TOOLS: Tool[] = [
   {
-    title: "Filtro de YouTube",
-    description: "Protege lo que ven los más pequeños. Filtra contenido por palabras clave.",
+    title: "YouTube Filter",
+    description: "Protege lo que ves. Filtra contenido por palabras clave.",
     image: "/ytfimagens/capturaFilter1.jpg",
-    href: "/youtube",
+    href: "/utilities/youtube-filter",
     badge: "Familiar"
   },
   {
-    title: "Quiz Bíblico",
+    title: "BibleQuiz",
     description: "Pon a prueba tus conocimientos de las Escrituras con retos interactivos. Una forma divertida de aprender sobre la Biblia.",
     image: "/thumbnails/bible_quiz.png",
-    href: "/utilities/biblequiz",
+    href: "/utilities/bible-quiz",
     badge: "Juego"
   },
   {

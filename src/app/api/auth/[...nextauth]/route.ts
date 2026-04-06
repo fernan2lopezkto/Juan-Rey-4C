@@ -114,8 +114,16 @@ export const authOptions: NextAuthOptions = {
         },
         async jwt({ token, account, user }) {
             if (account && user) {
-                // Inyectamos el provider en el token
+                // Fetch user plan from DB
+                const [dbUser] = await db
+                    .select({ plan: users.plan })
+                    .from(users)
+                    .where(eq(users.email, user.email!))
+                    .limit(1);
+
+                // Inyectamos el provider y el plan en el token
                 token.provider = account.provider;
+                token.plan = dbUser?.plan || 'basic';
                 
                 return {
                     ...token,
@@ -138,6 +146,8 @@ export const authOptions: NextAuthOptions = {
         async session({ session, token }) {
             // @ts-ignore
             session.user.provider = token.provider;
+            // @ts-ignore
+            session.user.plan = token.plan;
             // @ts-ignore
             session.accessToken = token.accessToken;
             // @ts-ignore

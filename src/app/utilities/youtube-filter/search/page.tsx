@@ -3,16 +3,16 @@
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { searchVideos } from '@/services/youtube';
-import { useYoutube } from '@/context/YoutubeContext';
-import VideoList from '@/components/youtube/VideoList';
-import { Video } from '@/types/youtube';
+import { searchVideos } from '@/services/youtube-filter';
+import { useYoutubeFilter } from '@/context/YoutubeFilterContext';
+import VideoList from '@/components/youtube-filter/VideoList';
+import { Video } from '@/types/youtube-filter';
 
 function SearchResults() {
     const searchParams = useSearchParams();
     const query = searchParams.get('q');
     const { data: session } = useSession();
-    const { accessToken, filterAndDislike, blacklist } = useYoutube();
+    const { accessToken, filterAndDislike, blacklist } = useYoutubeFilter();
 
     const [videos, setVideos] = useState<Video[]>([]);
     const [loading, setLoading] = useState(false);
@@ -26,7 +26,7 @@ function SearchResults() {
                 // Filtrado explícito: Eliminar palabras blacklist de la query de búsqueda
                 let safeQuery = query;
                 if (blacklist && blacklist.length > 0) {
-                    blacklist.forEach(word => {
+                    blacklist.forEach((word: string) => {
                         const regex = new RegExp(`\\b${word}\\b`, 'gi');
                         safeQuery = safeQuery.replace(regex, '').trim();
                     });
@@ -62,8 +62,8 @@ function SearchResults() {
     );
 }
 
-import SearchHeader from '@/components/youtube/SearchHeader';
-import YoutubeNav from '@/components/youtube/YoutubeNav';
+import SearchHeader from '@/components/youtube-filter/SearchHeader';
+import YoutubeNav from '@/components/youtube-filter/YoutubeNav';
 
 // Es necesario envolver en Suspense para usar useSearchParams en Next.js
 export default function SearchPage() {

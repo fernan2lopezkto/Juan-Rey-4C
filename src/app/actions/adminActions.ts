@@ -7,15 +7,13 @@ import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
-export async function updateUserPlan(userId: number, currentPlan: string) {
+export async function updateUserPlan(userId: number, newPlan: string) {
   const session = await getServerSession(authOptions);
   
   // ⚠️ IMPORTANTE: Pon aquí tu correo real de Google
   if (session?.user?.email !== "fernan2lopezkto@gmail.com") {
     throw new Error("No autorizado");
   }
-
-  const newPlan = currentPlan === 'pro' ? 'free' : 'pro';
 
   await db.update(users)
     .set({ plan: newPlan })

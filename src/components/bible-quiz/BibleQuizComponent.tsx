@@ -7,7 +7,7 @@ import ScoreHandler from './ScoreHandler';
 export type AnswerOption = { answerText: string; isCorrect: boolean; };
 export type Question = { questionText: string; answerOptions: AnswerOption[]; };
 
-export default function BqSPAComponent({ questions }: { questions: Question[] }) {
+export default function BibleQuizComponent({ questions }: { questions: Question[] }) {
   // --- Estados ---
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
@@ -85,7 +85,7 @@ export default function BqSPAComponent({ questions }: { questions: Question[] })
   if (!gameStarted) {
     return (
       <div className="max-w-2xl mx-auto p-4 text-center">
-        <h1 className="text-5xl mt-8 font-serif">Bible Quiz</h1>
+        <h1 className="text-5xl mt-8 font-serif">BibleQuiz</h1>
         <div className="py-8">
            <PersistenceManager 
               score={score} 

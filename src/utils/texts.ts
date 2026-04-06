@@ -22,8 +22,8 @@ export const navigationItems: NavigationItem[] = [
     label: "Utilidades",
     href: "#",
     submenu: [
-      { label: "Youtube Kid Filter", href: "/youtube" },
-      { label: "Bible Quiz", href: "/utilities/biblequiz" },
+      { label: "YouTube Filter", href: "/utilities/youtube-filter" },
+      { label: "BibleQuiz", href: "/utilities/bible-quiz" },
       { label: "Libreta de Acordes", href: "/utilities/libretadenotas" },
     ],
   },

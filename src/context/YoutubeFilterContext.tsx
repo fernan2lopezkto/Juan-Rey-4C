@@ -1,7 +1,7 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { Video } from '@/types/youtube';
+import { Video } from '@/types/youtube-filter';
 import { getBlacklist, addWordServer, removeWordServer } from '@/app/actions/filterActions';
 import { 
     getHistoryServer, 
@@ -11,7 +11,7 @@ import {
 } from '@/app/actions/historyActions';
 import { getUserPlan } from '@/app/actions/userActions'; // Importa la nueva acción
 
-interface YoutubeContextType {
+interface YoutubeFilterContextType {
     blacklist: string[];
     history: Video[];
     userPlan: string;
@@ -24,9 +24,9 @@ interface YoutubeContextType {
     filterAndDislike: (videos: Video[]) => Promise<Video[]>;
 }
 
-const YoutubeContext = createContext<YoutubeContextType | undefined>(undefined);
+const YoutubeFilterContext = createContext<YoutubeFilterContextType | undefined>(undefined);
 
-export function YoutubeProvider({ children }: { children: React.ReactNode }) {
+export function YoutubeFilterProvider({ children }: { children: React.ReactNode }) {
     const { data: session } = useSession();
     const [blacklist, setBlacklist] = useState<string[]>([]);
     const [history, setHistory] = useState<Video[]>([]);
@@ -147,7 +147,7 @@ const clearHistory = async () => {
     };
 
     return (
-        <YoutubeContext.Provider value={{
+        <YoutubeFilterContext.Provider value={{
             blacklist, history, userPlan,
             addToBlacklist, removeFromBlacklist,
             addToHistory, removeFromHistory, clearHistory,
@@ -155,12 +155,12 @@ const clearHistory = async () => {
             filterAndDislike
         }}>
             {children}
-        </YoutubeContext.Provider>
+        </YoutubeFilterContext.Provider>
     );
 }
 
-export const useYoutube = () => {
-    const context = useContext(YoutubeContext);
-    if (!context) throw new Error("useYoutube must be used within a YoutubeProvider");
+export const useYoutubeFilter = () => {
+    const context = useContext(YoutubeFilterContext);
+    if (!context) throw new Error("useYoutubeFilter must be used within a YoutubeFilterProvider");
     return context;
 };

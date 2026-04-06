@@ -1,4 +1,4 @@
-import { Question } from '@/types/biblequiz';
+import { Question } from '@/types/bible-quiz';
 
 export const bibleQuestions: Question[] = [
   // --- FÁCILES (1-34) ---

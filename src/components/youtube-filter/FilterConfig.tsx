@@ -1,10 +1,10 @@
 "use client";
 import { useState } from 'react';
 import { FaPlus, FaTrash } from 'react-icons/fa';
-import { useYoutube } from '@/context/YoutubeContext';
+import { useYoutubeFilter } from '@/context/YoutubeFilterContext';
 
 export default function FilterConfig() {
-    const { blacklist, addToBlacklist, removeFromBlacklist } = useYoutube();
+    const { blacklist, addToBlacklist, removeFromBlacklist } = useYoutubeFilter();
     const [newWord, setNewWord] = useState('');
 
     const handleSubmit = (e: React.FormEvent) => {

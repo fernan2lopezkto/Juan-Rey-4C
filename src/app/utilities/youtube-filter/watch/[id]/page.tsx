@@ -2,19 +2,19 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { getVideoDetails, getRelatedVideos } from '@/services/youtube';
-import { useYoutube } from '@/context/YoutubeContext';
-import YoutubePlayer from '@/components/youtube/YoutubePlayer';
-import AuthPlaceholder from '@/components/AuthPlaceholder'; // Assuming generic auth guard might be needed or just components
-import SearchHeader from '@/components/youtube/SearchHeader';
-import YoutubeNav from '@/components/youtube/YoutubeNav';
-import VideoList from '@/components/youtube/VideoList';
-import { Video } from '@/types/youtube';
+import { getVideoDetails, getRelatedVideos } from '@/services/youtube-filter';
+import { useYoutubeFilter } from '@/context/YoutubeFilterContext';
+import YoutubePlayer from '@/components/youtube-filter/YoutubePlayer';
+import AuthPlaceholder from '@/components/AuthPlaceholder'; 
+import SearchHeader from '@/components/youtube-filter/SearchHeader';
+import YoutubeNav from '@/components/youtube-filter/YoutubeNav';
+import VideoList from '@/components/youtube-filter/VideoList';
+import { Video } from '@/types/youtube-filter';
 
 export default function WatchPage() {
     const params = useParams();
     const videoId = params.id as string;
-    const { accessToken, addToHistory, filterAndDislike } = useYoutube();
+    const { accessToken, addToHistory, filterAndDislike } = useYoutubeFilter();
 
     const [video, setVideo] = useState<Video | null>(null);
     const [related, setRelated] = useState<Video[]>([]);
@@ -74,10 +74,10 @@ export default function WatchPage() {
                     onEnded={() => {
                         // Play 5th related video (index 4) if available
                         if (related.length > 4) {
-                            window.location.href = `/youtube/watch/${related[4].id}`;
+                            window.location.href = `/utilities/youtube-filter/watch/${related[4].id}`;
                         } else if (related.length > 0) {
                             // Fallback to first if less than 5
-                            window.location.href = `/youtube/watch/${related[0].id}`;
+                            window.location.href = `/utilities/youtube-filter/watch/${related[0].id}`;
                         }
                     }}
                 />

@@ -100,18 +100,28 @@ export default async function UsersListPage({
                   </div>
                 </td>
                 <td>
-                  <div className={`badge badge-lg gap-2 ${user.plan === 'pro' ? 'badge-primary' : 'badge-ghost opacity-50'}`}>
-                    {user.plan === 'pro' ? '⭐ PREMIUM' : 'GRATIS'}
+                  <div className={`badge badge-lg gap-2 ${user.plan !== 'basic' && user.plan !== 'free' ? 'badge-primary' : 'badge-ghost opacity-50'}`}>
+                    {user.plan !== 'basic' && user.plan !== 'free' ? `⭐ ${user.plan?.toUpperCase()}` : 'BASIC'}
                   </div>
                 </td>
                 <td className="text-center">
-                  <form action={async () => {
+                  <form action={async (formData: FormData) => {
                     'use server'
-                    await updateUserPlan(user.id, user.plan || 'free');
-                  }}>
-                    <button className={`btn btn-sm md:btn-md rounded-xl ${user.plan === 'pro' ? 'btn-outline btn-error' : 'btn-primary'}`}>
-                      {user.plan === 'pro' ? 'Quitar Pro' : 'Dar acceso PRO'}
-                    </button>
+                    const newPlan = formData.get('plan') as string;
+                    if (newPlan) {
+                      await updateUserPlan(user.id, newPlan);
+                    }
+                  }} className="flex items-center justify-center gap-2">
+                    <select name="plan" defaultValue={user.plan === 'free' ? 'basic' : (user.plan || 'basic')} className="select select-bordered select-sm max-w-xs">
+                        <option value="basic">Basic</option>
+                        <option value="music">Music</option>
+                        <option value="learning">Learning</option>
+                        <option value="play">Play</option>
+                        <option value="pro">Pro</option>
+                        <option value="creador">Creador</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <button type="submit" className="btn btn-sm btn-primary">Guardar</button>
                   </form>
                 </td>
               </tr>

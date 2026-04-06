@@ -1,6 +1,6 @@
-import FilterConfig from '@/components/youtube/FilterConfig';
-import SearchHeader from '@/components/youtube/SearchHeader';
-import YoutubeNav from '@/components/youtube/YoutubeNav';
+import FilterConfig from '@/components/youtube-filter/FilterConfig';
+import SearchHeader from '@/components/youtube-filter/SearchHeader';
+import YoutubeNav from '@/components/youtube-filter/YoutubeNav';
 
 export default function ConfigPage() {
     return (

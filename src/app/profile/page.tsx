@@ -25,6 +25,8 @@ export default function ProfilePage() {
     const user = session.user;
     // @ts-ignore
     const provider = user?.provider;
+    // @ts-ignore
+    const userPlan = (user?.plan === 'free' ? 'basic' : user?.plan) || 'basic';
 
     return (
         <div className="min-h-screen bg-base-200 py-12 px-4">
@@ -109,8 +111,14 @@ export default function ProfilePage() {
                                     <span className="font-mono text-success">SÍ</span>
                                 </div>
                                 <div className="flex justify-between text-sm">
-                                    <span className="opacity-70">Rol de usuario:</span>
-                                    <span className="badge badge-ghost badge-sm">Miembro</span>
+                                    <span className="opacity-70">Tipo de cuenta:</span>
+                                    <span className={`badge badge-sm uppercase flex items-center font-bold ${
+                                        ['pro', 'creador', 'admin'].includes(userPlan) ? 'badge-primary'
+                                        : userPlan !== 'basic' ? 'badge-secondary'
+                                        : 'badge-ghost'
+                                    }`}>
+                                        {userPlan}
+                                    </span>
                                 </div>
                             </div>
                         </div>

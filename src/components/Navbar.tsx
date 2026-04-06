@@ -35,6 +35,12 @@ export default async function Navbar() {
       <div className="navbar-end gap-2">
         <ThemeSwitcher />
 
+        {session?.user?.email === "fernan2lopezkto@gmail.com" && (
+          <Link href="/ulist" className="btn btn-outline btn-warning btn-sm hidden md:flex">
+            Dashboard
+          </Link>
+        )}
+
         {session?.user ? (
           <UserMenu user={session.user} />
         ) : (

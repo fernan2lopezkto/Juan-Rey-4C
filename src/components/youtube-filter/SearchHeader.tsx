@@ -15,7 +15,7 @@ export default function SearchHeader() {
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
         if (query.trim()) {
-            router.push(`/youtube/search?q=${encodeURIComponent(query)}`);
+            router.push(`/utilities/youtube-filter/search?q=${encodeURIComponent(query)}`);
         }
     };
 
@@ -27,7 +27,7 @@ export default function SearchHeader() {
         <div className="flex flex-col md:flex-row gap-4 mb-6 items-center justify-between bg-base-100 p-4 rounded-xl shadow-sm border border-base-200">
             <h1 
                 className="text-2xl font-bold text-base-content flex items-center gap-2 cursor-pointer" 
-                onClick={() => router.push('/youtube')}
+                onClick={() => router.push('/utilities/youtube-filter')}
             >
                 <span className="text-error">You</span>Tube Filter
             </h1>
@@ -53,7 +53,7 @@ export default function SearchHeader() {
                         {session ? "Para buscar necesitas vincular Google" : "Inicia sesión con Google para buscar"}
                     </span>
                     <button 
-                        onClick={() => signIn("google", { callbackUrl: "/youtube" })}
+                        onClick={() => signIn("google", { callbackUrl: "/utilities/youtube-filter" })}
                         className="btn btn-error btn-sm gap-2 text-white"
                     >
                         <FaGoogle /> Conectar

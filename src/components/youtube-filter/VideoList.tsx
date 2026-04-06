@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from 'next/navigation';
 import { FaTrash } from 'react-icons/fa';
-import { Video } from '@/types/youtube';
+import { Video } from '@/types/youtube-filter';
 
 interface VideoListProps {
     videos: Video[];
@@ -16,7 +16,7 @@ export default function VideoList({ videos, onRemove, loading }: VideoListProps)
         // Al hacer click, navegamos a la subruta de reproducción
         // Pasamos datos básicos por query params para carga instantánea o confiamos en fetch por ID
         // Aquí simplificamos yendo a la ruta /watch
-        router.push(`/youtube/watch/${video.id}`);
+        router.push(`/utilities/youtube-filter/watch/${video.id}`);
     };
 
     if (loading) return <div className="flex justify-center p-10"><span className="loading loading-spinner loading-lg"></span></div>;

@@ -1,12 +1,12 @@
 "use client";
-import { useYoutube } from '@/context/YoutubeContext';
-import VideoList from '@/components/youtube/VideoList';
+import { useYoutubeFilter } from '@/context/YoutubeFilterContext';
+import VideoList from '@/components/youtube-filter/VideoList';
 import { FaTrash, FaCloud, FaHdd } from 'react-icons/fa';
-import SearchHeader from '@/components/youtube/SearchHeader';
-import YoutubeNav from '@/components/youtube/YoutubeNav';
+import SearchHeader from '@/components/youtube-filter/SearchHeader';
+import YoutubeNav from '@/components/youtube-filter/YoutubeNav';
 
 export default function HistoryPage() {
-    const { history, removeFromHistory, clearHistory, userPlan } = useYoutube();
+    const { history, removeFromHistory, clearHistory, userPlan } = useYoutubeFilter();
 
     return (
         <div className="max-w-6xl mx-auto pb-20">

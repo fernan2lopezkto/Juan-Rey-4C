@@ -2,8 +2,8 @@
 import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 
-import { Video } from '@/types/youtube';
-import { useYoutube } from '@/context/YoutubeContext';
+import { Video } from '@/types/youtube-filter';
+import { useYoutubeFilter } from '@/context/YoutubeFilterContext';
 
 const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
 
@@ -13,7 +13,7 @@ interface PlayerProps {
 }
 
 export default function YoutubePlayer({ video, onEnded }: PlayerProps) {
-    const { accessToken, addToHistory } = useYoutube();
+    const { accessToken, addToHistory } = useYoutubeFilter();
 
     // EFECTO: Guardar en historial al montar el componente con un nuevo video
     useEffect(() => {
