@@ -25,8 +25,52 @@
 *   **🔍 YouTube Filter**: Una herramienta especializada diseñada para filtrar y organizar contenido de YouTube, permitiendo una navegación más enfocada y personalizada.
 *   **📝 Libreta de Notas**: Un sistema de notas integrado para capturar ideas, recordatorios o fragmentos de código de forma rápida y sencilla.
 *   **📊 Súper Panel (Admin)**: Un panel de administración avanzado para la gestión de usuarios, control de planes (PRO/Gratis) y comunicación directa vía email.
-*   **🔧 Utilidades Varias**: Una colección de componentes interactivos, visualizadores de imágenes (Carruseles y Sliders) y herramientas de cálculo optimizadas.
-*   **🌗 Modo Oscuro Nativo**: Soporte completo para temas claros y oscuros, adaptándose a las preferencias del usuario para una lectura cómoda en cualquier entorno.
+*   **📖 Bible Quiz**: Un juego interactivo de preguntas y respuestas bíblicas con sistema de puntuación, persistencia de progreso y récords personales.
+
+---
+
+## 📖 Módulo Bible Quiz
+
+El **Bible Quiz** es un componente interactivo diseñado para poner a prueba el conocimiento bíblico de los usuarios.
+
+### 🧠 Lógica de Funcionamiento
+
+La lógica está centralizada en el componente `BibleQuizComponent` y se basa en un flujo de estados reactivos:
+
+1.  **Inicialización**: El componente lee el `localStorage` para recuperar el progreso previo (`gameStarted`, `score`, `currentQuestion`) y el puntaje máximo (`highScore`).
+2.  **Validación de Respuesta**: Al seleccionar una opción:
+    *   **Acierto**: Suma 10 puntos y muestra feedback visual (verde).
+    *   **Error**: Resta 5 puntos y muestra feedback visual (rojo).
+3.  **Transición**: Existe un retraso de 1.2 segundos tras cada respuesta para que el usuario procese el feedback antes de pasar automáticamente a la siguiente pregunta.
+4.  **Finalización**: Al completar el set de preguntas, se muestra una vista de resultados con el puntaje final y la opción de reiniciar, actualizando el `highScore` si es necesario.
+
+### 📊 Diagrama de Flujo (Mermaid)
+
+```mermaid
+graph TD
+    A[Inicio: Página BibleQuiz] --> B{¿Hay Sesión?}
+    B -- No --> C[Mostrar AuthPlaceholder]
+    B -- Sí --> D[Cargar BibleQuizComponent]
+    D --> E[Cargar datos de LocalStorage]
+    E --> F{¿Juego Iniciado?}
+    F -- No --> G[Mostrar Menú de Inicio / Continuar]
+    G --> H[Usuario Pulsa Botón]
+    H --> I[Estado gameStarted = true]
+    I --> J[Mostrar Pregunta Actual]
+    J --> K[Usuario selecciona Respuesta]
+    K --> L{¿Es Correcta?}
+    L -- Sí --> M[Score +10 / Feedback Verde]
+    L -- No --> N[Score -5 / Feedback Rojo]
+    M --> O[Esperar 1.2s]
+    N --> O
+    O --> P{¿Hay más preguntas?}
+    P -- Sí --> Q[Incrementar currentQuestion]
+    Q --> J
+    P -- No --> R[Mostrar Vista de Resultados]
+    R --> S[Actualizar HighScore]
+    S --> T[Opción de Reiniciar Todo]
+    T --> G
+```
 
 ---
 
