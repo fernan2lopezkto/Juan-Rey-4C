@@ -17,7 +17,6 @@ interface AboutTexts {
 // NavBars
 export const navigationItems: NavigationItem[] = [
   { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
   {
     label: "Utilidades",
     href: "#",
@@ -27,6 +26,8 @@ export const navigationItems: NavigationItem[] = [
       { label: "Libreta de Acordes", href: "/utilities/libretadenotas" },
     ],
   },
+  { label: "Portfolio", href: "/portfolio" },
+  { label: "About", href: "/about" },
 ];
 
 // ABOUT
