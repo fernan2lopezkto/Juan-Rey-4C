@@ -8,11 +8,12 @@ export default function BibleQuizProDashboard({ initialProgress }: { initialProg
   const [mode, setMode] = useState<"menu" | "historia" | "libre" | "playing">("menu");
   const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
 
-  // Mapa de progreso rápido
-  const progressMap = initialProgress.reduce((acc, curr) => {
-    acc[curr.moduleId] = curr;
+  // Mapa de progreso rápido y cálculo de global score
+  const { progressMap, globalScore } = initialProgress.reduce((acc, curr) => {
+    acc.progressMap[curr.moduleId] = curr;
+    acc.globalScore += (curr.score || 0);
     return acc;
-  }, {} as Record<string, any>);
+  }, { progressMap: {} as Record<string, any>, globalScore: 0 });
 
   const handleStartGame = (moduleId: string) => {
     setActiveModuleId(moduleId);
@@ -42,7 +43,11 @@ export default function BibleQuizProDashboard({ initialProgress }: { initialProg
     <div className="max-w-6xl mx-auto py-8">
       <div className="text-center mb-10">
         <h1 className="text-5xl font-bold font-serif mb-4 text-primary">Bible Quiz Pro</h1>
-        <p className="text-lg opacity-80">Elige tu modo de juego</p>
+        <p className="text-lg opacity-80 mb-4">Elige tu modo de juego</p>
+        <div className="inline-block bg-base-200 px-6 py-3 rounded-full border border-primary/30">
+          <span className="font-bold">Score Global: </span>
+          <span className="text-2xl text-primary font-black ml-2">{globalScore} pts</span>
+        </div>
       </div>
 
       {mode === "menu" && (
@@ -88,6 +93,7 @@ export default function BibleQuizProDashboard({ initialProgress }: { initialProg
               if (!mod.isAvailable) isLocked = true;
 
               const isCompleted = progressMap[mod.id]?.passed;
+              const highScore = progressMap[mod.id]?.score || 0;
 
               return (
                 <div key={mod.id} className={`card shadow-lg border ${isLocked ? "bg-base-200 opacity-70" : "bg-base-100"}`}>
@@ -95,6 +101,10 @@ export default function BibleQuizProDashboard({ initialProgress }: { initialProg
                     <h3 className="card-title">{mod.title}</h3>
                     <p className="text-sm opacity-80">{mod.description}</p>
                     
+                    <div className="mt-2 text-sm font-semibold">
+                      Mejor Puntaje: <span className="text-primary">{highScore}</span>
+                    </div>
+
                     <div className="mt-4 flex justify-between items-center">
                       {isCompleted ? (
                         <span className="badge badge-success gap-1">Completado ✓</span>
@@ -128,11 +138,15 @@ export default function BibleQuizProDashboard({ initialProgress }: { initialProg
             ) : (
               bibleQuizModules.map(mod => {
                 if (!progressMap[mod.id]?.passed) return null;
+                const highScore = progressMap[mod.id]?.score || 0;
                 return (
                   <div key={mod.id} className="card bg-base-100 shadow-lg border border-secondary">
                     <div className="card-body">
                       <h3 className="card-title">{mod.title}</h3>
                       <p className="text-sm opacity-80">{mod.description}</p>
+                      <div className="mt-2 text-sm font-semibold">
+                        Mejor Puntaje: <span className="text-primary">{highScore}</span>
+                      </div>
                       <div className="mt-4 card-actions justify-end">
                         <button onClick={() => handleStartGame(mod.id)} className="btn btn-sm btn-secondary">
                           Jugar Libre

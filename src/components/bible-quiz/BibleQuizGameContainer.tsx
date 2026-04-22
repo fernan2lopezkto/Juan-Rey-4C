@@ -3,11 +3,16 @@
 import React, { useState } from "react";
 import { QuizModule } from "@/data/bible-quiz-modules";
 import { saveBibleQuizProgress } from "@/app/actions/bibleQuizActions";
-import BibleQuizComponent from "./BibleQuizComponent"; // Refactorizado o reutilizado
+import BibleQuizComponent from "./BibleQuizComponent"; 
 import PentateuchOrderGame from "./games/PentateuchOrderGame";
 
-// Aquí importaríamos los diferentes bancos de preguntas
-import { bibleQuestions } from "@/data/bible-questions"; // mock temporal
+// Importamos los bancos de preguntas
+import { genesisQuestions } from "@/data/genesis-questions";
+import { exodusQuestions } from "@/data/exodus-questions";
+import { leviticusQuestions } from "@/data/leviticus-questions";
+import { numbersQuestions } from "@/data/numbers-questions";
+import { deuteronomyQuestions } from "@/data/deuteronomy-questions";
+import { pentateuchHardQuestions } from "@/data/pentateuch-hard-questions";
 
 type GameContainerProps = {
   moduleInfo: QuizModule;
@@ -22,16 +27,13 @@ export default function BibleQuizGameContainer({ moduleInfo, onBack, onFinish }:
   const handleGameEnd = async (score: number) => {
     setIsSaving(true);
     
-    // Cálculo del 60%
-    // Depende del módulo, por ejemplo un quiz de 100 preguntas -> cada pregunta vale 1 punto? 
-    // Si `BibleQuizComponent` da 10 puntos por pregunta, necesitamos saber el máximo.
-    // Para simplificar, pasamos el score bruto y calculamos el porcentaje.
-    // Asumiremos que el maxScore es totalQuestions * 10 (si cada una da 10).
+    // Cálculo del porcentaje
+    // Cada pregunta da 10 puntos (si es correcta)
     const maxScore = moduleInfo.totalQuestions * 10; 
     let passed = false;
 
     if (moduleInfo.id === "mod_1_pentateuch_order") {
-        // En ordenar, el score será 100 si lo hace bien
+        // En ordenar, el max score es 100
         passed = score >= 60; 
     } else {
         const percentage = (score / maxScore) * 100;
@@ -45,7 +47,7 @@ export default function BibleQuizGameContainer({ moduleInfo, onBack, onFinish }:
       setSavedResult({ score, passed });
     } else {
       alert("Hubo un error al guardar tu progreso.");
-      setSavedResult({ score, passed }); // Mostrar igual para no bloquear
+      setSavedResult({ score, passed }); 
     }
   };
 
@@ -78,6 +80,15 @@ export default function BibleQuizGameContainer({ moduleInfo, onBack, onFinish }:
     );
   }
 
+  // Selección dinámica de preguntas
+  let questionsToUse: any[] = [];
+  if (moduleInfo.id === "mod_2_genesis") questionsToUse = genesisQuestions;
+  if (moduleInfo.id === "mod_3_exodus") questionsToUse = exodusQuestions;
+  if (moduleInfo.id === "mod_4_leviticus") questionsToUse = leviticusQuestions;
+  if (moduleInfo.id === "mod_5_numbers") questionsToUse = numbersQuestions;
+  if (moduleInfo.id === "mod_6_deuteronomy") questionsToUse = deuteronomyQuestions;
+  if (moduleInfo.id === "mod_7_pentateuch_hard") questionsToUse = pentateuchHardQuestions;
+
   return (
     <div className="w-full">
       <div className="flex justify-between items-center mb-6">
@@ -93,25 +104,23 @@ export default function BibleQuizGameContainer({ moduleInfo, onBack, onFinish }:
         </div>
       ) : (
         <div className="w-full">
-          {/* Renderizado dinámico según el módulo */}
           {moduleInfo.id === "mod_1_pentateuch_order" && (
             <PentateuchOrderGame onComplete={handleGameEnd} />
           )}
 
-          {moduleInfo.id.startsWith("mod_2") && (
-            // Reutilizamos el BibleQuizComponent pero sin LocalStorage (o con un flag para no usarlo)
+          {moduleInfo.id.startsWith("mod_") && moduleInfo.id !== "mod_1_pentateuch_order" && questionsToUse.length > 0 && (
             <BibleQuizComponent 
-              questions={bibleQuestions} // Aquí irían las 100 de Génesis
+              questions={questionsToUse} 
               onComplete={handleGameEnd} 
               isProMode={true} 
             />
           )}
 
-          {/* ... otros módulos */}
-          {moduleInfo.id !== "mod_1_pentateuch_order" && !moduleInfo.id.startsWith("mod_2") && (
+          {moduleInfo.id !== "mod_1_pentateuch_order" && questionsToUse.length === 0 && (
              <div className="text-center p-10 bg-base-200 rounded-xl">
-                 <h3 className="text-xl">Módulo en construcción...</h3>
-                 <button onClick={() => handleGameEnd(100)} className="btn btn-warning mt-4">Forzar Victoria (Dev)</button>
+                 <h3 className="text-xl mb-4">Módulo en construcción...</h3>
+                 <p className="opacity-70 mb-4">No hay preguntas cargadas para este módulo aún.</p>
+                 <button onClick={() => handleGameEnd(100)} className="btn btn-warning">Forzar Victoria (Dev)</button>
              </div>
           )}
         </div>
