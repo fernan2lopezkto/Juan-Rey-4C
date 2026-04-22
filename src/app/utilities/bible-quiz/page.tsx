@@ -7,12 +7,30 @@ import { bibleQuestions } from '@/data/bible-questions';
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getBibleQuizProgress } from "@/app/actions/bibleQuizActions";
+import { db } from "@/db";
+import { users } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export default async function BibleQuiz() {
     const session = await getServerSession(authOptions);
     
-    // Obtenemos el plan del usuario (si está logueado)
-    const userPlan = (session?.user as any)?.plan || "basic";
+    let userPlan = "basic";
+
+    if (session?.user?.email) {
+        try {
+            const [dbUser] = await db
+                .select({ plan: users.plan })
+                .from(users)
+                .where(eq(users.email, session.user.email))
+                .limit(1);
+            if (dbUser) {
+                userPlan = dbUser.plan;
+            }
+        } catch (error) {
+            console.error("Error fetching user plan:", error);
+        }
+    }
+
     const isProOrLearning = userPlan === "pro" || userPlan === "learning";
 
     let dbProgress: any[] = [];
