@@ -52,7 +52,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
       "Trabajamos con tazas, prendas de vestir y más, transformando ideas creativas en objetos reales y duraderos que nuestros clientes pueden disfrutar día a día."
     ],
     icon: Printer,
-    badge: "Sublimación",
+    badge: "Emprendimiento",
     href: "/portfolio/esrprint",
     externalLink: "https://www.instagram.com/esrprint_uy/",
     color: "bg-red-500",

@@ -70,3 +70,16 @@ export const emailVerifications = pgTable('email_verifications', {
   used:      boolean('used').default(false).notNull(),
   createdAt: timestamp('created_at').defaultNow(),
 });
+
+// Tabla para el progreso de Bible Quiz
+export const bibleQuizProgress = pgTable('bible_quiz_progress', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  moduleId: text('module_id').notNull(), // Ej: 'pentateuch_order', 'genesis_100', etc.
+  score: integer('score').notNull().default(0),
+  passed: boolean('passed').notNull().default(false), // Si superó el 60%
+  completedAt: timestamp('completed_at').defaultNow(),
+}, (table) => ({
+  // Un usuario solo debe tener un registro principal de progreso por módulo, o actualizar el existente
+  uniqueUserModule: uniqueIndex('unique_user_module_idx').on(table.userId, table.moduleId),
+}));

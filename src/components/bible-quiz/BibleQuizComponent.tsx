@@ -7,7 +7,13 @@ import ScoreHandler from './ScoreHandler';
 export type AnswerOption = { answerText: string; isCorrect: boolean; };
 export type Question = { questionText: string; answerOptions: AnswerOption[]; };
 
-export default function BibleQuizComponent({ questions }: { questions: Question[] }) {
+type BibleQuizComponentProps = {
+  questions: Question[];
+  onComplete?: (score: number) => void;
+  isProMode?: boolean;
+};
+
+export default function BibleQuizComponent({ questions, onComplete, isProMode = false }: BibleQuizComponentProps) {
   // --- Estados ---
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
@@ -17,8 +23,13 @@ export default function BibleQuizComponent({ questions }: { questions: Question[
   const [gameStarted, setGameStarted] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // --- Cargar datos de LocalStorage al iniciar ---
+  // --- Cargar datos de LocalStorage al iniciar (Solo si no es ProMode) ---
   useEffect(() => {
+    if (isProMode) {
+        setGameStarted(true); // Inicia directo en Pro Mode
+        return;
+    }
+
     const savedProgress = localStorage.getItem('bible-quiz-progress');
     const savedHighScore = localStorage.getItem('bible-quiz-highscore');
     
@@ -30,10 +41,12 @@ export default function BibleQuizComponent({ questions }: { questions: Question[
       setCurrentQuestion(q);
       setGameStarted(gs);
     }
-  }, []);
+  }, [isProMode]);
 
-  // --- Guardar progreso cada vez que cambien valores clave ---
+  // --- Guardar progreso cada vez que cambien valores clave (Solo si no es ProMode) ---
   useEffect(() => {
+    if (isProMode) return;
+
     if (gameStarted) {
       localStorage.setItem('bible-quiz-progress', JSON.stringify({
         score,
@@ -45,17 +58,19 @@ export default function BibleQuizComponent({ questions }: { questions: Question[
       setHighScore(score);
       localStorage.setItem('bible-quiz-highscore', score.toString());
     }
-  }, [score, currentQuestion, gameStarted, highScore]);
+  }, [score, currentQuestion, gameStarted, highScore, isProMode]);
 
   const handleAnswerOptionClick = (isCorrect: boolean) => {
     if (isProcessing) return; // Evita clics dobles
     setIsProcessing(true);
 
+    const newScore = isCorrect ? score + 10 : score - 5;
+    
     if (isCorrect) {
-      setScore(prev => prev + 10);
+      setScore(newScore);
       setLastResult('correct');
     } else {
-      setScore(prev => prev - 5);
+      setScore(newScore);
       setLastResult('incorrect');
     }
 
@@ -66,17 +81,21 @@ export default function BibleQuizComponent({ questions }: { questions: Question[
       if (nextQuestion < questions.length) {
         setCurrentQuestion(nextQuestion);
       } else {
-        setShowScoreView(true);
+        if (isProMode && onComplete) {
+            onComplete(newScore);
+        } else {
+            setShowScoreView(true);
+        }
       }
       setIsProcessing(false);
-    }, 1200); // Un poco más de tiempo para ver el toast
+    }, 1200);
   };
 
   const fullReset = () => {
-    localStorage.removeItem('bible-quiz-progress');
+    if (!isProMode) localStorage.removeItem('bible-quiz-progress');
     setCurrentQuestion(0);
     setScore(0);
-    setGameStarted(false);
+    setGameStarted(isProMode);
     setShowScoreView(false);
     setLastResult(null);
   };
@@ -102,7 +121,7 @@ export default function BibleQuizComponent({ questions }: { questions: Question[
     );
   }
 
-  if (showScoreView) {
+  if (showScoreView && !isProMode) {
     return (
       <div className="max-w-2xl mx-auto p-4 text-center">
         <div className="card bg-base-100 shadow-xl">
@@ -128,13 +147,15 @@ export default function BibleQuizComponent({ questions }: { questions: Question[
         </div>
       )}
 
-      <PersistenceManager 
-        score={score} 
-        highScore={highScore} 
-        currentQuestion={currentQuestion} 
-        totalQuestions={questions.length} 
-        onReset={fullReset} 
-      />
+      {!isProMode && (
+          <PersistenceManager 
+            score={score} 
+            highScore={highScore} 
+            currentQuestion={currentQuestion} 
+            totalQuestions={questions.length} 
+            onReset={fullReset} 
+          />
+      )}
 
       <ScoreHandler score={score} lastResult={lastResult} />
 
