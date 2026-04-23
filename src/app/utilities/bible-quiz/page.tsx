@@ -31,7 +31,7 @@ export default async function BibleQuiz() {
         }
     }
 
-    const isProOrLearning = userPlan === "pro" || userPlan === "learning";
+    const isProOrLearning = userPlan === "pro" || userPlan === "learning" || userPlan === "admin";
 
     let dbProgress: any[] = [];
     if (isProOrLearning && session) {

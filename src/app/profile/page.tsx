@@ -120,7 +120,7 @@ export default function ProfilePage() {
                                     <span className="opacity-70">Email Verificado:</span>
                                     <span className="font-mono text-success">SÍ</span>
                                 </div>
-                                <div className="flex justify-between text-sm">
+                                <div className="flex justify-between text-sm items-center">
                                     <span className="opacity-70">Tipo de cuenta:</span>
                                     <span className={`badge badge-sm uppercase flex items-center font-bold ${
                                         ['pro', 'creador', 'admin'].includes(displayPlan) ? 'badge-primary'
@@ -129,6 +129,14 @@ export default function ProfilePage() {
                                     }`}>
                                         {displayPlan}
                                     </span>
+                                </div>
+                                <div className="mt-4 pt-4 border-t border-base-200 text-center">
+                                    <button 
+                                        onClick={() => router.push('/plans')}
+                                        className="btn btn-sm btn-outline btn-secondary w-full"
+                                    >
+                                        Cambiar Plan
+                                    </button>
                                 </div>
                             </div>
                         </div>

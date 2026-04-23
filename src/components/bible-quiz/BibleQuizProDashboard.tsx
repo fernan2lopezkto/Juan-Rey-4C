@@ -5,7 +5,7 @@ import { bibleQuizModules } from "@/data/bible-quiz-modules";
 import BibleQuizGameContainer from "./BibleQuizGameContainer";
 
 export default function BibleQuizProDashboard({ initialProgress }: { initialProgress: any[] }) {
-  const [mode, setMode] = useState<"menu" | "historia" | "libre" | "playing">("menu");
+  const [mode, setMode] = useState<"menu" | "historia" | "libre" | "playing_historia" | "playing_libre">("menu");
   const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
 
   // Mapa de progreso rápido y cálculo de global score
@@ -15,31 +15,38 @@ export default function BibleQuizProDashboard({ initialProgress }: { initialProg
     return acc;
   }, { progressMap: {} as Record<string, any>, globalScore: 0 });
 
-  const handleStartGame = (moduleId: string) => {
+  const handleStartGame = (moduleId: string, isStory: boolean) => {
     setActiveModuleId(moduleId);
-    setMode("playing");
+    setMode(isStory ? "playing_historia" : "playing_libre");
   };
 
   const handleFinishGame = () => {
     setMode("menu");
     setActiveModuleId(null);
-    // Idealmente, aquí forzaríamos un re-fetch del progreso o actualizaríamos el estado local.
-    // Para simplificar, asumimos recarga en producción o manejo local.
     window.location.reload(); 
   };
 
-  if (mode === "playing" && activeModuleId) {
+  if ((mode === "playing_historia" || mode === "playing_libre") && activeModuleId) {
     const moduleInfo = bibleQuizModules.find(m => m.id === activeModuleId);
+    
+    let nextModuleInfo = null;
+    if (mode === "playing_historia") {
+      const currentIndex = bibleQuizModules.findIndex(m => m.id === activeModuleId);
+      if (currentIndex !== -1 && currentIndex + 1 < bibleQuizModules.length) {
+        nextModuleInfo = bibleQuizModules[currentIndex + 1];
+      }
+    }
+
     return (
       <BibleQuizGameContainer 
         moduleInfo={moduleInfo!} 
-        onBack={() => setMode("menu")}
+        nextModuleInfo={nextModuleInfo}
+        onBack={() => setMode(mode === "playing_historia" ? "historia" : "libre")}
         onFinish={handleFinishGame}
+        onNext={() => nextModuleInfo ? handleStartGame(nextModuleInfo.id, true) : handleFinishGame()}
       />
     );
-  }
-
-  return (
+  }  return (
     <div className="max-w-6xl mx-auto py-8">
       <div className="text-center mb-10">
         <h1 className="text-5xl font-bold font-serif mb-4 text-primary">Bible Quiz Pro</h1>
@@ -115,7 +122,7 @@ export default function BibleQuizProDashboard({ initialProgress }: { initialProg
                       {isLocked ? (
                         <button className="btn btn-sm btn-disabled" disabled>Bloqueado 🔒</button>
                       ) : (
-                        <button onClick={() => handleStartGame(mod.id)} className="btn btn-sm btn-primary">
+                        <button onClick={() => handleStartGame(mod.id, true)} className="btn btn-sm btn-primary">
                           Jugar
                         </button>
                       )}
@@ -148,7 +155,7 @@ export default function BibleQuizProDashboard({ initialProgress }: { initialProg
                         Mejor Puntaje: <span className="text-primary">{highScore}</span>
                       </div>
                       <div className="mt-4 card-actions justify-end">
-                        <button onClick={() => handleStartGame(mod.id)} className="btn btn-sm btn-secondary">
+                        <button onClick={() => handleStartGame(mod.id, false)} className="btn btn-sm btn-secondary">
                           Jugar Libre
                         </button>
                       </div>

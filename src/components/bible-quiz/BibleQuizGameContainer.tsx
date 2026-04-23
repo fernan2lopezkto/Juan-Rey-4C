@@ -16,11 +16,13 @@ import { pentateuchHardQuestions } from "@/data/pentateuch-hard-questions";
 
 type GameContainerProps = {
   moduleInfo: QuizModule;
+  nextModuleInfo?: QuizModule | null;
   onBack: () => void;
   onFinish: () => void;
+  onNext?: () => void;
 };
 
-export default function BibleQuizGameContainer({ moduleInfo, onBack, onFinish }: GameContainerProps) {
+export default function BibleQuizGameContainer({ moduleInfo, nextModuleInfo, onBack, onFinish, onNext }: GameContainerProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [savedResult, setSavedResult] = useState<{ score: number, passed: boolean } | null>(null);
 
@@ -71,8 +73,11 @@ export default function BibleQuizGameContainer({ moduleInfo, onBack, onFinish }:
                 <p>Sigue intentándolo.</p>
               </div>
             )}
-            <div className="mt-6">
-              <button onClick={onFinish} className="btn btn-primary">Volver al Menú</button>
+            <div className="mt-6 flex flex-col sm:flex-row justify-center gap-4">
+              <button onClick={onFinish} className="btn btn-outline btn-primary">Volver al Menú</button>
+              {savedResult.passed && nextModuleInfo && onNext && (
+                  <button onClick={onNext} className="btn btn-primary">Siguiente Módulo</button>
+              )}
             </div>
           </div>
         </div>
