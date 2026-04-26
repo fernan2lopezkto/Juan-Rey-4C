@@ -3,8 +3,9 @@
 import React, { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { FaUser, FaEnvelope, FaShieldAlt, FaSignOutAlt, FaGoogle, FaKey } from "react-icons/fa";
+import { FaUser, FaEnvelope, FaShieldAlt, FaSignOutAlt, FaGoogle, FaKey, FaTrash } from "react-icons/fa";
 import { getLiveUserPlan } from "@/app/actions/adminActions";
+import { deleteUserAccount } from "@/app/actions/userActions";
 
 export default function ProfilePage() {
     const { data: session, status } = useSession();
@@ -37,6 +38,17 @@ export default function ProfilePage() {
     const provider = user?.provider;
     const userPlan = livePlan || (user as any)?.plan || 'basic';
     const displayPlan = userPlan === 'free' ? 'basic' : userPlan;
+
+    const handleDeleteAccount = async () => {
+        if (window.confirm("¿Estás seguro de que deseas eliminar tu cuenta permanentemente? Esta acción eliminará todo tu progreso, notas guardadas y no se puede deshacer.")) {
+            const res = await deleteUserAccount();
+            if (res.success) {
+                signOut({ callbackUrl: "/" });
+            } else {
+                alert("Hubo un error al eliminar tu cuenta.");
+            }
+        }
+    };
 
     return (
         <div className="min-h-screen bg-base-200 py-12 px-4">
@@ -141,6 +153,16 @@ export default function ProfilePage() {
                             </div>
                         </div>
                     </div>
+                </div>
+
+                {/* Sección de Peligro */}
+                <div className="mt-8 pt-8 border-t border-error/20 flex justify-center">
+                    <button 
+                        onClick={handleDeleteAccount}
+                        className="btn btn-outline btn-error gap-2 opacity-80 hover:opacity-100"
+                    >
+                        <FaTrash /> Eliminar Cuenta
+                    </button>
                 </div>
             </div>
         </div>
