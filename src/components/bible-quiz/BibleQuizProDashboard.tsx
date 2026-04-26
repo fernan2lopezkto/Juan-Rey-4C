@@ -39,6 +39,7 @@ export default function BibleQuizProDashboard({ initialProgress }: { initialProg
 
     return (
       <BibleQuizGameContainer 
+        key={activeModuleId}
         moduleInfo={moduleInfo!} 
         nextModuleInfo={nextModuleInfo}
         onBack={() => setMode(mode === "playing_historia" ? "historia" : "libre")}

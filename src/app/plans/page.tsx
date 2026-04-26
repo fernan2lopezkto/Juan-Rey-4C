@@ -47,22 +47,6 @@ const PLANS = [
         color: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
         description: "Experiencia completa sin restricciones.",
         features: ["Acceso total a todas las apps", "Sin anuncios", "Soporte prioritario"]
-    },
-    {
-        id: "creador",
-        name: "Creador",
-        icon: <FaMagic className="text-xl" />,
-        color: "bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200",
-        description: "Para creadores de contenido.",
-        features: ["Herramientas de creación", "Estadísticas avanzadas", "Todo de Pro"]
-    },
-    {
-        id: "admin",
-        name: "Admin",
-        icon: <FaShieldAlt className="text-xl" />,
-        color: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
-        description: "Administración de la plataforma.",
-        features: ["Panel de control completo", "Gestión de usuarios", "Acceso absoluto"]
     }
 ];
 

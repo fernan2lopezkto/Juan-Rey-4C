@@ -13,6 +13,8 @@ import { leviticusQuestions } from "@/data/leviticus-questions";
 import { numbersQuestions } from "@/data/numbers-questions";
 import { deuteronomyQuestions } from "@/data/deuteronomy-questions";
 import { pentateuchHardQuestions } from "@/data/pentateuch-hard-questions";
+import { abrahamQuestions } from "@/data/abraham-questions";
+import { mosesQuestions } from "@/data/moses-questions";
 
 type GameContainerProps = {
   moduleInfo: QuizModule;
@@ -93,6 +95,8 @@ export default function BibleQuizGameContainer({ moduleInfo, nextModuleInfo, onB
   if (moduleInfo.id === "mod_5_numbers") questionsToUse = numbersQuestions;
   if (moduleInfo.id === "mod_6_deuteronomy") questionsToUse = deuteronomyQuestions;
   if (moduleInfo.id === "mod_7_pentateuch_hard") questionsToUse = pentateuchHardQuestions;
+  if (moduleInfo.id === "mod_char_abraham") questionsToUse = abrahamQuestions;
+  if (moduleInfo.id === "mod_char_moses") questionsToUse = mosesQuestions;
 
   return (
     <div className="w-full">

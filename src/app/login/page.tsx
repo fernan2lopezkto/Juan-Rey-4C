@@ -87,6 +87,9 @@ const LoginPage = () => {
                 className="input input-bordered w-full" 
                 required 
               />
+              <label className="label">
+                <a href="/forgot-password" className="label-text-alt link link-hover text-primary">¿Olvidaste tu contraseña?</a>
+              </label>
             </div>
 
             <button 

@@ -5,6 +5,7 @@ export type QuizModule = {
   isAvailable: boolean; // Si está implementado
   requirements?: string[]; // IDs de módulos que se deben haber pasado para jugar este en modo historia
   totalQuestions: number; // o puntos necesarios, sirve como meta
+  isOptional?: boolean; // Módulos opcionales de personajes
 };
 
 export const bibleQuizModules: QuizModule[] = [
@@ -62,5 +63,23 @@ export const bibleQuizModules: QuizModule[] = [
     isAvailable: true,
     requirements: ["mod_6_deuteronomy"],
     totalQuestions: 15,
+  },
+  {
+    id: "mod_char_abraham",
+    title: "Personaje: Abraham",
+    description: "Preguntas sobre la vida de Abraham y los patriarcas. Módulo opcional.",
+    isAvailable: true,
+    requirements: ["mod_2_genesis"],
+    totalQuestions: 10,
+    isOptional: true,
+  },
+  {
+    id: "mod_char_moses",
+    title: "Personaje: Moisés",
+    description: "Preguntas específicas sobre la vida de Moisés y su liderazgo. Módulo opcional.",
+    isAvailable: true,
+    requirements: ["mod_3_exodus"],
+    totalQuestions: 10,
+    isOptional: true,
   }
 ];
