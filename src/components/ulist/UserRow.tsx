@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { updateUserPlan } from "@/app/actions/adminActions";
+import { updateUserPlan, deleteAccountByAdmin } from "@/app/actions/adminActions";
 import { useUlist } from "./UlistContext";
+import { useRouter } from "next/navigation";
+import { FaTrash } from "react-icons/fa";
 
 interface UserRowProps {
   user: {
@@ -18,17 +20,35 @@ export default function UserRow({ user }: UserRowProps) {
   const [selectedPlan, setSelectedPlan] = useState(user.plan === "free" ? "basic" : user.plan);
   const [loading, setLoading] = useState(false);
   const { showToast } = useUlist();
+  const router = useRouter();
 
   const handleSave = async () => {
     setLoading(true);
     try {
       await updateUserPlan(user.id, selectedPlan);
       showToast(`Plan de ${user.name || user.email} actualizado a ${selectedPlan.toUpperCase()}`, "success");
+      router.refresh();
     } catch (error) {
       showToast("Error al actualizar el plan", "error");
       console.error(error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm(`¿Estás seguro de que deseas eliminar permanentemente la cuenta de ${user.email}?`)) {
+      setLoading(true);
+      try {
+        await deleteAccountByAdmin(user.id);
+        showToast(`Cuenta de ${user.email} eliminada correctamente`, "success");
+        router.refresh();
+      } catch (error) {
+        showToast("Error al eliminar la cuenta", "error");
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -80,6 +100,14 @@ export default function UserRow({ user }: UserRowProps) {
             }`}
           >
             {loading ? "" : "Guardar"}
+          </button>
+          <button
+            onClick={handleDelete}
+            disabled={loading}
+            className="btn btn-sm btn-error btn-square rounded-lg shadow-sm hover:shadow-md transition-all ml-2"
+            title="Eliminar cuenta"
+          >
+            {loading ? <span className="loading loading-spinner loading-xs"></span> : <FaTrash />}
           </button>
         </div>
       </td>

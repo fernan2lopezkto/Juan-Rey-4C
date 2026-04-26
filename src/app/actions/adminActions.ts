@@ -29,3 +29,15 @@ export async function getLiveUserPlan(email: string) {
     const [user] = await db.select({ plan: users.plan }).from(users).where(eq(users.email, email)).limit(1);
     return user?.plan || 'basic';
 }
+
+export async function deleteAccountByAdmin(userId: number) {
+  const session = await getServerSession(authOptions);
+  
+  if (!session?.user?.email || !ADMIN_EMAILS.includes(session.user.email)) {
+    throw new Error("No autorizado");
+  }
+
+  await db.delete(users).where(eq(users.id, userId));
+  revalidatePath("/ulist");
+  return { success: true };
+}

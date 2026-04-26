@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { changeUserPlan } from "@/app/actions/userActions";
+import { getLiveUserPlan } from "@/app/actions/adminActions";
 import PrincipalFooter from "@/components/PrincipalFooter";
 import { FaCheckCircle, FaStar, FaMusic, FaBook, FaGamepad, FaCrown, FaMagic, FaShieldAlt } from "react-icons/fa";
 
@@ -57,11 +58,12 @@ export default function PlansPage() {
     const [isLoading, setIsLoading] = useState<string | null>(null);
 
     useEffect(() => {
-        if (session?.user) {
-            // @ts-ignore
-            setCurrentPlan(session.user.plan || "basic");
+        if (session?.user?.email) {
+            getLiveUserPlan(session.user.email).then(plan => {
+                setCurrentPlan(plan);
+            });
         }
-    }, [session]);
+    }, [session?.user?.email]);
 
     if (status === "loading") {
         return (
