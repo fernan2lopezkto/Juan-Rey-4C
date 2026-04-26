@@ -15,6 +15,8 @@ import { deuteronomyQuestions } from "@/data/deuteronomy-questions";
 import { pentateuchHardQuestions } from "@/data/pentateuch-hard-questions";
 import { abrahamQuestions } from "@/data/abraham-questions";
 import { mosesQuestions } from "@/data/moses-questions";
+import { aaronQuestions } from "@/data/aaron-questions";
+import { joshuaCalebQuestions } from "@/data/joshua-caleb-questions";
 
 type GameContainerProps = {
   moduleInfo: QuizModule;
@@ -22,9 +24,10 @@ type GameContainerProps = {
   onBack: () => void;
   onFinish: () => void;
   onNext?: () => void;
+  onUpdateProgress?: (moduleId: string, score: number, passed: boolean) => void;
 };
 
-export default function BibleQuizGameContainer({ moduleInfo, nextModuleInfo, onBack, onFinish, onNext }: GameContainerProps) {
+export default function BibleQuizGameContainer({ moduleInfo, nextModuleInfo, onBack, onFinish, onNext, onUpdateProgress }: GameContainerProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [savedResult, setSavedResult] = useState<{ score: number, passed: boolean } | null>(null);
 
@@ -48,6 +51,9 @@ export default function BibleQuizGameContainer({ moduleInfo, nextModuleInfo, onB
     setIsSaving(false);
     
     if (res.success) {
+      if (onUpdateProgress) {
+        onUpdateProgress(moduleInfo.id, score, passed);
+      }
       setSavedResult({ score, passed });
     } else {
       alert("Hubo un error al guardar tu progreso.");
@@ -97,6 +103,8 @@ export default function BibleQuizGameContainer({ moduleInfo, nextModuleInfo, onB
   if (moduleInfo.id === "mod_7_pentateuch_hard") questionsToUse = pentateuchHardQuestions;
   if (moduleInfo.id === "mod_char_abraham") questionsToUse = abrahamQuestions;
   if (moduleInfo.id === "mod_char_moses") questionsToUse = mosesQuestions;
+  if (moduleInfo.id === "mod_char_aaron") questionsToUse = aaronQuestions;
+  if (moduleInfo.id === "mod_char_joshua_caleb") questionsToUse = joshuaCalebQuestions;
 
   return (
     <div className="w-full">

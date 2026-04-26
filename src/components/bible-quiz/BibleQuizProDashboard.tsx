@@ -7,9 +7,10 @@ import BibleQuizGameContainer from "./BibleQuizGameContainer";
 export default function BibleQuizProDashboard({ initialProgress }: { initialProgress: any[] }) {
   const [mode, setMode] = useState<"menu" | "historia" | "libre" | "playing_historia" | "playing_libre">("menu");
   const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
+  const [progressData, setProgressData] = useState<any[]>(initialProgress);
 
   // Mapa de progreso rápido y cálculo de global score
-  const { progressMap, globalScore } = initialProgress.reduce((acc, curr) => {
+  const { progressMap, globalScore } = progressData.reduce((acc, curr) => {
     acc.progressMap[curr.moduleId] = curr;
     acc.globalScore += (curr.score || 0);
     return acc;
@@ -23,7 +24,6 @@ export default function BibleQuizProDashboard({ initialProgress }: { initialProg
   const handleFinishGame = () => {
     setMode("menu");
     setActiveModuleId(null);
-    window.location.reload(); 
   };
 
   if ((mode === "playing_historia" || mode === "playing_libre") && activeModuleId) {
@@ -45,6 +45,22 @@ export default function BibleQuizProDashboard({ initialProgress }: { initialProg
         onBack={() => setMode(mode === "playing_historia" ? "historia" : "libre")}
         onFinish={handleFinishGame}
         onNext={() => nextModuleInfo ? handleStartGame(nextModuleInfo.id, true) : handleFinishGame()}
+        onUpdateProgress={(moduleId, score, passed) => {
+          setProgressData(prev => {
+            const existingIndex = prev.findIndex(p => p.moduleId === moduleId);
+            if (existingIndex >= 0) {
+              const newProgress = [...prev];
+              newProgress[existingIndex] = {
+                ...newProgress[existingIndex],
+                score: Math.max(newProgress[existingIndex].score || 0, score),
+                passed: newProgress[existingIndex].passed || passed
+              };
+              return newProgress;
+            } else {
+              return [...prev, { moduleId, score, passed }];
+            }
+          });
+        }}
       />
     );
   }  return (

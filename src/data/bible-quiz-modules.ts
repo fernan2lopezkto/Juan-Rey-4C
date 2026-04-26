@@ -81,5 +81,23 @@ export const bibleQuizModules: QuizModule[] = [
     requirements: ["mod_3_exodus"],
     totalQuestions: 10,
     isOptional: true,
+  },
+  {
+    id: "mod_char_aaron",
+    title: "Personaje: Aarón",
+    description: "Preguntas sobre Aarón y el sacerdocio. Módulo opcional.",
+    isAvailable: true,
+    requirements: ["mod_4_leviticus"],
+    totalQuestions: 10,
+    isOptional: true,
+  },
+  {
+    id: "mod_char_joshua_caleb",
+    title: "Personajes: Josué y Caleb",
+    description: "Preguntas sobre los espías y la fe en el desierto. Módulo opcional.",
+    isAvailable: true,
+    requirements: ["mod_5_numbers"],
+    totalQuestions: 10,
+    isOptional: true,
   }
 ];
