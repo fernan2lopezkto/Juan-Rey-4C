@@ -4,7 +4,7 @@ Esta guía describe el funcionamiento interno del sistema de "Bible Quiz" en est
 
 ## Arquitectura del Bible Quiz
 
-El sistema está compuesto de tres partes principales:
+El sistema está compuesto por tres partes principales:
 1. **Definición de Módulos (`src/data/bible-quiz-modules.ts`)**: Define qué módulos existen, en qué orden se juegan y qué requisitos tienen para ser desbloqueados.
 2. **Bancos de Preguntas (`src/data/<nombre>-questions.ts`)**: Archivos independientes que exportan un arreglo de preguntas para cada módulo.
 3. **Gestor del Juego (`src/components/bible-quiz/BibleQuizGameContainer.tsx`)**: Componente que recibe la información del módulo activo, carga sus preguntas correspondientes y maneja el guardado del progreso.
