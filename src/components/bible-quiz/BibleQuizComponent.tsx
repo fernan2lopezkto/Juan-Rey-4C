@@ -161,10 +161,10 @@ export default function BibleQuizComponent({ questions, onComplete, isProMode = 
 
       <div className="card bg-base-100 shadow-xl border mt-4">
         <div className="card-body">
-          <span className="text-xs font-bold opacity-50">PREGUNTA {currentQuestion + 1} / {questions.length}</span>
-          <h3 className="text-2xl font-bold py-4">{questions[currentQuestion].questionText}</h3>
+          <span className="text-xs font-bold opacity-50">PREGUNTA {currentQuestion + 1} / {questions?.length || 0}</span>
+          <h3 className="text-2xl font-bold py-4">{questions?.[currentQuestion]?.questionText || "Pregunta no disponible"}</h3>
           <div className="grid gap-3">
-            {questions[currentQuestion].answerOptions.map((opt, idx) => (
+            {questions?.[currentQuestion]?.answerOptions?.map((opt, idx) => (
               <button 
                 key={idx} 
                 disabled={isProcessing}

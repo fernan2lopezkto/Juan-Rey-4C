@@ -83,3 +83,29 @@ export const bibleQuizProgress = pgTable('bible_quiz_progress', {
   // Un usuario solo debe tener un registro principal de progreso por módulo, o actualizar el existente
   uniqueUserModule: uniqueIndex('unique_user_module_idx').on(table.userId, table.moduleId),
 }));
+
+// Tabla para los módulos de Bible Quiz
+export const bibleQuizModules = pgTable('bible_quiz_modules', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id, { onDelete: 'set null' }), // Creador del módulo, si lo hay
+  name: text('name').notNull(), // Nombre del módulo, Ej: "Génesis"
+  type: text('type').notNull().default('story'), // Tipo de módulo: "story" o "optional"
+  index: integer('order_index').notNull().default(0), // Para saber en qué orden aparecen en la historia
+  requiredModuleId: integer('required_module_id'), // Módulo previo requerido para desbloquear este
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+// Tabla para las preguntas de Bible Quiz
+export const bibleQuizQuestions = pgTable('bible_quiz_questions', {
+  id: serial('id').primaryKey(),
+  moduleId: integer('module_id').notNull().references(() => bibleQuizModules.id, { onDelete: 'cascade' }), // Relación con el módulo
+  questionText: text('pregunta').notNull(),
+  cards: json('targetas').$type<string[]>().default([]), // Arreglo de strings como en la libreta de canciones
+  respUno: text('resp_uno').notNull(),
+  respDos: text('resp_dos').notNull(),
+  respTres: text('resp_tres').notNull(),
+  correcta: text('correcta').notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
