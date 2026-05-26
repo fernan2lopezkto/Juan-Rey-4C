@@ -1,28 +1,47 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const CORRECT_ORDER = ["Génesis", "Éxodo", "Levítico", "Números", "Deuteronomio"];
+const DEFAULT_ITEMS = ["Génesis", "Éxodo", "Levítico", "Números", "Deuteronomio"];
 
-export default function PentateuchOrderGame({ onComplete }: { onComplete: (score: number) => void }) {
-  const [availableBooks, setAvailableBooks] = useState<string[]>(
-    [...CORRECT_ORDER].sort(() => Math.random() - 0.5)
-  );
+type OrderingGameProps = {
+  items?: string[];
+  title?: string;
+  description?: string;
+  onComplete: (score: number) => void;
+};
+
+export default function PentateuchOrderGame({ 
+  items = DEFAULT_ITEMS, 
+  title = "Ordena los libros del Pentateuco", 
+  description = "Selecciona los libros en su orden correcto.", 
+  onComplete 
+}: OrderingGameProps) {
+  const [availableBooks, setAvailableBooks] = useState<string[]>([]);
   const [selectedBooks, setSelectedBooks] = useState<string[]>([]);
   const [mistakes, setMistakes] = useState(0);
 
+  // Inicializar y mezclar elementos cuando cambien
+  useEffect(() => {
+    setAvailableBooks([...items].sort(() => Math.random() - 0.5));
+    setSelectedBooks([]);
+    setMistakes(0);
+  }, [items]);
+
   const handleSelect = (book: string) => {
     // Si elige el correcto en orden
-    const expectedBook = CORRECT_ORDER[selectedBooks.length];
+    const expectedBook = items[selectedBooks.length];
     
     if (book === expectedBook) {
-      setSelectedBooks([...selectedBooks, book]);
-      setAvailableBooks(availableBooks.filter(b => b !== book));
+      const newSelected = [...selectedBooks, book];
+      setSelectedBooks(newSelected);
+      setAvailableBooks(prev => prev.filter(b => b !== book));
       
       // Si completó todos
-      if (selectedBooks.length + 1 === CORRECT_ORDER.length) {
-        // Calcular score final (100 - (mistakes * 20))
-        const finalScore = Math.max(0, 100 - (mistakes * 20));
+      if (newSelected.length === items.length) {
+        // Calcular score final (100 - (mistakes * (100 / total_items)))
+        const penalty = Math.max(10, Math.round(100 / items.length));
+        const finalScore = Math.max(0, 100 - (mistakes * penalty));
         setTimeout(() => {
           onComplete(finalScore);
         }, 1000);
@@ -30,25 +49,19 @@ export default function PentateuchOrderGame({ onComplete }: { onComplete: (score
     } else {
       // Error
       setMistakes(prev => prev + 1);
-      // Opcional: mostrar un toast de error
     }
-  };
-
-  const handleRemove = (book: string) => {
-    // Para simplificar, permitiremos limpiar todo y empezar de nuevo si quieren
-    // pero como obligamos a orden correcto, no debería necesitar remover.
   };
 
   return (
     <div className="card bg-base-100 shadow-xl border p-6 text-center">
-      <h3 className="text-2xl font-bold mb-4">Ordena los libros del Pentateuco</h3>
-      <p className="opacity-70 mb-6">Selecciona los libros en su orden correcto.</p>
+      <h3 className="text-2xl font-bold mb-4">{title}</h3>
+      <p className="opacity-70 mb-6">{description}</p>
 
       <div className="flex flex-col md:flex-row gap-8">
         {/* Libros Disponibles */}
         <div className="flex-1">
           <h4 className="font-bold mb-4">Disponibles</h4>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-wrap md:flex-col justify-center gap-2">
             {availableBooks.map(book => (
               <button 
                 key={book}
@@ -59,7 +72,7 @@ export default function PentateuchOrderGame({ onComplete }: { onComplete: (score
               </button>
             ))}
             {availableBooks.length === 0 && (
-              <p className="text-success font-bold mt-4">¡Todos seleccionados!</p>
+              <p className="text-success font-bold mt-4 w-full">¡Todos seleccionados!</p>
             )}
           </div>
         </div>

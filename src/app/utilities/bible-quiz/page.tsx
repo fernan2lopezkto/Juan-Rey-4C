@@ -6,7 +6,7 @@ import { bibleQuestions } from '@/data/bible-questions';
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { getBibleQuizProgress } from "@/app/actions/bibleQuizActions";
+import { getBibleQuizProgress, getBibleQuizModulesWithTypes } from "@/app/actions/bibleQuizActions";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -31,28 +31,35 @@ export default async function BibleQuiz() {
         }
     }
 
-    const isProOrLearning = userPlan === "pro" || userPlan === "learning" || userPlan === "admin";
+    const isCloudUser = ["pro", "learning", "admin", "creator", "creators"].includes(userPlan);
 
     let dbProgress: any[] = [];
-    if (isProOrLearning && session) {
+    let dbModules: any[] = [];
+    
+    if (isCloudUser && session) {
         const progressRes = await getBibleQuizProgress();
         if (progressRes.success) {
             dbProgress = progressRes.progress || [];
+        }
+        
+        const modulesRes = await getBibleQuizModulesWithTypes();
+        if (modulesRes.success) {
+            dbModules = modulesRes.modules || [];
         }
     }
 
     return (
         <div className="min-h-screen flex flex-col">
             <div className="flex-grow p-4 md:p-8">
-                {isProOrLearning ? (
-                    // VISTA PARA USUARIOS PRO/LEARNING: Modos Historia y Libre
-                    <BibleQuizProDashboard initialProgress={dbProgress} />
+                {isCloudUser ? (
+                    // VISTA PARA USUARIOS CLOUD: Modos Historia y Libre
+                    <BibleQuizProDashboard initialProgress={dbProgress} modules={dbModules} />
                 ) : (
                     // VISTA PARA USUARIOS NUEVOS O BASICOS: Demo con LocalStorage
                     <div className="max-w-7xl mx-auto">
                         <div className="mb-8 text-center">
                             <h1 className="text-4xl font-bold font-serif mb-2">Bible Quiz (Demo)</h1>
-                            <p className="opacity-70">Sube a un plan Pro o Learning para desbloquear el Modo Historia y Modo Libre.</p>
+                            <p className="opacity-70">Sube a un plan Pro, Learning o Creator para desbloquear el Modo Historia y Modo Libre.</p>
                         </div>
                         {/* Diseño dividido en escritorio */}
                         <div className="flex flex-col lg:flex-row gap-8">

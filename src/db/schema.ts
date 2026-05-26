@@ -84,13 +84,26 @@ export const bibleQuizProgress = pgTable('bible_quiz_progress', {
   uniqueUserModule: uniqueIndex('unique_user_module_idx').on(table.userId, table.moduleId),
 }));
 
+// Tabla para los tipos de módulos de Bible Quiz (Ej: "trivia", "ordering")
+export const bibleQuizModuleTypes = pgTable('bible_quiz_module_types', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull(), 
+  code: text('code').notNull().unique(), // E.g., 'trivia', 'ordering'
+  description: text('description'),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
 // Tabla para los módulos de Bible Quiz
 export const bibleQuizModules = pgTable('bible_quiz_modules', {
   id: serial('id').primaryKey(),
   userId: integer('user_id').references(() => users.id, { onDelete: 'set null' }), // Creador del módulo, si lo hay
+  key: text('key').notNull().unique(), // Identificador único (Ej: 'mod_1_pentateuch_order')
   name: text('name').notNull(), // Nombre del módulo, Ej: "Génesis"
-  type: text('type').notNull().default('story'), // Tipo de módulo: "story" o "optional"
+  description: text('description'),
+  type: text('type').notNull().default('story'), // Modo de módulo: "story" o "optional"
+  isAvailable: boolean('is_available').default(true).notNull(),
   index: integer('order_index').notNull().default(0), // Para saber en qué orden aparecen en la historia
+  moduleTypeId: integer('module_type_id').references(() => bibleQuizModuleTypes.id, { onDelete: 'set null' }), // Tipo de juego/lógica
   requiredModuleId: integer('required_module_id'), // Módulo previo requerido para desbloquear este
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),

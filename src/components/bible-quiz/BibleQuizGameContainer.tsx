@@ -19,17 +19,28 @@ import { aaronQuestions } from "@/data/aaron-questions";
 import { joshuaCalebQuestions } from "@/data/joshua-caleb-questions";
 
 type GameContainerProps = {
-  moduleInfo: QuizModule;
-  nextModuleInfo?: QuizModule | null;
+  moduleInfo: any;
+  nextModuleInfo?: any | null;
+  questions?: any[];
   onBack: () => void;
   onFinish: () => void;
   onNext?: () => void;
   onUpdateProgress?: (moduleId: string, score: number, passed: boolean) => void;
 };
 
-export default function BibleQuizGameContainer({ moduleInfo, nextModuleInfo, onBack, onFinish, onNext, onUpdateProgress }: GameContainerProps) {
+export default function BibleQuizGameContainer({ 
+  moduleInfo, 
+  nextModuleInfo, 
+  questions,
+  onBack, 
+  onFinish, 
+  onNext, 
+  onUpdateProgress 
+}: GameContainerProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [savedResult, setSavedResult] = useState<{ score: number, passed: boolean } | null>(null);
+
+  const isOrderingGame = moduleInfo.moduleTypeCode === "ordering" || moduleInfo.id === "mod_1_pentateuch_order";
 
   const handleGameEnd = async (score: number) => {
     setIsSaving(true);
@@ -39,7 +50,7 @@ export default function BibleQuizGameContainer({ moduleInfo, nextModuleInfo, onB
     const maxScore = moduleInfo.totalQuestions * 10; 
     let passed = false;
 
-    if (moduleInfo.id === "mod_1_pentateuch_order") {
+    if (isOrderingGame) {
         // En ordenar, el max score es 100
         passed = score >= 60; 
     } else {
@@ -93,18 +104,26 @@ export default function BibleQuizGameContainer({ moduleInfo, nextModuleInfo, onB
     );
   }
 
-  // Selección dinámica de preguntas
-  let questionsToUse: any[] = [];
-  if (moduleInfo.id === "mod_2_genesis") questionsToUse = genesisQuestions;
-  if (moduleInfo.id === "mod_3_exodus") questionsToUse = exodusQuestions;
-  if (moduleInfo.id === "mod_4_leviticus") questionsToUse = leviticusQuestions;
-  if (moduleInfo.id === "mod_5_numbers") questionsToUse = numbersQuestions;
-  if (moduleInfo.id === "mod_6_deuteronomy") questionsToUse = deuteronomyQuestions;
-  if (moduleInfo.id === "mod_7_pentateuch_hard") questionsToUse = pentateuchHardQuestions;
-  if (moduleInfo.id === "mod_char_abraham") questionsToUse = abrahamQuestions;
-  if (moduleInfo.id === "mod_char_moses") questionsToUse = mosesQuestions;
-  if (moduleInfo.id === "mod_char_aaron") questionsToUse = aaronQuestions;
-  if (moduleInfo.id === "mod_char_joshua_caleb") questionsToUse = joshuaCalebQuestions;
+  // Selección de preguntas
+  let questionsToUse: any[] = questions && questions.length > 0 ? questions : [];
+
+  if (questionsToUse.length === 0) {
+    if (moduleInfo.id === "mod_2_genesis") questionsToUse = genesisQuestions;
+    if (moduleInfo.id === "mod_3_exodus") questionsToUse = exodusQuestions;
+    if (moduleInfo.id === "mod_4_leviticus") questionsToUse = leviticusQuestions;
+    if (moduleInfo.id === "mod_5_numbers") questionsToUse = numbersQuestions;
+    if (moduleInfo.id === "mod_6_deuteronomy") questionsToUse = deuteronomyQuestions;
+    if (moduleInfo.id === "mod_7_pentateuch_hard") questionsToUse = pentateuchHardQuestions;
+    if (moduleInfo.id === "mod_char_abraham") questionsToUse = abrahamQuestions;
+    if (moduleInfo.id === "mod_char_moses") questionsToUse = mosesQuestions;
+    if (moduleInfo.id === "mod_char_aaron") questionsToUse = aaronQuestions;
+    if (moduleInfo.id === "mod_char_joshua_caleb") questionsToUse = joshuaCalebQuestions;
+  }
+
+  // Extraer información para el juego de ordenar
+  const orderingQuestion = questionsToUse.find(q => q.cards && q.cards.length > 0);
+  const orderingItems = orderingQuestion ? orderingQuestion.cards : undefined;
+  const orderingTitle = orderingQuestion ? orderingQuestion.questionText : undefined;
 
   return (
     <div className="w-full">
@@ -121,11 +140,15 @@ export default function BibleQuizGameContainer({ moduleInfo, nextModuleInfo, onB
         </div>
       ) : (
         <div className="w-full">
-          {moduleInfo.id === "mod_1_pentateuch_order" && (
-            <PentateuchOrderGame onComplete={handleGameEnd} />
+          {isOrderingGame && (
+            <PentateuchOrderGame 
+              items={orderingItems}
+              title={orderingTitle}
+              onComplete={handleGameEnd} 
+            />
           )}
 
-          {moduleInfo.id.startsWith("mod_") && moduleInfo.id !== "mod_1_pentateuch_order" && questionsToUse.length > 0 && (
+          {!isOrderingGame && questionsToUse.length > 0 && (
             <BibleQuizComponent 
               questions={questionsToUse} 
               onComplete={handleGameEnd} 
@@ -133,7 +156,7 @@ export default function BibleQuizGameContainer({ moduleInfo, nextModuleInfo, onB
             />
           )}
 
-          {moduleInfo.id !== "mod_1_pentateuch_order" && questionsToUse.length === 0 && (
+          {!isOrderingGame && questionsToUse.length === 0 && (
              <div className="text-center p-10 bg-base-200 rounded-xl">
                  <h3 className="text-xl mb-4">Módulo en construcción...</h3>
                  <p className="opacity-70 mb-4">No hay preguntas cargadas para este módulo aún.</p>

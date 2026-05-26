@@ -1,13 +1,25 @@
 "use client";
 
 import React, { useState } from "react";
-import { bibleQuizModules } from "@/data/bible-quiz-modules";
+import { bibleQuizModules as staticBibleQuizModules } from "@/data/bible-quiz-modules";
 import BibleQuizGameContainer from "./BibleQuizGameContainer";
+import { getBibleQuizQuestionsAction } from "@/app/actions/bibleQuizActions";
 
-export default function BibleQuizProDashboard({ initialProgress }: { initialProgress: any[] }) {
-  const [mode, setMode] = useState<"menu" | "historia" | "libre" | "playing_historia" | "playing_libre">("menu");
+export default function BibleQuizProDashboard({ 
+  initialProgress, 
+  modules = staticBibleQuizModules 
+}: { 
+  initialProgress: any[]; 
+  modules?: any[]; 
+}) {
+  const [mode, setMode] = useState<"menu" | "historia" | "libre" | "playing_historia" | "playing_libre" >("menu");
   const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
   const [progressData, setProgressData] = useState<any[]>(initialProgress);
+  const [loadedQuestions, setLoadedQuestions] = useState<any[]>([]);
+  const [isLoadingQuestions, setIsLoadingQuestions] = useState(false);
+
+  // Utilizar módulos pasados por props (de la DB) o estáticos de fallback
+  const modulesToUse = modules;
 
   // Mapa de progreso rápido y cálculo de global score
   const { progressMap, globalScore } = progressData.reduce((acc, curr) => {
@@ -16,24 +28,48 @@ export default function BibleQuizProDashboard({ initialProgress }: { initialProg
     return acc;
   }, { progressMap: {} as Record<string, any>, globalScore: 0 });
 
-  const handleStartGame = (moduleId: string, isStory: boolean) => {
-    setActiveModuleId(moduleId);
-    setMode(isStory ? "playing_historia" : "playing_libre");
+  const handleStartGame = async (moduleId: string, isStory: boolean) => {
+    setIsLoadingQuestions(true);
+    try {
+      const res = await getBibleQuizQuestionsAction(moduleId);
+      if (res.success && res.questions) {
+        setLoadedQuestions(res.questions);
+        setActiveModuleId(moduleId);
+        setMode(isStory ? "playing_historia" : "playing_libre");
+      } else {
+        alert("Error al cargar las preguntas: " + (res.error || "error desconocido"));
+      }
+    } catch (err) {
+      console.error("Error al cargar preguntas:", err);
+      alert("Hubo un error de conexión al cargar el módulo.");
+    } finally {
+      setIsLoadingQuestions(false);
+    }
   };
 
   const handleFinishGame = () => {
     setMode("menu");
     setActiveModuleId(null);
+    setLoadedQuestions([]);
   };
 
+  if (isLoadingQuestions) {
+    return (
+      <div className="max-w-xl mx-auto mt-20 text-center py-20 flex flex-col items-center">
+        <span className="loading loading-spinner loading-lg text-primary mb-4"></span>
+        <p className="text-lg font-medium">Cargando preguntas de la nube...</p>
+      </div>
+    );
+  }
+
   if ((mode === "playing_historia" || mode === "playing_libre") && activeModuleId) {
-    const moduleInfo = bibleQuizModules.find(m => m.id === activeModuleId);
+    const moduleInfo = modulesToUse.find(m => m.id === activeModuleId);
     
     let nextModuleInfo = null;
     if (mode === "playing_historia") {
-      const currentIndex = bibleQuizModules.findIndex(m => m.id === activeModuleId);
-      if (currentIndex !== -1 && currentIndex + 1 < bibleQuizModules.length) {
-        nextModuleInfo = bibleQuizModules[currentIndex + 1];
+      const currentIndex = modulesToUse.findIndex(m => m.id === activeModuleId);
+      if (currentIndex !== -1 && currentIndex + 1 < modulesToUse.length) {
+        nextModuleInfo = modulesToUse[currentIndex + 1];
       }
     }
 
@@ -42,6 +78,7 @@ export default function BibleQuizProDashboard({ initialProgress }: { initialProg
         key={activeModuleId}
         moduleInfo={moduleInfo!} 
         nextModuleInfo={nextModuleInfo}
+        questions={loadedQuestions}
         onBack={() => setMode(mode === "playing_historia" ? "historia" : "libre")}
         onFinish={handleFinishGame}
         onNext={() => nextModuleInfo ? handleStartGame(nextModuleInfo.id, true) : handleFinishGame()}
@@ -107,7 +144,7 @@ export default function BibleQuizProDashboard({ initialProgress }: { initialProg
           <button onClick={() => setMode("menu")} className="btn btn-ghost mb-4">← Volver</button>
           <h2 className="text-3xl font-bold mb-6">Modo Historia</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {bibleQuizModules.map((mod, index) => {
+            {modulesToUse.map((mod, index) => {
               // Verifica si los requisitos se cumplen
               let isLocked = false;
               if (mod.requirements && mod.requirements.length > 0) {
@@ -157,10 +194,10 @@ export default function BibleQuizProDashboard({ initialProgress }: { initialProg
           <button onClick={() => setMode("menu")} className="btn btn-ghost mb-4">← Volver</button>
           <h2 className="text-3xl font-bold mb-6">Modo Libre</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {bibleQuizModules.filter(mod => progressMap[mod.id]?.passed).length === 0 ? (
+            {modulesToUse.filter(mod => progressMap[mod.id]?.passed).length === 0 ? (
               <p className="opacity-70 col-span-full">No has desbloqueado ningún módulo aún. Juega el Modo Historia primero.</p>
             ) : (
-              bibleQuizModules.map(mod => {
+              modulesToUse.map(mod => {
                 if (!progressMap[mod.id]?.passed) return null;
                 const highScore = progressMap[mod.id]?.score || 0;
                 return (
