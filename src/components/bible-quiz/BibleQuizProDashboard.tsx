@@ -148,7 +148,7 @@ export default function BibleQuizProDashboard({
               // Verifica si los requisitos se cumplen
               let isLocked = false;
               if (mod.requirements && mod.requirements.length > 0) {
-                isLocked = !mod.requirements.every(reqId => progressMap[reqId]?.passed);
+                isLocked = !mod.requirements.every((reqId: string) => progressMap[reqId]?.passed);
               }
               // El primero siempre desbloqueado, a menos que isAvailable sea falso globalmente
               if (!mod.isAvailable) isLocked = true;
